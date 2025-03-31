@@ -1,16 +1,11 @@
-# simpledictionary
+# Simple Dictionary
 
-A new Flutter project.
+A simple application for creating and managing personal dictionaries.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+*   **Create & Manage Dictionaries:** Easily create new dictionaries and view your list of dictionaries on the home screen.
+*   **Theme Customization:** Choose between Light, Dark, or System Default themes to personalize your experience. Your preferred theme is automatically saved.
+*   **Data Storage:** Your settings (like theme choice) and dictionary data are saved locally on your device. (Note: Dictionary saving to files is planned for future updates).
+*   **(Planned)** Add, edit, and delete word entries within each dictionary.
+*   **(Planned)** Import and Export dictionary data.
