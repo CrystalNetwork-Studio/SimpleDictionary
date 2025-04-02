@@ -11,27 +11,19 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Access the provider
-
     // ignore: unused_local_variable
     final dictionaryProvider = Provider.of<DictionaryProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Simple Dictionary'),
-        // Drawer icon is automatically added by Scaffold if drawer is present
-      ),
-      drawer: const AppDrawer(), // Add the drawer
+      appBar: AppBar(title: const Text('Simple Dictionary')),
+      drawer: const AppDrawer(),
       body: Consumer<DictionaryProvider>(
-        // Use Consumer for rebuilds
         builder: (context, provider, child) {
           if (provider.isLoading && provider.dictionaries.isEmpty) {
-            // Show loading indicator only on initial load
             return const Center(child: CircularProgressIndicator());
           } else if (provider.dictionaries.isEmpty) {
-            return const EmptyState(); // Show empty state if no dictionaries
+            return const EmptyState();
           } else {
-            // Show the list of dictionaries
             return DictionaryList(dictionaries: provider.dictionaries);
           }
         },
@@ -41,11 +33,8 @@ class HomeScreen extends StatelessWidget {
           showDialog(
             context: context,
             builder: (BuildContext dialogContext) {
-              // Use dialogContext to avoid issues with context across async gaps
               return CreateDictionaryDialog(
                 onCreate: (name) {
-                  // Call provider's method to add dictionary
-                  // Use read outside build methods for calls
                   Provider.of<DictionaryProvider>(
                     context,
                     listen: false,

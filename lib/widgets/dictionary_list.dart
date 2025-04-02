@@ -14,9 +14,7 @@ class DictionaryList extends StatelessWidget {
       itemCount: dictionaries.length,
       itemBuilder: (context, index) {
         final dictionary = dictionaries[index];
-        // Use dictionary name as key for better performance on updates
         return Padding(
-          // Add space between items
           padding: const EdgeInsets.only(bottom: 8.0),
           child: DictionaryItem(
             key: ValueKey(dictionary.name),

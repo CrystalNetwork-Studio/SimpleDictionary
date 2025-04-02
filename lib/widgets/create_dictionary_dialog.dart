@@ -43,7 +43,7 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
     return AlertDialog(
       title: const Text('Створити Словник'),
       content: Column(
-        mainAxisSize: MainAxisSize.min, // Prevent dialog stretching
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('Введіть назву для нового словника:'),
@@ -56,7 +56,7 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
               border: const OutlineInputBorder(),
               errorText: _errorMessage,
             ),
-            onSubmitted: (_) => _submit(), // Allow submitting with Enter key
+            onSubmitted: (_) => _submit(),
           ),
         ],
       ),
@@ -64,11 +64,10 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
         TextButton(
           child: const Text('Відмінити'),
           onPressed: () {
-            Navigator.of(context).pop(); // Close the dialog
+            Navigator.of(context).pop();
           },
         ),
         TextButton(
-          // Enable button only if name is not blank
           onPressed: _canCreate ? _submit : null,
           child: const Text('Створити'),
         ),
@@ -85,8 +84,9 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
           _errorMessage = 'Словник з такою назвою вже існує.';
         });
       } else {
+        if (!mounted) return;
         widget.onCreate(dictionaryName);
-        Navigator.of(context).pop(); // Close the dialog
+        Navigator.of(context).pop();
       }
     }
   }

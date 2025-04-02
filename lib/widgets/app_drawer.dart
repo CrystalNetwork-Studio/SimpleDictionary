@@ -1,4 +1,3 @@
-// lib/widgets/app_drawer.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/dictionary_provider.dart';
@@ -18,13 +17,15 @@ class AppDrawer extends StatelessWidget {
           // Header
           DrawerHeader(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.1),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.book_outlined, // Use outlined book
+                  Icons.book_outlined,
                   size: 32,
                   color: Theme.of(context).colorScheme.primary,
                 ),
@@ -40,26 +41,24 @@ class AppDrawer extends StatelessWidget {
           ),
           // Info Items
           _DrawerInfoItem(
-            icon: Icons.collections_bookmark_outlined, // Outlined
+            icon: Icons.collections_bookmark_outlined,
             text: 'Словники: $dictionaryCount',
           ),
           const _DrawerInfoItem(
-            icon: Icons.language_outlined, // Outlined
-            text: 'Мова: Українська', // Hardcoded
+            icon: Icons.language_outlined,
+            text: 'Мова: Українська',
           ),
           const Divider(),
           // Nav Items
           ListTile(
             leading: Icon(
-              Icons.settings_outlined, // Outlined
-              color:
-                  Theme.of(context).iconTheme.color, // Use default icon color
+              Icons.settings_outlined,
+              color: Theme.of(context).iconTheme.color,
             ),
             title: const Text('Налаштування'),
             onTap: () {
-              Navigator.pop(context); // Close drawer first
+              Navigator.pop(context);
               Navigator.push(
-                // Navigate to SettingsScreen
                 context,
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
@@ -67,13 +66,12 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(
-              Icons.info_outline, // Use outline variant
-              color:
-                  Theme.of(context).iconTheme.color, // Use default icon color
+              Icons.info_outline,
+              color: Theme.of(context).iconTheme.color,
             ),
             title: const Text('Про додаток'),
             onTap: () {
-              Navigator.pop(context); // Close drawer
+              Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Інформація про додаток ще не реалізована.'),
@@ -82,14 +80,11 @@ class AppDrawer extends StatelessWidget {
               );
             },
           ),
-          const Spacer(), // Push version to bottom
+          const Spacer(),
           const Divider(),
           const Padding(
             padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Версія 1.0.0', // TODO: Get version dynamically later
-              style: TextStyle(color: Colors.grey),
-            ),
+            child: Text('Версія 1.0.0', style: TextStyle(color: Colors.grey)),
           ),
         ],
       ),
@@ -97,7 +92,6 @@ class AppDrawer extends StatelessWidget {
   }
 }
 
-// Helper remains the same
 class _DrawerInfoItem extends StatelessWidget {
   final IconData icon;
   final String text;
@@ -115,9 +109,9 @@ class _DrawerInfoItem extends StatelessWidget {
             size: 24,
             color: Theme.of(
               context,
-            ).textTheme.bodySmall?.color?.withOpacity(0.7),
+            ).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
           ),
-          const SizedBox(width: 16), // Increased spacing slightly
+          const SizedBox(width: 16),
           Text(text, style: Theme.of(context).textTheme.bodyLarge),
         ],
       ),

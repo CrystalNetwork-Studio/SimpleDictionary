@@ -23,17 +23,14 @@ class ConfirmDeleteDialog extends StatelessWidget {
         TextButton(
           child: const Text('Скасувати'),
           onPressed: () {
-            Navigator.of(context).pop(); // Close the dialog
+            Navigator.of(context).pop();
           },
         ),
         TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor:
-                colorScheme.error, // Use error color for delete button text
-          ),
+          style: TextButton.styleFrom(foregroundColor: colorScheme.error),
           onPressed: () {
             onConfirm();
-            Navigator.of(context).pop(); // Close the dialog
+            Navigator.of(context).pop();
           },
           child: const Text('Видалити'),
         ),

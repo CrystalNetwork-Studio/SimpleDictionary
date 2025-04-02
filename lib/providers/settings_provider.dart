@@ -20,15 +20,14 @@ class SettingsProvider with ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       final themeIndex = prefs.getInt(_themeModeKey) ?? ThemeMode.system.index;
-      // Ensure index is within bounds
       if (themeIndex >= 0 && themeIndex < ThemeMode.values.length) {
         _themeMode = ThemeMode.values[themeIndex];
       } else {
-        _themeMode = ThemeMode.system; // Default if index is invalid
+        _themeMode = ThemeMode.system;
       }
     } catch (e) {
       print("Error loading settings: $e");
-      _themeMode = ThemeMode.system; // Default on error
+      _themeMode = ThemeMode.system;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -44,7 +43,6 @@ class SettingsProvider with ChangeNotifier {
       await prefs.setInt(_themeModeKey, mode.index);
     } catch (e) {
       print("Error saving theme mode: $e");
-      // Optionally revert or show error
     }
   }
 }

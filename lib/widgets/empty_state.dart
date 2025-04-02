@@ -14,15 +14,14 @@ class EmptyState extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Icon(
-              Icons
-                  .folder_off_outlined, // KMM used Filled.Folder, maybe off is better?
+              Icons.folder_off_outlined,
               size: 64,
               color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
             ),
             const SizedBox(height: 16),
             Text(
               'У вас ще немає жодного словника.',
-              style: theme.textTheme.headlineSmall, // Similar to h6
+              style: theme.textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),

@@ -7,7 +7,13 @@ import '../data/dictionary.dart';
 const String _baseDirName = 'Dictionary';
 const String _fileName = 'words.json';
 
-// Gets the path to the main "Dictionary" directory in app documents.
+/// Retrieves the path to the base directory where all dictionaries are stored.
+///
+/// If the directory doesn't exist, it creates it. The base directory is located
+/// inside the application documents directory, under the name 'Dictionary'.
+///
+/// Returns:
+///   A Future<String> that resolves to the path of the base directory.
 Future<String> _getBaseDirectoryPath() async {
   final directory = await getApplicationDocumentsDirectory();
   final baseDirPath = p.join(directory.path, _baseDirName);
@@ -19,7 +25,19 @@ Future<String> _getBaseDirectoryPath() async {
   return baseDirPath;
 }
 
-// Gets the path to a specific dictionary's directory.
+/// Retrieves the path to a specific dictionary directory.
+///
+/// The directory is located inside the base directory, and its name is
+/// determined by the [dictionaryName] parameter.
+///
+/// Parameters:
+///   - [dictionaryName]: The name of the dictionary. Cannot be empty.
+///
+/// Returns:
+///   A Future<String> that resolves to the path of the dictionary directory.
+///
+/// Throws:
+///   - ArgumentError: If [dictionaryName] is empty.
 Future<String> getDictionaryDirectoryPath(String dictionaryName) async {
   if (dictionaryName.isEmpty) {
     throw ArgumentError(
@@ -30,7 +48,16 @@ Future<String> getDictionaryDirectoryPath(String dictionaryName) async {
   return p.join(baseDirPath, dictionaryName);
 }
 
-// Saves a Dictionary object to its specific directory as words.json.
+/// Saves a [Dictionary] object to a JSON file.
+///
+/// The file is saved in the directory corresponding to the dictionary's name.
+/// If the directory doesn't exist, it is created.
+///
+/// Parameters:
+///   - [dictionary]: The Dictionary object to save.
+///
+/// Throws:
+///   - Any exception that occurs during the saving process.
 Future<void> saveDictionaryToJson(Dictionary dictionary) async {
   try {
     final directoryPath = await getDictionaryDirectoryPath(dictionary.name);
@@ -52,7 +79,15 @@ Future<void> saveDictionaryToJson(Dictionary dictionary) async {
   }
 }
 
-// Loads a Dictionary object from words.json in its specific directory.
+/// Loads a [Dictionary] object from a JSON file.
+///
+/// The file is loaded from the directory corresponding to the [dictionaryName] parameter.
+///
+/// Parameters:
+///   - [dictionaryName]: The name of the dictionary to load.
+///
+/// Returns:
+///   A Future<Dictionary?> that resolves to the loaded Dictionary object, or null if the file doesn't exist or an error occurs.
 Future<Dictionary?> loadDictionaryFromJson(String dictionaryName) async {
   try {
     final directoryPath = await getDictionaryDirectoryPath(dictionaryName);
@@ -73,7 +108,12 @@ Future<Dictionary?> loadDictionaryFromJson(String dictionaryName) async {
   }
 }
 
-// Gets the names of all dictionary directories.
+/// Retrieves a list of all dictionary names.
+///
+/// It reads the names of the directories located inside the base dictionary directory.
+///
+/// Returns:
+///   A Future<List<String>> that resolves to a list of dictionary names.  Returns an empty list if no dictionaries are found, or if an error occurs.
 Future<List<String>> getDictionaryNames() async {
   try {
     final baseDirPath = await _getBaseDirectoryPath();
@@ -86,7 +126,7 @@ Future<List<String>> getDictionaryNames() async {
     final List<String> dirNames = [];
     await for (final entity in entities) {
       if (entity is Directory) {
-        dirNames.add(p.basename(entity.path)); // Get only the directory name
+        dirNames.add(p.basename(entity.path));
       }
     }
     print("Found dictionary directories: $dirNames");
@@ -97,7 +137,13 @@ Future<List<String>> getDictionaryNames() async {
   }
 }
 
-// Deletes the directory for a specific dictionary.
+/// Deletes the directory of a specific dictionary.
+///
+/// Parameters:
+///   - [dictionaryName]: The name of the dictionary to delete.
+///
+/// Returns:
+///   A Future<bool> that resolves to true if the directory was successfully deleted, false otherwise.
 Future<bool> deleteDictionaryDirectory(String dictionaryName) async {
   try {
     if (dictionaryName.isEmpty) {
@@ -119,7 +165,7 @@ Future<bool> deleteDictionaryDirectory(String dictionaryName) async {
       print(
         "Directory for dictionary '$dictionaryName' not found at: $directoryPath",
       );
-      return false; // Directory didn't exist
+      return false;
     }
   } catch (e) {
     print("Error deleting dictionary '$dictionaryName': $e");

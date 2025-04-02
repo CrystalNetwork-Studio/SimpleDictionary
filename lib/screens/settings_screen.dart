@@ -44,7 +44,7 @@ class SettingsScreen extends StatelessWidget {
 
   Widget _buildThemeSetting(BuildContext context, SettingsProvider provider) {
     return ListTile(
-      leading: const Icon(Icons.brightness_6), // Icon for theme
+      leading: const Icon(Icons.brightness_6),
       title: const Text('Тема'),
       subtitle: Text(_themeModeToString(provider.themeMode)),
       onTap: () async {
@@ -87,7 +87,6 @@ class SettingsScreen extends StatelessWidget {
         );
 
         if (selectedTheme != null) {
-          // Use read for calls outside build/builder methods
           context.read<SettingsProvider>().setThemeMode(selectedTheme);
         }
       },
@@ -101,7 +100,7 @@ class SettingsScreen extends StatelessWidget {
       case ThemeMode.dark:
         return 'Темна';
       case ThemeMode.system:
-      // ignore: unreachable_switch_default
+        // ignore: unreachable_switch_default
       default:
         return 'За замовчуванням системи';
     }

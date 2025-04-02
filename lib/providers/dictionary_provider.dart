@@ -28,7 +28,7 @@ class DictionaryProvider with ChangeNotifier {
       _dictionaries = loaded;
     } catch (e) {
       print("Помилка в loadDictionaries provider: $e");
-      _dictionaries = []; // Reset on error
+      _dictionaries = [];
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -37,24 +37,21 @@ class DictionaryProvider with ChangeNotifier {
 
   Future<void> addDictionary(String name) async {
     if (name.isEmpty) return;
-    // Check if dictionary with the same name already exists (case-insensitive)
     if (_dictionaries.any((d) => d.name.toLowerCase() == name.toLowerCase())) {
       print("Словник з назвою '$name' вже існує.");
-      // Optionally: throw error or return a status
       return;
     }
 
     final newDictionary = Dictionary(name: name);
-    _isLoading = true; // Indicate loading while saving
+    _isLoading = true;
     notifyListeners();
 
     try {
       await file_utils.saveDictionaryToJson(newDictionary);
       _dictionaries.add(newDictionary);
-      _dictionaries.sort((a, b) => a.name.compareTo(b.name)); // Keep sorted
+      _dictionaries.sort((a, b) => a.name.compareTo(b.name));
     } catch (e) {
       print("Помилка при додаванні словника '$name': $e");
-      // Optionally: show error message to user
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -62,7 +59,7 @@ class DictionaryProvider with ChangeNotifier {
   }
 
   Future<void> deleteDictionary(Dictionary dictionary) async {
-    _isLoading = true; // Indicate loading while deleting
+    _isLoading = true;
     notifyListeners();
     final index = _dictionaries.indexWhere((d) => d.name == dictionary.name);
     if (index == -1) {
@@ -82,11 +79,9 @@ class DictionaryProvider with ChangeNotifier {
         print(
           "Не вдалося видалити файли словника для '${dictionary.name}'. Не видаляємо зі списку.",
         );
-        // Optionally: show error message to user
       }
     } catch (e) {
       print("Помилка при видаленні словника '${dictionary.name}': $e");
-      // Optionally: show error message to user
     } finally {
       _isLoading = false;
       notifyListeners();

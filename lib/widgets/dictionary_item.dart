@@ -19,9 +19,7 @@ class DictionaryItem extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
-      // Use settings from CardTheme
       child: InkWell(
-        // Make card clickable
         onTap: () {
           // TODO: Navigate to dictionary details screen
           ScaffoldMessenger.of(context).showSnackBar(
@@ -34,29 +32,18 @@ class DictionaryItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Row(
             children: <Widget>[
-              Icon(
-                Icons.folder_outlined, // KMM used Filled.Folder
-                color:
-                    textTheme
-                        .bodyLarge
-                        ?.color, // Use default text color for icon
-              ),
+              Icon(Icons.folder_outlined, color: textTheme.bodyLarge?.color),
               const SizedBox(width: 16),
               Expanded(
-                // Make text take available space
                 child: Text(
                   dictionary.name,
-                  style: textTheme.titleMedium, // Equivalent to subtitle1
-                  overflow:
-                      TextOverflow.ellipsis, // Prevent long names overflowing
+                  style: textTheme.titleMedium,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(width: 8),
               IconButton(
-                icon: Icon(
-                  Icons.delete_outline, // Use outlined version
-                  color: colorScheme.error,
-                ),
+                icon: Icon(Icons.delete_outline, color: colorScheme.error),
                 tooltip: 'Видалити ${dictionary.name}',
                 onPressed: () {
                   showDialog(

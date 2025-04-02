@@ -13,9 +13,7 @@ class Word {
   Map<String, dynamic> toJson() => _$WordToJson(this);
 }
 
-@JsonSerializable(
-  explicitToJson: true,
-) // Need explicitToJson because Word is complex
+@JsonSerializable(explicitToJson: true)
 class Dictionary {
   final String name;
   final List<Word> words;
