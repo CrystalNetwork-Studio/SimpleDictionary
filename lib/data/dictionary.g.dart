@@ -7,23 +7,24 @@ part of 'dictionary.dart';
 // **************************************************************************
 
 Word _$WordFromJson(Map<String, dynamic> json) => Word(
-  term: json['term'] as String,
-  definition: json['definition'] as String,
-);
+      term: json['term'] as String,
+      translation: json['translation'] as String,
+      description: json['description'] as String,
+    );
 
 Map<String, dynamic> _$WordToJson(Word instance) => <String, dynamic>{
-  'term': instance.term,
-  'definition': instance.definition,
-};
+      'term': instance.term,
+      'translation': instance.translation,
+      'description': instance.description,
+    };
 
 Dictionary _$DictionaryFromJson(Map<String, dynamic> json) => Dictionary(
-  name: json['name'] as String,
-  words:
-      (json['words'] as List<dynamic>?)
+      name: json['name'] as String,
+      words: (json['words'] as List<dynamic>?)
           ?.map((e) => Word.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
-);
+    );
 
 Map<String, dynamic> _$DictionaryToJson(Dictionary instance) =>
     <String, dynamic>{

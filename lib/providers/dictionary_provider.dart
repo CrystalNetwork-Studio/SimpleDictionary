@@ -58,6 +58,64 @@ class DictionaryProvider with ChangeNotifier {
     }
   }
 
+  Future<void> addWordToDictionary(String dictionaryName, Word word) async {
+    _isLoading = true;
+    notifyListeners();
+    
+    try {
+      final index = _dictionaries.indexWhere((d) => d.name == dictionaryName);
+      if (index == -1) {
+        print("Словник '$dictionaryName' не знайдено для додавання слова.");
+        return;
+      }
+      
+      // Create a new dictionary with the added word
+      final dictionary = _dictionaries[index];
+      final updatedWords = List<Word>.from(dictionary.words)..add(word);
+      final updatedDictionary = dictionary.copyWith(words: updatedWords);
+      
+      // Save to storage
+      await file_utils.saveDictionaryToJson(updatedDictionary);
+      
+      // Update in memory
+      _dictionaries[index] = updatedDictionary;
+      
+      print("Слово '${word.term}' додано до словника '$dictionaryName'");
+    } catch (e) {
+      print("Помилка при додаванні слова до словника '$dictionaryName': $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Update a dictionary (for example when deleting a word)
+  Future<void> updateDictionary(Dictionary updatedDictionary) async {
+    _isLoading = true;
+    notifyListeners();
+    
+    try {
+      final index = _dictionaries.indexWhere((d) => d.name == updatedDictionary.name);
+      if (index == -1) {
+        print("Словник '${updatedDictionary.name}' не знайдено для оновлення.");
+        return;
+      }
+      
+      // Save to storage
+      await file_utils.saveDictionaryToJson(updatedDictionary);
+      
+      // Update in memory
+      _dictionaries[index] = updatedDictionary;
+      
+      print("Словник '${updatedDictionary.name}' оновлено");
+    } catch (e) {
+      print("Помилка при оновленні словника '${updatedDictionary.name}': $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> deleteDictionary(Dictionary dictionary) async {
     _isLoading = true;
     notifyListeners();
@@ -91,6 +149,4 @@ class DictionaryProvider with ChangeNotifier {
   Future<bool> dictionaryExists(String name) async {
     return _dictionaries.any((d) => d.name.toLowerCase() == name.toLowerCase());
   }
-
-  // TODO: Add methods for adding/removing words within a dictionary if needed
 }

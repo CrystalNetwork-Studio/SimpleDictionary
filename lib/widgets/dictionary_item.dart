@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../data/dictionary.dart';
 import '../providers/dictionary_provider.dart';
+import '../screens/dictionary_detail_screen.dart';
 import 'confirm_delete_dialog.dart';
 
 class DictionaryItem extends StatelessWidget {
@@ -21,10 +22,12 @@ class DictionaryItem extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          // TODO: Navigate to dictionary details screen
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Перегляд ${dictionary.name} ще не реалізовано.'),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DictionaryDetailScreen(
+                dictionary: dictionary,
+              ),
             ),
           );
         },
