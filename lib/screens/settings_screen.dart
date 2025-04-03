@@ -100,7 +100,7 @@ class SettingsScreen extends StatelessWidget {
       case ThemeMode.dark:
         return 'Темна';
       case ThemeMode.system:
-        // ignore: unreachable_switch_default
+      // ignore: unreachable_switch_default
       default:
         return 'За замовчуванням системи';
     }
@@ -114,7 +114,7 @@ class SettingsScreen extends StatelessWidget {
         // TODO: Implement Import/Export functionality
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Функція Імпорту/Експорту ще не реалізована.'),
+            content: Text('Функція Імпорту/Експорту ще не готова. :('),
           ),
         );
       },
