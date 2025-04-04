@@ -1,0 +1,11 @@
+[
+  {
+    "label": "Flutter Build APK ",
+    "command": "flutter build apk --split-per-abi",
+    "use_new_terminal": false,
+    "reveal": "always",
+    "reveal_target": "dock",
+    "hide": "never",
+    "shell": "system"
+  }
+]

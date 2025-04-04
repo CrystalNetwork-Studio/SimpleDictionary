@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../data/dictionary.dart';
 import '../providers/dictionary_provider.dart';
+import '../widgets/edit_word_dialog.dart';
 import 'add_word_screen.dart';
 
 class DictionaryDetailScreen extends StatefulWidget {
@@ -20,11 +22,42 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
       appBar: AppBar(title: Text(widget.dictionary.name)),
       body: Consumer<DictionaryProvider>(
         builder: (context, provider, child) {
-          // Find the current version of this dictionary
-          final currentDict = provider.dictionaries.firstWhere(
-            (d) => d.name == widget.dictionary.name,
-            orElse: () => widget.dictionary,
-          );
+          Dictionary? currentDictFromProvider;
+          try {
+            currentDictFromProvider = provider.dictionaries.firstWhere(
+              (d) => d.name == widget.dictionary.name,
+            );
+          } catch (e) {
+            print(
+              "Dictionary '${widget.dictionary.name}' not found in provider. It might have been deleted.",
+            );
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Словник не знайдено',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Можливо, його було видалено.',
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final currentDict = currentDictFromProvider;
 
           if (currentDict.words.isEmpty) {
             return Center(
@@ -34,42 +67,50 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
                   Icon(
                     Icons.book_outlined,
                     size: 64,
-                    color: Theme.of(context).disabledColor,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.secondary.withOpacity(0.6),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Словник порожній',
-                    style: Theme.of(context).textTheme.headlineSmall,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Додайте слова, натиснувши кнопку "+"\nвнизу екрана',
                     textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
               ),
             );
           }
 
-          return WordsList(
-            currentDict: currentDict,
-            provider: provider,
-          );
+          return WordsList(currentDict: currentDict, provider: provider);
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          final targetDictionaryName = widget.dictionary.name;
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddWordScreen(
-                onWordAdded: (word) {
-                  Provider.of<DictionaryProvider>(
-                    context,
-                    listen: false,
-                  ).addWordToDictionary(widget.dictionary.name, word);
-                },
-              ),
+              builder:
+                  (context) => AddWordScreen(
+                    onWordAdded: (word) async {
+                      Provider.of<DictionaryProvider>(
+                        context,
+                        listen: false,
+                      ).clearError();
+                      return await Provider.of<DictionaryProvider>(
+                        context,
+                        listen: false,
+                      ).addWordToDictionary(targetDictionaryName, word);
+                    },
+                  ),
             ),
           );
         },
@@ -80,7 +121,7 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
   }
 }
 
-class WordsList extends StatefulWidget {
+class WordsList extends StatelessWidget {
   final Dictionary currentDict;
   final DictionaryProvider provider;
 
@@ -91,50 +132,22 @@ class WordsList extends StatefulWidget {
   });
 
   @override
-  State<WordsList> createState() => _WordsListState();
-}
-
-class _WordsListState extends State<WordsList> {
-  final List<GlobalKey<_WordCardState>> _wordKeys = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _updateKeys();
-  }
-
-  @override
-  void didUpdateWidget(WordsList oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.currentDict.words.length != _wordKeys.length) {
-      _updateKeys();
-    }
-  }
-
-  void _updateKeys() {
-    _wordKeys.clear();
-    for (int i = 0; i < widget.currentDict.words.length; i++) {
-      _wordKeys.add(GlobalKey<_WordCardState>());
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final words = currentDict.words;
+
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: widget.currentDict.words.length,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      itemCount: words.length,
       itemBuilder: (context, index) {
-        // Make sure we have enough keys
-        if (index >= _wordKeys.length) {
-          _updateKeys();
-        }
-        
+        final word = words[index];
+        final wordKey =
+            '${currentDict.name}_${word.term}_${word.translation}_$index';
         return WordCard(
-          key: _wordKeys[index],
-          word: widget.currentDict.words[index],
+          key: ValueKey(wordKey),
+          word: word,
           index: index,
-          dictionary: widget.currentDict,
-          provider: widget.provider,
+          dictionaryName: currentDict.name,
+          provider: provider,
         );
       },
     );
@@ -144,13 +157,13 @@ class _WordsListState extends State<WordsList> {
 class WordCard extends StatefulWidget {
   final Word word;
   final int index;
-  final Dictionary dictionary;
+  final String dictionaryName;
   final DictionaryProvider provider;
 
   const WordCard({
     required this.word,
     required this.index,
-    required this.dictionary,
+    required this.dictionaryName,
     required this.provider,
     super.key,
   });
@@ -160,127 +173,172 @@ class WordCard extends StatefulWidget {
 }
 
 class _WordCardState extends State<WordCard> {
-  // For tracking dismissal state
-  bool _isConfirming = false;
+  void _showEditWordDialog() {
+    final currentDictionary = widget.provider.dictionaries.firstWhere(
+      (d) => d.name == widget.dictionaryName,
+      orElse:
+          () =>
+              widget.provider.dictionaries.first, // Fallback, ideally it exists
+    );
+    final actualIndex = currentDictionary.words.indexWhere(
+      (w) =>
+          w.term == widget.word.term &&
+          w.translation == widget.word.translation &&
+          w.description == widget.word.description,
+    );
 
-  Future<bool> _confirmDeletion() async {
-    if (_isConfirming) return false;
-    
-    _isConfirming = true;
-    
-    final bool shouldDelete = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Підтвердити видалення'),
-          content: Text(
-            'Ви впевнені, що хочете видалити слово "${widget.word.term}"?'
+    if (actualIndex == -1) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Не вдалося знайти слово для редагування/видалення.'),
+            backgroundColor: Colors.orange,
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Скасувати'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Видалити'),
-            ),
-          ],
+        );
+      }
+      return;
+    }
+
+    showDialog<EditWordDialogResult>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        final provider = Provider.of<DictionaryProvider>(
+          dialogContext,
+          listen: false,
+        );
+        return EditWordDialog(
+          initialWord: widget.word,
+          dictionaryName: widget.dictionaryName,
+          wordIndex: actualIndex,
+          onWordUpdated: (indexFromDialog, updatedWord) async {
+            provider.clearError();
+            bool success = await provider.updateWordInDictionary(
+              widget.dictionaryName,
+              indexFromDialog,
+              updatedWord,
+            );
+            return success;
+          },
+          onWordDeleted: (indexFromDialog) async {
+            provider.clearError();
+            final wordTermToDelete =
+                provider
+                    .dictionaries[provider.dictionaries.indexWhere(
+                      (d) => d.name == widget.dictionaryName,
+                    )]
+                    .words[indexFromDialog]
+                    .term;
+
+            bool success = await provider.removeWordFromDictionary(
+              widget.dictionaryName,
+              indexFromDialog,
+            );
+            return success ? wordTermToDelete : null;
+          },
         );
       },
-    ) ?? false;
-    
-    if (shouldDelete && context.mounted) {
-      try {
-        // Make sure the index is still valid
-        if (widget.index >= 0 && widget.index < widget.dictionary.words.length) {
-          // Create a copy of the words list without the deleted word
-          final List<Word> updatedWords = List<Word>.from(widget.dictionary.words);
-          updatedWords.removeAt(widget.index);
-          
-          // Create an updated dictionary
-          final updatedDict = widget.dictionary.copyWith(words: updatedWords);
-          
-          // Update the dictionary in the provider
-          await widget.provider.updateDictionary(updatedDict);
-          
-          if (context.mounted) {
+    ).then((result) {
+      if (!mounted || result == null) return;
+
+      switch (result.status) {
+        case EditWordDialogStatus.saved:
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Слово успішно оновлено!'),
+              duration: Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          break;
+        case EditWordDialogStatus.deleted:
+          if (result.deletedWordTerm != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Слово "${widget.word.term}" видалено'),
+                content: Text('Слово "${result.deletedWordTerm}" видалено'),
                 duration: const Duration(seconds: 2),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Слово видалено'),
+                duration: Duration(seconds: 2),
+                behavior: SnackBarBehavior.floating,
               ),
             );
           }
-        }
-      } catch (e) {
-        print('Помилка при видаленні слова: $e');
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Помилка при видаленні слова'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-        _isConfirming = false;
-        return false;
+          break;
+        case EditWordDialogStatus.cancelled:
+        case EditWordDialogStatus.error:
+          break;
       }
-    }
-    
-    _isConfirming = false;
-    return shouldDelete;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: ValueKey('${widget.word.term}_${widget.index}'),
-      direction: DismissDirection.horizontal,
-      background: Container(
-        color: Theme.of(context).colorScheme.error.withOpacity(0.1),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        alignment: Alignment.centerLeft,
-        child: Icon(
-          Icons.delete,
-          color: Theme.of(context).colorScheme.error,
-        ),
-      ),
-      secondaryBackground: Container(
-        color: Theme.of(context).colorScheme.error.withOpacity(0.1),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        alignment: Alignment.centerRight,
-        child: Icon(
-          Icons.delete,
-          color: Theme.of(context).colorScheme.error,
-        ),
-      ),
-      dismissThresholds: const {
-        DismissDirection.startToEnd: 0.4,
-        DismissDirection.endToStart: 0.4,
-      },
-      confirmDismiss: (_) => _confirmDeletion(),
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 12),
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    const TextAlign alignment = TextAlign.center;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: _showEditWordDialog,
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                widget.word.term,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Divider(),
-              Text(
-                'Переклад: ${widget.word.translation}',
-                style: Theme.of(context).textTheme.bodyLarge,
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          widget.word.term,
+                          textAlign: alignment,
+                          style: textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: VerticalDivider(thickness: 1, width: 1),
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          widget.word.translation,
+                          textAlign: alignment,
+                          style: textTheme.titleMedium,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               if (widget.word.description.isNotEmpty) ...[
-                const SizedBox(height: 8),
+                const Divider(height: 20, thickness: 0.5),
                 Text(
-                  'Опис: ${widget.word.description}',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  widget.word.description,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: textTheme.bodySmall?.color?.withOpacity(0.8),
+                  ),
+                  textAlign: TextAlign.start,
                 ),
               ],
             ],

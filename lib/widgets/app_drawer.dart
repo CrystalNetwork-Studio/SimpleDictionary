@@ -14,7 +14,6 @@ class AppDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: <Widget>[
-          // Header
           DrawerHeader(
             decoration: BoxDecoration(
               color: Theme.of(
@@ -39,7 +38,6 @@ class AppDrawer extends StatelessWidget {
               ],
             ),
           ),
-          // Info Items
           _DrawerInfoItem(
             icon: Icons.collections_bookmark_outlined,
             text: 'Словники: $dictionaryCount',
@@ -49,7 +47,6 @@ class AppDrawer extends StatelessWidget {
             text: 'Мова: Українська',
           ),
           const Divider(),
-          // Nav Items
           ListTile(
             leading: Icon(
               Icons.settings_outlined,
@@ -74,7 +71,7 @@ class AppDrawer extends StatelessWidget {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Інформація про додаток ще не реалізована.'),
+                  content: Text('Інформація про додаток ще не доробленна.'),
                   duration: Duration(seconds: 2),
                 ),
               );
@@ -84,7 +81,10 @@ class AppDrawer extends StatelessWidget {
           const Divider(),
           const Padding(
             padding: EdgeInsets.all(16.0),
-            child: Text('Версія 1.0.0', style: TextStyle(color: Colors.grey)),
+            child: Text(
+              'Версія 0.0.1',
+              style: TextStyle(color: Colors.grey),
+            ), // TODO: Automatically update version number
           ),
         ],
       ),

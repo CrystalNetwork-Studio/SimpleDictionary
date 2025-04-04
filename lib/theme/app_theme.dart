@@ -1,141 +1,145 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static final Color _lightPrimary = const Color(0xFF6200EE);
-  static final Color _lightPrimaryVariant = const Color(0xFF3700B3);
-  static final Color _lightSecondary = const Color(0xFF03DAC5);
-  static final Color _lightBackground = Colors.white;
-  static final Color _lightSurface = Colors.white;
-  static final Color _lightOnPrimary = Colors.white;
-  static final Color _lightOnSecondary = Colors.black;
-  static final Color _lightOnSurface = Colors.black;
-  static final Color _lightError = Colors.red.shade700;
-
-  static final Color _darkPrimary = const Color(0xFFBB86FC);
-  static final Color _darkPrimaryVariant = const Color(0xFF3700B3);
-  static final Color _darkSecondary = const Color(0xFF03DAC5);
-  static final Color _darkBackground = const Color(0xFF121212);
-  static final Color _darkSurface = const Color(0xFF1E1E1E);
-  static final Color _darkOnPrimary = Colors.black;
-  static final Color _darkOnSecondary = Colors.black;
-  static final Color _darkOnSurface = Colors.white;
-  static final Color _darkError = Colors.red.shade400;
-
-  static final ThemeData lightTheme = ThemeData(
+  // Base colors for light theme
+  static final Color _lightSeedColor = Colors.deepPurple;
+  static final ColorScheme _lightColorScheme = ColorScheme.fromSeed(
+    seedColor: _lightSeedColor,
     brightness: Brightness.light,
-    primaryColor: _lightPrimary,
-    primaryColorDark: _lightPrimaryVariant,
-    colorScheme: ColorScheme.light(
-      primary: _lightPrimary,
-      secondary: _lightSecondary,
-      surface: _lightSurface,
-      background: _lightBackground,
-      onPrimary: _lightOnPrimary,
-      onSecondary: _lightOnSecondary,
-      onSurface: _lightOnSurface,
-      onBackground: _lightOnSurface,
-      error: _lightError,
-    ),
-    scaffoldBackgroundColor: _lightBackground,
-    appBarTheme: AppBarTheme(
-      color: _lightPrimary,
-      iconTheme: IconThemeData(color: _lightOnPrimary),
-      toolbarTextStyle:
-          TextTheme(
-            titleLarge: TextStyle(
-              color: _lightOnPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-            ),
-          ).bodyMedium,
-      titleTextStyle:
-          TextTheme(
-            titleLarge: TextStyle(
-              color: _lightOnPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-            ),
-          ).titleLarge,
-    ),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: _lightSecondary,
-      foregroundColor: _lightOnSecondary,
-    ),
-    dialogTheme: DialogTheme(
-      backgroundColor: _lightSurface,
-      titleTextStyle: TextStyle(
-        color: _lightOnSurface,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
-      contentTextStyle: TextStyle(color: _lightOnSurface, fontSize: 16),
-    ),
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(foregroundColor: _lightPrimary),
-    ),
-    cardTheme: CardTheme(
-      elevation: 2.0,
-      color: _lightSurface,
-      shadowColor: Colors.black.withOpacity(0.2),
-    ),
   );
 
-  static final ThemeData darkTheme = ThemeData(
+  // Base colors for dark theme
+  static final Color _darkSeedColor = Colors.deepPurple;
+  static final ColorScheme _darkColorScheme = ColorScheme.fromSeed(
+    seedColor: _darkSeedColor,
     brightness: Brightness.dark,
-    primaryColor: _darkPrimary,
-    primaryColorDark: _darkPrimaryVariant,
-    colorScheme: ColorScheme.dark(
-      primary: _darkPrimary,
-      secondary: _darkSecondary,
-      surface: _darkSurface,
-      background: _darkBackground,
-      onPrimary: _darkOnPrimary,
-      onSecondary: _darkOnSecondary,
-      onSurface: _darkOnSurface,
-      onBackground: _darkOnSurface,
-      error: _darkError,
-    ),
-    scaffoldBackgroundColor: _darkBackground,
+  );
+
+  // Light Theme
+  static final ThemeData lightTheme = ThemeData(
+    colorScheme: _lightColorScheme,
+    useMaterial3: true,
+    brightness: Brightness.light,
     appBarTheme: AppBarTheme(
-      color: _darkSurface,
-      iconTheme: IconThemeData(color: _darkOnSurface),
-      toolbarTextStyle:
-          TextTheme(
-            titleLarge: TextStyle(
-              color: _darkOnSurface,
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-            ),
-          ).bodyMedium,
-      titleTextStyle:
-          TextTheme(
-            titleLarge: TextStyle(
-              color: _darkOnSurface,
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-            ),
-          ).titleLarge,
+      backgroundColor: _lightColorScheme.primaryContainer,
+      foregroundColor: _lightColorScheme.onPrimaryContainer,
+      elevation: 2,
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: _darkSecondary,
-      foregroundColor: _darkOnSecondary,
+      backgroundColor: _lightColorScheme.primary,
+      foregroundColor: _lightColorScheme.onPrimary,
     ),
     dialogTheme: DialogTheme(
-      backgroundColor: _darkSurface,
+      backgroundColor: _lightColorScheme.surface,
       titleTextStyle: TextStyle(
-        color: _darkOnSurface,
+        color: _lightColorScheme.onSurface,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
-      contentTextStyle: TextStyle(color: _darkOnSurface, fontSize: 16),
+      contentTextStyle: TextStyle(
+        color: _lightColorScheme.onSurfaceVariant,
+        fontSize: 16,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
     textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(foregroundColor: _darkSecondary),
+      style: TextButton.styleFrom(foregroundColor: _lightColorScheme.primary),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _lightColorScheme.primary,
+        foregroundColor: _lightColorScheme.onPrimary,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: _lightColorScheme.primary, width: 2),
+      ),
+      labelStyle: TextStyle(color: _lightColorScheme.onSurfaceVariant),
     ),
     cardTheme: CardTheme(
-      elevation: 2.0,
-      color: _darkSurface,
-      shadowColor: Colors.black.withOpacity(0.5),
+      elevation: 1.0,
+      color: _lightColorScheme.surfaceContainerHighest,
+      shadowColor: Colors.black.withOpacity(0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
     ),
+    listTileTheme: ListTileThemeData(
+      iconColor: _lightColorScheme.onSurfaceVariant,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+    dividerTheme: DividerThemeData(
+      color: _lightColorScheme.outlineVariant,
+      thickness: 0.5,
+    ),
+    iconButtonTheme: IconButtonThemeData(style: IconButton.styleFrom()),
+  );
+
+  // Dark Theme
+  static final ThemeData darkTheme = ThemeData(
+    colorScheme: _darkColorScheme,
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    appBarTheme: AppBarTheme(
+      backgroundColor: _darkColorScheme.surface,
+      foregroundColor: _darkColorScheme.onSurface,
+      elevation: 0,
+    ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: _darkColorScheme.primaryContainer,
+      foregroundColor: _darkColorScheme.onPrimaryContainer,
+    ),
+    dialogTheme: DialogTheme(
+      backgroundColor: _darkColorScheme.surfaceContainerHigh,
+      titleTextStyle: TextStyle(
+        color: _darkColorScheme.onSurface,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+      contentTextStyle: TextStyle(
+        color: _darkColorScheme.onSurfaceVariant,
+        fontSize: 16,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(foregroundColor: _darkColorScheme.primary),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _darkColorScheme.primary,
+        foregroundColor: _darkColorScheme.onPrimary,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: _darkColorScheme.primary, width: 2),
+      ),
+      labelStyle: TextStyle(color: _darkColorScheme.onSurfaceVariant),
+    ),
+    cardTheme: CardTheme(
+      elevation: 1.0,
+      color: _darkColorScheme.surfaceContainerHighest,
+      shadowColor: Colors.black.withOpacity(0.3),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+    ),
+    listTileTheme: ListTileThemeData(
+      iconColor: _darkColorScheme.onSurfaceVariant,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+    dividerTheme: DividerThemeData(
+      color: _darkColorScheme.outlineVariant,
+      thickness: 0.5,
+    ),
+    iconButtonTheme: IconButtonThemeData(style: IconButton.styleFrom()),
   );
 }

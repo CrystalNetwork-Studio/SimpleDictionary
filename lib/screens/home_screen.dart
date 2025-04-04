@@ -11,40 +11,68 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
     final dictionaryProvider = Provider.of<DictionaryProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Simple Dictionary')),
+      appBar: AppBar(title: const Text('Мої словники')),
       drawer: const AppDrawer(),
-      body: Consumer<DictionaryProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading && provider.dictionaries.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (provider.dictionaries.isEmpty) {
-            return const EmptyState();
-          } else {
-            return DictionaryList(dictionaries: provider.dictionaries);
-          }
-        },
+      body: RefreshIndicator(
+        onRefresh: () => dictionaryProvider.loadDictionaries(),
+        child: Builder(
+          builder: (context) {
+            if (dictionaryProvider.isLoading &&
+                dictionaryProvider.dictionaries.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (dictionaryProvider.dictionaries.isEmpty) {
+              return LayoutBuilder(
+                builder:
+                    (context, constraints) => SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: const EmptyState(),
+                      ),
+                    ),
+              );
+            } else {
+              return DictionaryList(
+                dictionaries: dictionaryProvider.dictionaries,
+              );
+            }
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
+        onPressed: () async {
+          Provider.of<DictionaryProvider>(context, listen: false).clearError();
+
+          await showDialog(
             context: context,
             builder: (BuildContext dialogContext) {
+              final provider = Provider.of<DictionaryProvider>(
+                dialogContext,
+                listen: false,
+              );
               return CreateDictionaryDialog(
-                onCreate: (name) {
-                  Provider.of<DictionaryProvider>(
-                    context,
-                    listen: false,
-                  ).addDictionary(name);
+                onCreate: (name, color) {
+                  provider.addDictionary(name, color: color).then((success) {
+                    if (!success && dialogContext.mounted) {
+                      final error =
+                          provider.error ?? 'Не вдалося створити словник.';
+                      ScaffoldMessenger.of(dialogContext).showSnackBar(
+                        SnackBar(
+                          content: Text(error),
+                          backgroundColor: Colors.orange,
+                        ),
+                      );
+                      provider.clearError();
+                    }
+                  });
                 },
                 dictionaryExists: (String name) async {
-                  return await Provider.of<DictionaryProvider>(
-                    context,
-                    listen: false,
-                  ).dictionaryExists(name);
+                  return await provider.dictionaryExists(name);
                 },
               );
             },
