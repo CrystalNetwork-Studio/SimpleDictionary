@@ -21,7 +21,7 @@ class DictionaryProvider with ChangeNotifier {
   // Helper to manage loading state and errors
   Future<void> _performAction(
     AsyncCallback action, {
-    String? successMessage,
+    String? successMessage, // Kept for simple cases like loadDictionaries
     String? errorMessagePrefix,
   }) async {
     _isLoading = true;
@@ -29,6 +29,7 @@ class DictionaryProvider with ChangeNotifier {
     notifyListeners();
     try {
       await action();
+      // Success message printing moved inside specific actions for conditional logic
       if (kDebugMode && successMessage != null) {
         print(successMessage);
       }
@@ -73,7 +74,8 @@ class DictionaryProvider with ChangeNotifier {
         );
         _dictionaries = loaded;
       },
-      successMessage: "Dictionaries loaded successfully.",
+      successMessage:
+          "Dictionaries loaded successfully.", // Simple case OK here
       errorMessagePrefix: "Error loading dictionaries",
     );
   }
@@ -105,8 +107,11 @@ class DictionaryProvider with ChangeNotifier {
           (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
         );
         success = true;
+        if (kDebugMode) {
+          print("Dictionary '$trimmedName' added.");
+        }
       },
-      successMessage: "Dictionary '$trimmedName' added.",
+      // successMessage removed - handled inside action
       errorMessagePrefix: "Error adding dictionary '$trimmedName'",
     );
     return success;
@@ -120,6 +125,8 @@ class DictionaryProvider with ChangeNotifier {
     }
 
     bool addedSuccessfully = false;
+    String? wordTermForMessage; // To store term for success message
+
     await _performAction(
       () async {
         final index = _dictionaries.indexWhere((d) => d.name == dictionaryName);
@@ -133,7 +140,7 @@ class DictionaryProvider with ChangeNotifier {
             newWord.translation.trim().length > 20) {
           _error =
               "Довжина слова та перекладу не може перевищувати 20 символів.";
-          return;
+          return; // Exit early, _error is set
         }
 
         final trimmedTerm = newWord.term.trim();
@@ -148,6 +155,7 @@ class DictionaryProvider with ChangeNotifier {
 
         if (exists) {
           _error = "Слово '$trimmedTerm' / '$trimmedTranslation' вже існує.";
+          // Don't set addedSuccessfully to true
         } else {
           final wordToAdd = Word(
             term: trimmedTerm,
@@ -161,15 +169,18 @@ class DictionaryProvider with ChangeNotifier {
           await file_utils.saveDictionaryToJson(updatedDictionary);
           _dictionaries[index] = updatedDictionary;
           addedSuccessfully = true;
+          wordTermForMessage =
+              wordToAdd.term; // Store for message after success
+          if (kDebugMode) {
+            print("Word '$wordTermForMessage' added to '$dictionaryName'.");
+          }
         }
       },
-      successMessage:
-          addedSuccessfully
-              ? "Word '${newWord.term}' added to '$dictionaryName'."
-              : null,
+      // successMessage removed - handled inside action
       errorMessagePrefix: "Error adding word to '$dictionaryName'",
     );
 
+    // Notify if an error was set inside the action but didn't throw
     if (_error != null && !addedSuccessfully) {
       notifyListeners();
     }
@@ -215,7 +226,7 @@ class DictionaryProvider with ChangeNotifier {
             updatedWord.translation.trim().length > 20) {
           _error =
               "Довжина слова та перекладу не може перевищувати 20 символів.";
-          return;
+          return; // Exit early, _error is set
         }
 
         final trimmedTerm = updatedWord.term.trim();
@@ -235,6 +246,7 @@ class DictionaryProvider with ChangeNotifier {
         if (exists) {
           _error =
               "Інше слово з таким же терміном '$trimmedTerm' / '$trimmedTranslation' вже існує.";
+          // Don't set updatedSuccessfully to true
         } else {
           final wordToUpdateWith = Word(
             term: trimmedTerm,
@@ -255,17 +267,17 @@ class DictionaryProvider with ChangeNotifier {
             print(
               "Word at index $wordIndex in '$dictionaryName' updated to '${wordToUpdateWith.term}'.",
             );
+
+            print("Word at index $wordIndex updated in '$dictionaryName'.");
           }
         }
       },
-      successMessage:
-          updatedSuccessfully
-              ? "Word at index $wordIndex updated in '$dictionaryName'."
-              : null,
+      // successMessage removed - handled inside action
       errorMessagePrefix:
           "Error updating word in '$dictionaryName' at index $wordIndex",
     );
 
+    // Notify if an error was set inside the action but didn't throw
     if (_error != null && !updatedSuccessfully) {
       notifyListeners();
     }
@@ -280,6 +292,8 @@ class DictionaryProvider with ChangeNotifier {
     int wordIndex,
   ) async {
     bool removedSuccessfully = false;
+    String? removedWordTerm; // Store for logging
+
     await _performAction(
       () async {
         final dictIndex = _dictionaries.indexWhere(
@@ -300,7 +314,7 @@ class DictionaryProvider with ChangeNotifier {
         }
 
         // Get the term before removing for potential success message
-        final removedWordTerm = dictionary.words[wordIndex].term;
+        removedWordTerm = dictionary.words[wordIndex].term;
 
         final List<Word> updatedWords = List<Word>.from(dictionary.words);
         updatedWords.removeAt(wordIndex);
@@ -315,9 +329,11 @@ class DictionaryProvider with ChangeNotifier {
           print(
             "Word '$removedWordTerm' (index $wordIndex) removed from '$dictionaryName'.",
           );
+
+          print("Word removed.");
         }
       },
-      successMessage: removedSuccessfully ? "Word removed." : null,
+      // successMessage removed - handled inside action
       errorMessagePrefix:
           "Error removing word from '$dictionaryName' at index $wordIndex",
     );
@@ -364,11 +380,13 @@ class DictionaryProvider with ChangeNotifier {
           color: newColor,
         );
 
-        // --- Name has changed - Perform rename (more complex) ---
+        // --- Handle file operations ---
         if (trimmedNewName == oldName) {
+          // Only color changed, just save over the existing file
           await file_utils.saveDictionaryToJson(updatedDictionary);
         } else {
-          // 1. Save the updated data to a temporary location or directly to the new path
+          // Name changed - Requires save to new, delete old
+          // 1. Save the updated data to the new path
           await file_utils.saveDictionaryToJson(updatedDictionary);
 
           // 2. If saving to the new location was successful, delete the old directory
@@ -376,22 +394,35 @@ class DictionaryProvider with ChangeNotifier {
             oldName,
           );
           if (!deletedOld) {
-            // Critical error: New file exists, but old one couldn't be deleted.
-            print(
-              "CRITICAL: Failed to delete old directory '$oldName' after renaming to '$trimmedNewName'. Manual cleanup might be needed.",
-            );
-            _error = "Помилка: Не вдалося видалити стару версію словника.";
+            // Log critical error, but potentially proceed with in-memory update
+            // The user might need to manually clean up the old file.
+            final criticalMessage =
+                "CRITICAL: Failed to delete old directory '$oldName' after renaming to '$trimmedNewName'. Manual cleanup might be needed.";
+            if (kDebugMode) {
+              print(criticalMessage);
+            }
+            // Decide if this should throw or just set an error message
+            // Throwing might be better as the state is inconsistent.
+            _error =
+                "Помилка: Не вдалося видалити стару версію словника. '$oldName'";
             throw Exception(_error);
+            // If not throwing: notifyListeners(); // To show the error
+            // If not throwing: success = false; // Ensure success isn't set
+            // return; // Stop further processing in the success path
           }
         }
 
+        // --- Update in-memory list ---
         _dictionaries[index] = updatedDictionary;
         _dictionaries.sort(
           (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
         );
         success = true;
+        if (kDebugMode) {
+          print("Dictionary '$trimmedNewName' updated.");
+        }
       },
-      successMessage: success ? "Dictionary '$trimmedNewName' updated." : null,
+      // successMessage removed - handled inside action
       errorMessagePrefix:
           "Error updating dictionary '$oldName' to '$trimmedNewName'",
     );
@@ -416,6 +447,9 @@ class DictionaryProvider with ChangeNotifier {
         if (deletedFromFile) {
           _dictionaries.removeAt(index);
           success = true;
+          if (kDebugMode) {
+            print("Dictionary '$dictionaryName' deleted.");
+          }
         } else {
           // If file deletion failed, we might not want to remove it from the list
           throw Exception(
@@ -423,7 +457,7 @@ class DictionaryProvider with ChangeNotifier {
           );
         }
       },
-      successMessage: success ? "Dictionary '$dictionaryName' deleted." : null,
+      // successMessage removed - handled inside action
       errorMessagePrefix: "Error deleting dictionary '$dictionaryName'",
     );
     return success;
@@ -433,6 +467,8 @@ class DictionaryProvider with ChangeNotifier {
   Future<bool> dictionaryExists(String name) async {
     // Check against the current in-memory list for immediate feedback
     final lowerCaseName = name.trim().toLowerCase();
+    // Consider also checking the file system if consistency is critical,
+    // but for UI feedback, the in-memory check is usually sufficient.
     return _dictionaries.any((d) => d.name.toLowerCase() == lowerCaseName);
   }
 
