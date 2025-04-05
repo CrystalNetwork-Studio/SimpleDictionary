@@ -15,11 +15,38 @@ class DictionaryDetailScreen extends StatefulWidget {
   State<DictionaryDetailScreen> createState() => _DictionaryDetailScreenState();
 }
 
+enum SortOrder { alphabetical, lastAdded }
+
 class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
+  SortOrder _sortOrder = SortOrder.alphabetical;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.dictionary.name)),
+      appBar: AppBar(
+        title: Text(widget.dictionary.name),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _sortOrder == SortOrder.alphabetical
+                  ? Icons.sort_by_alpha
+                  : Icons.access_time,
+            ),
+            onPressed: () {
+              setState(() {
+                _sortOrder =
+                    _sortOrder == SortOrder.alphabetical
+                        ? SortOrder.lastAdded
+                        : SortOrder.alphabetical;
+              });
+            },
+            tooltip:
+                _sortOrder == SortOrder.alphabetical
+                    ? 'Сортувати за останніми доданими'
+                    : 'Сортувати за алфавітом',
+          ),
+        ],
+      ),
       body: Consumer<DictionaryProvider>(
         builder: (context, provider, child) {
           Dictionary? currentDictFromProvider;
@@ -58,8 +85,17 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
           }
 
           final currentDict = currentDictFromProvider;
+          List<Word> words = List.from(currentDict.words);
 
-          if (currentDict.words.isEmpty) {
+          if (_sortOrder == SortOrder.alphabetical) {
+            words.sort(
+              (a, b) => a.term.toLowerCase().compareTo(b.term.toLowerCase()),
+            );
+          } else {
+            words = words.toList();
+          }
+
+          if (words.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -89,7 +125,11 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
             );
           }
 
-          return WordsList(currentDict: currentDict, provider: provider);
+          return WordsList(
+            currentDict: currentDict,
+            provider: provider,
+            words: words,
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -124,17 +164,17 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
 class WordsList extends StatelessWidget {
   final Dictionary currentDict;
   final DictionaryProvider provider;
+  final List<Word> words;
 
   const WordsList({
     required this.currentDict,
     required this.provider,
+    required this.words,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    final words = currentDict.words;
-
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       itemCount: words.length,
@@ -176,9 +216,7 @@ class _WordCardState extends State<WordCard> {
   void _showEditWordDialog() {
     final currentDictionary = widget.provider.dictionaries.firstWhere(
       (d) => d.name == widget.dictionaryName,
-      orElse:
-          () =>
-              widget.provider.dictionaries.first, // Fallback, ideally it exists
+      orElse: () => widget.provider.dictionaries.first,
     );
     final actualIndex = currentDictionary.words.indexWhere(
       (w) =>

@@ -17,6 +17,7 @@ dependencies:
   path_provider: ^2.0.0 # For finding the documents directory
   json_annotation: ^4.8.0 # For JSON serialization annotations
   shared_preferences: ^2.0.0 # Storing settings
+  package_info_plus: ^8.3.0 # For getting app info
 
 dev_dependencies:
   flutter_test:

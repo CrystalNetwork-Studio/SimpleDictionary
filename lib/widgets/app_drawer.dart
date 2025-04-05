@@ -1,10 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
 import '../providers/dictionary_provider.dart';
 import '../screens/settings_screen.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
+
+  @override
+  State<AppDrawer> createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  String _appVersion = 'Loading...';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVersion();
+  }
+
+  Future<void> _loadVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      setState(() {
+        _appVersion = packageInfo.version;
+      });
+    } catch (e) {
+      setState(() {
+        _appVersion = 'Failed to load';
+      });
+      print('Error loading package info: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,12 +108,12 @@ class AppDrawer extends StatelessWidget {
           ),
           const Spacer(),
           const Divider(),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Версія 0.0.1',
-              style: TextStyle(color: Colors.grey),
-            ), // TODO: Automatically update version number
+              'Версія $_appVersion',
+              style: const TextStyle(color: Colors.grey),
+            ),
           ),
         ],
       ),
