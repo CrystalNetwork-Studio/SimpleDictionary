@@ -1,31 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Catppuccin Color Definitions
-class _CatppuccinColors {
-  // Latte
-  static const Color latteMauve = Color(0xff8839ef);
-  static const Color latteRed = Color(0xffd20f39);
-  static const Color latteBlue = Color(0xff1e66f5); // Primary accent
-  static const Color latteText = Color(0xff4c4f69);
-  static const Color latteSubtext0 = Color(0xff6c6f85);
-  static const Color latteSurface1 = Color(0xffbcc0cc);
-  static const Color latteSurface0 = Color(0xffccd0da);
-  static const Color latteBase = Color(0xffeff1f5); // Background
-  static const Color latteMantle = Color(0xffe6e9ef); // Surface
-
-  // Mocha
-  static const Color mochaMauve = Color(0xffcba6f7);
-  static const Color mochaRed = Color(0xfff38ba8);
-  static const Color mochaBlue = Color(0xff89b4fa); // Primary accent
-  static const Color mochaText = Color(0xffcdd6f4);
-  static const Color mochaSubtext0 = Color(0xffa6adc8);
-  static const Color mochaSurface1 = Color(0xff45475a);
-  static const Color mochaSurface0 = Color(0xff313244);
-  static const Color mochaBase = Color(0xff1e1e2e); // Background
-  static const Color mochaMantle = Color(0xff181825); // Surface
-  static const Color mochaCrust = Color(0xff11111b);
-}
-
 class AppTheme {
   // Base colors for light theme (Catppuccin Latte)
   static final ColorScheme _lightColorScheme = ColorScheme.fromSeed(
@@ -279,6 +253,32 @@ class AppTheme {
       textStyle: TextStyle(color: _darkColorScheme.onSurface), // Text
     ),
   );
+}
+
+// Catppuccin Color Definitions
+class _CatppuccinColors {
+  // Latte
+  static const Color latteMauve = Color(0xff8839ef);
+  static const Color latteRed = Color(0xffd20f39);
+  static const Color latteBlue = Color(0xff1e66f5); // Primary accent
+  static const Color latteText = Color(0xff4c4f69);
+  static const Color latteSubtext0 = Color(0xff6c6f85);
+  static const Color latteSurface1 = Color(0xffbcc0cc);
+  static const Color latteSurface0 = Color(0xffccd0da);
+  static const Color latteBase = Color(0xffeff1f5); // Background
+  static const Color latteMantle = Color(0xffe6e9ef); // Surface
+
+  // Mocha
+  static const Color mochaMauve = Color(0xffcba6f7);
+  static const Color mochaRed = Color(0xfff38ba8);
+  static const Color mochaBlue = Color(0xff89b4fa); // Primary accent
+  static const Color mochaText = Color(0xffcdd6f4);
+  static const Color mochaSubtext0 = Color(0xffa6adc8);
+  static const Color mochaSurface1 = Color(0xff45475a);
+  static const Color mochaSurface0 = Color(0xff313244);
+  static const Color mochaBase = Color(0xff1e1e2e); // Background
+  static const Color mochaMantle = Color(0xff181825); // Surface
+  static const Color mochaCrust = Color(0xff11111b);
 }
 
 // Extension for easier alpha modification if needed later

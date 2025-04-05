@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:simpledictionary/l10n/app_localizations.dart';
+
 import '../data/dictionary.dart';
 import '../providers/dictionary_provider.dart';
 import '../screens/dictionary_detail_screen.dart';
@@ -10,124 +12,6 @@ class DictionaryItem extends StatelessWidget {
   final Dictionary dictionary;
 
   const DictionaryItem({required this.dictionary, super.key});
-
-  Future<void> _editDictionary(BuildContext context) async {
-    final provider = Provider.of<DictionaryProvider>(context, listen: false);
-    provider.clearError();
-
-    final result = await showDialog<EditDictionaryDialogResult>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        final dialogProvider = Provider.of<DictionaryProvider>(
-          dialogContext,
-          listen: false,
-        );
-        return EditDictionaryDialog(
-          initialDictionary: dictionary,
-          onDictionaryUpdated: (oldName, newName, newColor) async {
-            return await dialogProvider.updateDictionaryProperties(
-              oldName,
-              newName,
-              newColor,
-            );
-          },
-          dictionaryExists: (name) async {
-            return await dialogProvider.dictionaryExists(name);
-          },
-        );
-      },
-    );
-
-    if (!context.mounted || result == null) return;
-
-    switch (result.status) {
-      case EditDictionaryDialogStatus.saved:
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Словник "${_getUpdatedName(context, dictionary.name)}" оновлено.',
-            ),
-            duration: const Duration(seconds: 2),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-        break;
-      case EditDictionaryDialogStatus.cancelled:
-        break;
-      case EditDictionaryDialogStatus.error:
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Не вдалося оновити словник.'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-        break;
-    }
-  }
-
-  String _getUpdatedName(BuildContext context, String originalName) {
-    try {
-      final currentDictionaries =
-          Provider.of<DictionaryProvider>(context, listen: false).dictionaries;
-      final updated = currentDictionaries.firstWhere(
-        (d) =>
-            d.color == dictionary.color &&
-            d.words.length == dictionary.words.length,
-        orElse: () => dictionary,
-      );
-      return updated.name;
-    } catch (_) {
-      return originalName;
-    }
-  }
-
-  Future<void> _deleteDictionary(BuildContext context) async {
-    final dictionaryProvider = Provider.of<DictionaryProvider>(
-      context,
-      listen: false,
-    );
-    final originalName = dictionary.name;
-
-    final bool? shouldDelete = await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext dialogContext) {
-        return ConfirmDeleteDialog(dictionaryName: originalName);
-      },
-    );
-
-    if (shouldDelete == true && context.mounted) {
-      try {
-        await dictionaryProvider.deleteDictionary(originalName);
-
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Словник "$originalName" видалено.'),
-              duration: const Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-      } catch (e) {
-        print("Error deleting dictionary in DictionaryItem: $e");
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Помилка видалення "$originalName": ${dictionaryProvider.error ?? e.toString()}',
-              ),
-              backgroundColor: Theme.of(context).colorScheme.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-          dictionaryProvider.clearError();
-        }
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +26,7 @@ class DictionaryItem extends StatelessWidget {
             final potentialMatch = provider.dictionaries.firstWhere(
               (d) =>
                   d.words.length == dictionary.words.length &&
-                  d.color.value == dictionary.color.value,
+                  d.color == dictionary.color,
               orElse: () => dictionary,
             );
             return potentialMatch;
@@ -201,25 +85,25 @@ class DictionaryItem extends StatelessWidget {
                     },
                     itemBuilder:
                         (BuildContext context) => <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
+                          PopupMenuItem<String>(
                             value: 'edit',
                             child: ListTile(
-                              leading: Icon(Icons.edit_outlined),
-                              title: Text('Редагувати'),
+                              leading: const Icon(Icons.edit_outlined),
+                              title: Text(AppLocalizations.of(context)!.edit),
                               dense: true,
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 8,
                               ),
                               visualDensity: VisualDensity.compact,
                             ),
                           ),
-                          const PopupMenuItem<String>(
+                          PopupMenuItem<String>(
                             value: 'delete',
                             child: ListTile(
-                              leading: Icon(Icons.delete_outline),
-                              title: Text('Видалити'),
+                              leading: const Icon(Icons.delete_outline),
+                              title: Text(AppLocalizations.of(context)!.delete),
                               dense: true,
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 8,
                               ),
                               visualDensity: VisualDensity.compact,
@@ -230,7 +114,7 @@ class DictionaryItem extends StatelessWidget {
                       Icons.more_vert,
                       color: colorScheme.onSurfaceVariant,
                     ),
-                    tooltip: 'Опції',
+                    tooltip: AppLocalizations.of(context)!.options,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                   ),
@@ -241,5 +125,115 @@ class DictionaryItem extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _deleteDictionary(BuildContext context) async {
+    final dictionaryProvider = Provider.of<DictionaryProvider>(
+      context,
+      listen: false,
+    );
+    final originalName = dictionary.name;
+
+    final bool? shouldDelete = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return ConfirmDeleteDialog(dictionaryName: originalName);
+      },
+    );
+
+    if (shouldDelete == true && context.mounted) {
+      try {
+        await dictionaryProvider.deleteDictionary(originalName);
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(
+                  context,
+                )!.dictionaryDeletedWithName(originalName),
+              ),
+              duration: const Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      } catch (e) {
+        debugPrint("Error deleting dictionary in DictionaryItem: $e");
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${AppLocalizations.of(context)!.errorDeletingDictionary} "$originalName": ${dictionaryProvider.error ?? e.toString()}',
+              ),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          dictionaryProvider.clearError();
+        }
+      }
+    }
+  }
+
+  Future<void> _editDictionary(BuildContext context) async {
+    final provider = Provider.of<DictionaryProvider>(context, listen: false);
+    provider.clearError();
+
+    final result = await showDialog<EditDictionaryDialogResult>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        final dialogProvider = Provider.of<DictionaryProvider>(
+          dialogContext,
+          listen: false,
+        );
+        return EditDictionaryDialog(
+          initialDictionary: dictionary,
+          onDictionaryUpdated: (oldName, newName, newColor) async {
+            return await dialogProvider.updateDictionaryProperties(
+              oldName,
+              newName,
+              newColor,
+            );
+          },
+          dictionaryExists: (name) async {
+            return await dialogProvider.dictionaryExists(name);
+          },
+        );
+      },
+    );
+
+    if (!context.mounted || result == null) return;
+
+    switch (result.status) {
+      case EditDictionaryDialogStatus.saved:
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(
+                context,
+              )!.dictionaryUpdatedWithName(dictionary.name),
+            ),
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        break;
+      case EditDictionaryDialogStatus.cancelled:
+        break;
+      case EditDictionaryDialogStatus.error:
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.failedToUpdateDictionary,
+            ),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        break;
+    }
   }
 }

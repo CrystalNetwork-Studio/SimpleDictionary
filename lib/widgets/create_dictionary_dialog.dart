@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simpledictionary/l10n/app_localizations.dart';
 
 class CreateDictionaryDialog extends StatefulWidget {
   final Function(String, Color) onCreate;
@@ -18,58 +19,43 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
   final _textController = TextEditingController();
   bool _canCreate = false;
   String? _errorMessage;
-  Color _selectedColor = Colors.blue; // Default folder color
+  Color _selectedColor = Colors.blue;
   bool _isLoading = false;
 
   final List<Color> _colorOptions = [
-    Colors.blue, Colors.red, Colors.green, Colors.orange, Colors.purple,
-    Colors.teal, Colors.pink, Colors.amber, Colors.cyan, Colors.indigo,
-    Colors.grey, // Added grey
+    Colors.blue,
+    Colors.red,
+    Colors.green,
+    Colors.orange,
+    Colors.purple,
+    Colors.teal,
+    Colors.pink,
+    Colors.amber,
+    Colors.cyan,
+    Colors.indigo,
+    Colors.grey,
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    _textController.addListener(() {
-      final text = _textController.text.trim();
-      final isNotEmpty = text.isNotEmpty;
-      final bool needsStateUpdate =
-          (isNotEmpty != _canCreate) || (_errorMessage != null);
-
-      if (needsStateUpdate) {
-        setState(() {
-          _canCreate = isNotEmpty;
-          _errorMessage = null;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
+    final localization = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      title: const Text('Створити Словник'),
+      title: Text(localization.createDictionary),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Назва:', style: textTheme.titleSmall),
+            Text(localization.dictionaryNameLabel, style: textTheme.titleSmall),
             const SizedBox(height: 8),
             TextField(
               controller: _textController,
               autofocus: true,
               decoration: InputDecoration(
-                hintText: 'Назва словнику',
+                hintText: localization.dictionaryNameHint,
                 errorText: _errorMessage,
                 suffixIcon:
                     _isLoading
@@ -89,7 +75,7 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
             ),
             const SizedBox(height: 20),
 
-            Text('Колір папки:', style: textTheme.titleSmall),
+            Text(localization.folderColor, style: textTheme.titleSmall),
             const SizedBox(height: 8),
             SizedBox(
               height: 50,
@@ -120,7 +106,7 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
                                     isSelected
                                         ? Border.all(
                                           color: colorScheme.onSurface
-                                              .withOpacity(0.9),
+                                              .withValues(alpha: 0.9),
                                           width: 3.0,
                                         )
                                         : Border.all(
@@ -154,10 +140,10 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
 
             if (_isLoading) ...[
               const SizedBox(height: 16),
-              const Center(
+              Center(
                 child: Text(
-                  "Перевірка...",
-                  style: TextStyle(fontStyle: FontStyle.italic),
+                  localization.checkingAvailability,
+                  style: const TextStyle(fontStyle: FontStyle.italic),
                 ),
               ),
             ],
@@ -167,14 +153,38 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
       actions: <Widget>[
         TextButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          child: const Text('Відмінити'),
+          child: Text(localization.cancel),
         ),
         TextButton(
           onPressed: (_canCreate && !_isLoading) ? _submit : null,
-          child: const Text('Створити'),
+          child: Text(localization.create),
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _textController.addListener(() {
+      final text = _textController.text.trim();
+      final isNotEmpty = text.isNotEmpty;
+      final bool needsStateUpdate =
+          (isNotEmpty != _canCreate) || (_errorMessage != null);
+
+      if (needsStateUpdate) {
+        setState(() {
+          _canCreate = isNotEmpty;
+          _errorMessage = null;
+        });
+      }
+    });
   }
 
   Future<void> _submit() async {
@@ -188,8 +198,9 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
     try {
       exists = await widget.dictionaryExists(dictionaryName);
     } catch (e) {
+      // Consider using a logging framework here instead of print
       print('Error checking dictionary existence: $e');
-      checkErrorMsg = 'Помилка перевірки імені.';
+      checkErrorMsg = AppLocalizations.of(context)!.errorValidatingNameDialog;
     }
 
     if (!mounted) return;
@@ -200,7 +211,7 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
         _errorMessage = checkErrorMsg;
         _canCreate = false;
       } else if (exists) {
-        _errorMessage = 'Словник з такою назвою вже існує.';
+        _errorMessage = AppLocalizations.of(context)!.dictionaryAlreadyExists;
         _canCreate = false;
       } else {
         _errorMessage = null;

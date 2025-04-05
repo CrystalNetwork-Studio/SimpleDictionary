@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../data/dictionary.dart';
 import 'dictionary_item.dart';
 

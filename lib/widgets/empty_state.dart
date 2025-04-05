@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simpledictionary/l10n/app_localizations.dart';
 
 class EmptyState extends StatelessWidget {
   const EmptyState({super.key});
@@ -6,6 +7,7 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final localization = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -20,13 +22,13 @@ class EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'У вас ще немає жодного словника.',
+              localization.dictionaryEmpty,
               style: theme.textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'Натисніть кнопку \'+\', щоб створити свій перший.',
+              localization.addWordsByPressingButton,
               style: theme.textTheme.bodyLarge,
               textAlign: TextAlign.center,
             ),

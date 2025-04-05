@@ -1,6 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:simpledictionary/l10n/app_localizations.dart';
 
 import '../data/dictionary.dart';
 import '../utils/file_utils.dart' as file_utils;
@@ -10,40 +10,192 @@ class DictionaryProvider with ChangeNotifier {
   bool _isLoading = false;
   String? _error;
 
-  List<Dictionary> get dictionaries => List.unmodifiable(_dictionaries);
-  bool get isLoading => _isLoading;
-  String? get error => _error;
-
   DictionaryProvider() {
     loadDictionaries();
   }
+  List<Dictionary> get dictionaries => List.unmodifiable(_dictionaries);
+  String? get error => _error;
 
-  // Helper to manage loading state and errors
-  Future<void> _performAction(
-    AsyncCallback action, {
-    String? successMessage, // Kept for simple cases like loadDictionaries
-    String? errorMessagePrefix,
+  bool get isLoading => _isLoading;
+
+  Future<bool> addDictionary(
+    String name, {
+    Color? color,
+    BuildContext? context,
   }) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-    try {
-      await action();
-      // Success message printing moved inside specific actions for conditional logic
-      if (kDebugMode && successMessage != null) {
-        print(successMessage);
-      }
-    } catch (e, stackTrace) {
-      final message = "${errorMessagePrefix ?? 'Error'}: $e";
-      _error = message;
+    String? nameNotEmptyError;
+    if (context != null) {
+      nameNotEmptyError = AppLocalizations.of(context)!.dictionaryNameNotEmpty;
+    } else {
+      nameNotEmptyError = 'Context is null';
+    }
+    if (name.trim().isEmpty) {
+      _error = nameNotEmptyError;
+      notifyListeners();
+      return false;
+    }
+    final trimmedName = name.trim();
+    String? dictionaryExistsError;
+    if (context != null) {
+      dictionaryExistsError =
+          AppLocalizations.of(context)!.dictionaryAlreadyExists;
+    } else {
+      dictionaryExistsError = 'Context is null';
+    }
+    if (await dictionaryExists(trimmedName)) {
+      _error = dictionaryExistsError;
+      notifyListeners();
       if (kDebugMode) {
-        print(message);
-        print(stackTrace);
+        debugPrint("Dictionary with name '$trimmedName' already exists.");
       }
-    } finally {
-      _isLoading = false;
+      return false;
+    }
+
+    final newDictionary = Dictionary(name: trimmedName, color: color);
+    bool success = false;
+
+    await _performAction(() async {
+      await file_utils.saveDictionaryToJson(newDictionary);
+      _dictionaries.add(newDictionary);
+      _dictionaries.sort(
+        (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+      );
+      success = true;
+      if (kDebugMode) {
+        debugPrint("Dictionary '$trimmedName' added.");
+      }
+    }, errorMessagePrefix: "Error adding dictionary '$trimmedName'");
+    return success;
+  }
+
+  Future<bool> addWordToDictionary(
+    String dictionaryName,
+    Word newWord, {
+    BuildContext? context,
+  }) async {
+    String? wordOrTranslationEmptyError;
+    if (context != null) {
+      wordOrTranslationEmptyError =
+          AppLocalizations.of(context)!.wordOrTranslationCannotBeEmpty;
+    } else {
+      wordOrTranslationEmptyError = 'Context is null';
+    }
+    if (newWord.term.trim().isEmpty || newWord.translation.trim().isEmpty) {
+      _error = wordOrTranslationEmptyError;
+      notifyListeners();
+      return false;
+    }
+
+    bool addedSuccessfully = false;
+    String? wordTermForMessage;
+
+    await _performAction(() async {
+      final index = _dictionaries.indexWhere((d) => d.name == dictionaryName);
+      if (index == -1) {
+        throw Exception("Dictionary '$dictionaryName' not found.");
+      }
+
+      final dictionary = _dictionaries[index];
+
+      String? wordMaxLengthError;
+      if (context != null) {
+        wordMaxLengthError =
+            AppLocalizations.of(context)!.wordAndTranslationMaxLength20;
+      } else {
+        wordMaxLengthError = 'Context is null';
+      }
+      if (newWord.term.trim().length > 20 ||
+          newWord.translation.trim().length > 20) {
+        _error = wordMaxLengthError;
+        return;
+      }
+
+      final trimmedTerm = newWord.term.trim();
+      final trimmedTranslation = newWord.translation.trim();
+      String? anotherWordExistsError;
+      if (context != null) {
+        anotherWordExistsError =
+            AppLocalizations.of(context)!.anotherWordWithSameTermExists
+                as String?;
+      } else {
+        anotherWordExistsError = 'Context is null';
+      }
+      final exists = dictionary.words.any(
+        (existingWord) =>
+            existingWord.term.trim().toLowerCase() ==
+                trimmedTerm.toLowerCase() &&
+            existingWord.translation.trim().toLowerCase() ==
+                trimmedTranslation.toLowerCase(),
+      );
+
+      if (exists) {
+        _error = anotherWordExistsError;
+      } else {
+        final wordToAdd = Word(
+          term: trimmedTerm,
+          translation: trimmedTranslation,
+          description: newWord.description.trim(),
+        );
+        final updatedWords = List<Word>.from(dictionary.words)..add(wordToAdd);
+        final updatedDictionary = dictionary.copyWith(words: updatedWords);
+
+        await file_utils.saveDictionaryToJson(updatedDictionary);
+        _dictionaries[index] = updatedDictionary;
+        addedSuccessfully = true;
+        wordTermForMessage = wordToAdd.term;
+        if (kDebugMode) {
+          debugPrint("Word '$wordTermForMessage' added to '$dictionaryName'.");
+        }
+      }
+    }, errorMessagePrefix: "Error adding word to '$dictionaryName'");
+
+    if (_error != null && !addedSuccessfully) {
       notifyListeners();
     }
+
+    return addedSuccessfully;
+  }
+
+  void clearError() {
+    if (_error != null) {
+      _error = null;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> deleteDictionary(
+    String dictionaryName, {
+    BuildContext? context,
+  }) async {
+    bool success = false;
+    await _performAction(() async {
+      final index = _dictionaries.indexWhere((d) => d.name == dictionaryName);
+      if (index == -1) {
+        throw Exception("Dictionary '$dictionaryName' not found for deletion.");
+      }
+
+      final deletedFromFile = await file_utils.deleteDictionaryDirectory(
+        dictionaryName,
+      );
+      if (deletedFromFile) {
+        _dictionaries.removeAt(index);
+        success = true;
+        if (kDebugMode) {
+          debugPrint("Dictionary '$dictionaryName' deleted.");
+        }
+      } else {
+        throw Exception(
+          "Failed to delete dictionary files for '$dictionaryName'.",
+        );
+      }
+    }, errorMessagePrefix: "Error deleting dictionary '$dictionaryName'");
+    return success;
+  }
+
+  // Checks if a dictionary with the given name exists (case-insensitive)
+  Future<bool> dictionaryExists(String name) async {
+    final lowerCaseName = name.trim().toLowerCase();
+    return _dictionaries.any((d) => d.name.toLowerCase() == lowerCaseName);
   }
 
   Future<void> loadDictionaries() async {
@@ -58,14 +210,14 @@ class DictionaryProvider with ChangeNotifier {
               loaded.add(dict);
             } else {
               if (kDebugMode) {
-                print(
+                debugPrint(
                   "Warning: Could not load dictionary data for '$name'. File might be corrupt or missing.",
                 );
               }
             }
           } catch (e) {
             if (kDebugMode) {
-              print("Error loading individual dictionary '$name': $e");
+              debugPrint("Error loading individual dictionary '$name': $e");
             }
           }
         }
@@ -74,130 +226,180 @@ class DictionaryProvider with ChangeNotifier {
         );
         _dictionaries = loaded;
       },
-      successMessage:
-          "Dictionaries loaded successfully.", // Simple case OK here
+      successMessage: "Dictionaries loaded successfully.",
       errorMessagePrefix: "Error loading dictionaries",
     );
   }
 
-  Future<bool> addDictionary(String name, {Color? color}) async {
-    if (name.trim().isEmpty) {
-      _error = "Назва словника не може бути порожньою.";
-      notifyListeners();
-      return false;
-    }
-    final trimmedName = name.trim();
-    if (await dictionaryExists(trimmedName)) {
-      _error = "Словник з назвою '$trimmedName' вже існує.";
-      notifyListeners();
-      if (kDebugMode) {
-        print("Dictionary with name '$trimmedName' already exists.");
-      }
-      return false;
-    }
-
-    final newDictionary = Dictionary(name: trimmedName, color: color);
-    bool success = false;
+  /// Removes a word from the dictionary by its index.
+  Future<bool> removeWordFromDictionary(
+    String dictionaryName,
+    int wordIndex, {
+    BuildContext? context,
+  }) async {
+    bool removedSuccessfully = false;
+    String? removedWordTerm;
 
     await _performAction(
       () async {
-        await file_utils.saveDictionaryToJson(newDictionary);
-        _dictionaries.add(newDictionary);
+        final dictIndex = _dictionaries.indexWhere(
+          (d) => d.name == dictionaryName,
+        );
+        if (dictIndex == -1) {
+          throw Exception(
+            "Dictionary '$dictionaryName' not found for word removal.",
+          );
+        }
+
+        final dictionary = _dictionaries[dictIndex];
+
+        if (wordIndex < 0 || wordIndex >= dictionary.words.length) {
+          throw Exception(
+            "Invalid word index $wordIndex for dictionary '$dictionaryName'. Max index is ${dictionary.words.length - 1}.",
+          );
+        }
+
+        removedWordTerm = dictionary.words[wordIndex].term;
+
+        final List<Word> updatedWords = List<Word>.from(dictionary.words);
+        updatedWords.removeAt(wordIndex);
+        final updatedDict = dictionary.copyWith(words: updatedWords);
+
+        await file_utils.saveDictionaryToJson(updatedDict);
+
+        _dictionaries[dictIndex] = updatedDict;
+        removedSuccessfully = true;
+
+        if (kDebugMode) {
+          debugPrint(
+            "Word '$removedWordTerm' (index $wordIndex) removed from '$dictionaryName'.",
+          );
+        }
+      },
+      errorMessagePrefix:
+          "Error removing word from '$dictionaryName' at index $wordIndex",
+    );
+    return removedSuccessfully;
+  }
+
+  /// Updates dictionary properties (name and color).
+  Future<bool> updateDictionaryProperties(
+    String oldName,
+    String newName,
+    Color newColor, {
+    BuildContext? context,
+  }) async {
+    String? dictionaryNameNotEmptyError;
+    if (context != null) {
+      dictionaryNameNotEmptyError =
+          AppLocalizations.of(context)!.dictionaryNameNotEmpty;
+    } else {
+      dictionaryNameNotEmptyError = 'Context is null';
+    }
+    if (newName.trim().isEmpty) {
+      _error = dictionaryNameNotEmptyError;
+      notifyListeners();
+      return false;
+    }
+    final trimmedNewName = newName.trim();
+
+    String? dictionaryNotFoundForUpdateError;
+    if (context != null) {
+      dictionaryNotFoundForUpdateError =
+          AppLocalizations.of(context)!.dictionaryNotFoundForUpdate as String?;
+    } else {
+      dictionaryNotFoundForUpdateError = 'Context is null';
+    }
+    final index = _dictionaries.indexWhere((d) => d.name == oldName);
+    if (index == -1) {
+      _error = dictionaryNotFoundForUpdateError;
+      notifyListeners();
+      return false;
+    }
+
+    String? dictionaryAlreadyExistsError;
+    if (context != null) {
+      dictionaryAlreadyExistsError =
+          AppLocalizations.of(context)!.dictionaryAlreadyExists;
+    } else {
+      dictionaryAlreadyExistsError = 'Context is null';
+    }
+    if (trimmedNewName != oldName && await dictionaryExists(trimmedNewName)) {
+      _error = dictionaryAlreadyExistsError;
+      notifyListeners();
+      return false;
+    }
+
+    bool success = false;
+    final originalDictionary = _dictionaries[index];
+
+    await _performAction(
+      () async {
+        final updatedDictionary = originalDictionary.copyWith(
+          name: trimmedNewName,
+          color: newColor,
+        );
+
+        if (trimmedNewName == oldName) {
+          await file_utils.saveDictionaryToJson(updatedDictionary);
+        } else {
+          await file_utils.saveDictionaryToJson(updatedDictionary);
+
+          final deletedOld = await file_utils.deleteDictionaryDirectory(
+            oldName,
+          );
+          if (!deletedOld) {
+            final criticalMessage =
+                "CRITICAL: Failed to delete old directory '$oldName' after renaming to '$trimmedNewName'. Manual cleanup might be needed.";
+            if (kDebugMode) {
+              debugPrint(criticalMessage);
+            }
+            String? errorDeletingDictionaryDir;
+            if (context != null) {
+              errorDeletingDictionaryDir =
+                  AppLocalizations.of(context)!.errorDeletingDictionaryDirectory
+                      as String?;
+            } else {
+              errorDeletingDictionaryDir = 'Context is null';
+            }
+            _error = errorDeletingDictionaryDir;
+            throw Exception(_error);
+          }
+        }
+
+        _dictionaries[index] = updatedDictionary;
         _dictionaries.sort(
           (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
         );
         success = true;
         if (kDebugMode) {
-          print("Dictionary '$trimmedName' added.");
+          debugPrint("Dictionary '$trimmedNewName' updated.");
         }
       },
-      // successMessage removed - handled inside action
-      errorMessagePrefix: "Error adding dictionary '$trimmedName'",
+      errorMessagePrefix:
+          "Error updating dictionary '$oldName' to '$trimmedNewName'",
     );
+
     return success;
   }
 
-  Future<bool> addWordToDictionary(String dictionaryName, Word newWord) async {
-    if (newWord.term.trim().isEmpty || newWord.translation.trim().isEmpty) {
-      _error = "Слово та переклад не можуть бути порожніми.";
-      notifyListeners();
-      return false;
-    }
-
-    bool addedSuccessfully = false;
-    String? wordTermForMessage; // To store term for success message
-
-    await _performAction(
-      () async {
-        final index = _dictionaries.indexWhere((d) => d.name == dictionaryName);
-        if (index == -1) {
-          throw Exception("Dictionary '$dictionaryName' not found.");
-        }
-
-        final dictionary = _dictionaries[index];
-
-        if (newWord.term.trim().length > 20 ||
-            newWord.translation.trim().length > 20) {
-          _error =
-              "Довжина слова та перекладу не може перевищувати 20 символів.";
-          return; // Exit early, _error is set
-        }
-
-        final trimmedTerm = newWord.term.trim();
-        final trimmedTranslation = newWord.translation.trim();
-        final exists = dictionary.words.any(
-          (existingWord) =>
-              existingWord.term.trim().toLowerCase() ==
-                  trimmedTerm.toLowerCase() &&
-              existingWord.translation.trim().toLowerCase() ==
-                  trimmedTranslation.toLowerCase(),
-        );
-
-        if (exists) {
-          _error = "Слово '$trimmedTerm' / '$trimmedTranslation' вже існує.";
-          // Don't set addedSuccessfully to true
-        } else {
-          final wordToAdd = Word(
-            term: trimmedTerm,
-            translation: trimmedTranslation,
-            description: newWord.description.trim(),
-          );
-          final updatedWords = List<Word>.from(dictionary.words)
-            ..add(wordToAdd);
-          final updatedDictionary = dictionary.copyWith(words: updatedWords);
-
-          await file_utils.saveDictionaryToJson(updatedDictionary);
-          _dictionaries[index] = updatedDictionary;
-          addedSuccessfully = true;
-          wordTermForMessage =
-              wordToAdd.term; // Store for message after success
-          if (kDebugMode) {
-            print("Word '$wordTermForMessage' added to '$dictionaryName'.");
-          }
-        }
-      },
-      // successMessage removed - handled inside action
-      errorMessagePrefix: "Error adding word to '$dictionaryName'",
-    );
-
-    // Notify if an error was set inside the action but didn't throw
-    if (_error != null && !addedSuccessfully) {
-      notifyListeners();
-    }
-
-    return addedSuccessfully;
-  }
-
   /// Updates a word at a specific index within a dictionary.
-  /// Returns true if successful, false otherwise.
   Future<bool> updateWordInDictionary(
     String dictionaryName,
     int wordIndex,
-    Word updatedWord,
-  ) async {
+    Word updatedWord, {
+    BuildContext? context,
+  }) async {
+    String? wordOrTranslationEmptyError;
+    if (context != null) {
+      wordOrTranslationEmptyError =
+          AppLocalizations.of(context)!.wordOrTranslationCannotBeEmpty;
+    } else {
+      wordOrTranslationEmptyError = 'Context is null';
+    }
     if (updatedWord.term.trim().isEmpty ||
         updatedWord.translation.trim().isEmpty) {
-      _error = "Слово та переклад не можуть бути порожніми.";
+      _error = wordOrTranslationEmptyError;
       notifyListeners();
       return false;
     }
@@ -222,18 +424,32 @@ class DictionaryProvider with ChangeNotifier {
           );
         }
 
+        String? wordMaxLengthError;
+        if (context != null) {
+          wordMaxLengthError =
+              AppLocalizations.of(context)!.wordAndTranslationMaxLength20;
+        } else {
+          wordMaxLengthError = 'Context is null';
+        }
         if (updatedWord.term.trim().length > 20 ||
             updatedWord.translation.trim().length > 20) {
-          _error =
-              "Довжина слова та перекладу не може перевищувати 20 символів.";
-          return; // Exit early, _error is set
+          _error = wordMaxLengthError;
+          return;
         }
 
         final trimmedTerm = updatedWord.term.trim();
         final trimmedTranslation = updatedWord.translation.trim();
         final trimmedDescription = updatedWord.description.trim();
 
-        // Check for duplicates *excluding* the current word being edited
+        String? anotherWordExistsError;
+        if (context != null) {
+          anotherWordExistsError =
+              AppLocalizations.of(context)!.anotherWordWithSameTermExists
+                  as String?;
+        } else {
+          anotherWordExistsError = 'Context is null';
+        }
+
         final exists = dictionary.words.asMap().entries.any(
           (entry) =>
               entry.key != wordIndex &&
@@ -244,9 +460,7 @@ class DictionaryProvider with ChangeNotifier {
         );
 
         if (exists) {
-          _error =
-              "Інше слово з таким же терміном '$trimmedTerm' / '$trimmedTranslation' вже існує.";
-          // Don't set updatedSuccessfully to true
+          _error = anotherWordExistsError;
         } else {
           final wordToUpdateWith = Word(
             term: trimmedTerm,
@@ -264,20 +478,16 @@ class DictionaryProvider with ChangeNotifier {
           _dictionaries[dictIndex] = updatedDict;
           updatedSuccessfully = true;
           if (kDebugMode) {
-            print(
+            debugPrint(
               "Word at index $wordIndex in '$dictionaryName' updated to '${wordToUpdateWith.term}'.",
             );
-
-            print("Word at index $wordIndex updated in '$dictionaryName'.");
           }
         }
       },
-      // successMessage removed - handled inside action
       errorMessagePrefix:
           "Error updating word in '$dictionaryName' at index $wordIndex",
     );
 
-    // Notify if an error was set inside the action but didn't throw
     if (_error != null && !updatedSuccessfully) {
       notifyListeners();
     }
@@ -285,196 +495,29 @@ class DictionaryProvider with ChangeNotifier {
     return updatedSuccessfully;
   }
 
-  /// Removes a word from the dictionary by its index.
-  /// Returns true if successful, false otherwise.
-  Future<bool> removeWordFromDictionary(
-    String dictionaryName,
-    int wordIndex,
-  ) async {
-    bool removedSuccessfully = false;
-    String? removedWordTerm; // Store for logging
-
-    await _performAction(
-      () async {
-        final dictIndex = _dictionaries.indexWhere(
-          (d) => d.name == dictionaryName,
-        );
-        if (dictIndex == -1) {
-          throw Exception(
-            "Dictionary '$dictionaryName' not found for word removal.",
-          );
-        }
-
-        final dictionary = _dictionaries[dictIndex];
-
-        if (wordIndex < 0 || wordIndex >= dictionary.words.length) {
-          throw Exception(
-            "Invalid word index $wordIndex for dictionary '$dictionaryName'. Max index is ${dictionary.words.length - 1}.",
-          );
-        }
-
-        // Get the term before removing for potential success message
-        removedWordTerm = dictionary.words[wordIndex].term;
-
-        final List<Word> updatedWords = List<Word>.from(dictionary.words);
-        updatedWords.removeAt(wordIndex);
-        final updatedDict = dictionary.copyWith(words: updatedWords);
-
-        await file_utils.saveDictionaryToJson(updatedDict);
-
-        _dictionaries[dictIndex] = updatedDict;
-        removedSuccessfully = true;
-
-        if (kDebugMode) {
-          print(
-            "Word '$removedWordTerm' (index $wordIndex) removed from '$dictionaryName'.",
-          );
-
-          print("Word removed.");
-        }
-      },
-      // successMessage removed - handled inside action
-      errorMessagePrefix:
-          "Error removing word from '$dictionaryName' at index $wordIndex",
-    );
-    return removedSuccessfully;
-  }
-
-  /// Updates dictionary properties (name and color).
-  /// Handles renaming by moving the underlying directory/file.
-  Future<bool> updateDictionaryProperties(
-    String oldName,
-    String newName,
-    Color newColor,
-  ) async {
-    if (newName.trim().isEmpty) {
-      _error = "Назва словника не може бути порожньою.";
-      notifyListeners();
-      return false;
-    }
-    final trimmedNewName = newName.trim();
-
-    // Find the original dictionary index
-    final index = _dictionaries.indexWhere((d) => d.name == oldName);
-    if (index == -1) {
-      _error = "Словник '$oldName' не знайдено для оновлення.";
-      notifyListeners();
-      return false;
-    }
-
-    // Check for name conflict only if the name actually changed
-    if (trimmedNewName != oldName && await dictionaryExists(trimmedNewName)) {
-      _error = "Словник з назвою '$trimmedNewName' вже існує.";
-      notifyListeners();
-      return false;
-    }
-
-    bool success = false;
-    final originalDictionary = _dictionaries[index];
-
-    await _performAction(
-      () async {
-        // Create the updated dictionary object *in memory* first
-        final updatedDictionary = originalDictionary.copyWith(
-          name: trimmedNewName,
-          color: newColor,
-        );
-
-        // --- Handle file operations ---
-        if (trimmedNewName == oldName) {
-          // Only color changed, just save over the existing file
-          await file_utils.saveDictionaryToJson(updatedDictionary);
-        } else {
-          // Name changed - Requires save to new, delete old
-          // 1. Save the updated data to the new path
-          await file_utils.saveDictionaryToJson(updatedDictionary);
-
-          // 2. If saving to the new location was successful, delete the old directory
-          final deletedOld = await file_utils.deleteDictionaryDirectory(
-            oldName,
-          );
-          if (!deletedOld) {
-            // Log critical error, but potentially proceed with in-memory update
-            // The user might need to manually clean up the old file.
-            final criticalMessage =
-                "CRITICAL: Failed to delete old directory '$oldName' after renaming to '$trimmedNewName'. Manual cleanup might be needed.";
-            if (kDebugMode) {
-              print(criticalMessage);
-            }
-            // Decide if this should throw or just set an error message
-            // Throwing might be better as the state is inconsistent.
-            _error =
-                "Помилка: Не вдалося видалити стару версію словника. '$oldName'";
-            throw Exception(_error);
-            // If not throwing: notifyListeners(); // To show the error
-            // If not throwing: success = false; // Ensure success isn't set
-            // return; // Stop further processing in the success path
-          }
-        }
-
-        // --- Update in-memory list ---
-        _dictionaries[index] = updatedDictionary;
-        _dictionaries.sort(
-          (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
-        );
-        success = true;
-        if (kDebugMode) {
-          print("Dictionary '$trimmedNewName' updated.");
-        }
-      },
-      // successMessage removed - handled inside action
-      errorMessagePrefix:
-          "Error updating dictionary '$oldName' to '$trimmedNewName'",
-    );
-
-    return success;
-  }
-
-  Future<bool> deleteDictionary(String dictionaryName) async {
-    bool success = false;
-    await _performAction(
-      () async {
-        final index = _dictionaries.indexWhere((d) => d.name == dictionaryName);
-        if (index == -1) {
-          throw Exception(
-            "Dictionary '$dictionaryName' not found for deletion.",
-          );
-        }
-
-        final deletedFromFile = await file_utils.deleteDictionaryDirectory(
-          dictionaryName,
-        );
-        if (deletedFromFile) {
-          _dictionaries.removeAt(index);
-          success = true;
-          if (kDebugMode) {
-            print("Dictionary '$dictionaryName' deleted.");
-          }
-        } else {
-          // If file deletion failed, we might not want to remove it from the list
-          throw Exception(
-            "Failed to delete dictionary files for '$dictionaryName'.",
-          );
-        }
-      },
-      // successMessage removed - handled inside action
-      errorMessagePrefix: "Error deleting dictionary '$dictionaryName'",
-    );
-    return success;
-  }
-
-  // Checks if a dictionary with the given name exists (case-insensitive)
-  Future<bool> dictionaryExists(String name) async {
-    // Check against the current in-memory list for immediate feedback
-    final lowerCaseName = name.trim().toLowerCase();
-    // Consider also checking the file system if consistency is critical,
-    // but for UI feedback, the in-memory check is usually sufficient.
-    return _dictionaries.any((d) => d.name.toLowerCase() == lowerCaseName);
-  }
-
-  void clearError() {
-    if (_error != null) {
-      _error = null;
+  // Helper to manage loading state and errors
+  Future<void> _performAction(
+    AsyncCallback action, {
+    String? successMessage,
+    String? errorMessagePrefix,
+  }) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      await action();
+      if (kDebugMode && successMessage != null) {
+        debugPrint(successMessage);
+      }
+    } catch (e, stackTrace) {
+      final message = "${errorMessagePrefix ?? 'Error'}: $e";
+      _error = message;
+      if (kDebugMode) {
+        debugPrint(message);
+        debugPrintStack(stackTrace: stackTrace);
+      }
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }

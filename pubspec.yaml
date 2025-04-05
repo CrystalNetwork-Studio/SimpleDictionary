@@ -12,6 +12,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl_utils: 2.8.10
   cupertino_icons: ^1.0.8
   provider: ^6.0.0 # For state management
   path_provider: ^2.0.0 # For finding the documents directory
@@ -27,3 +30,4 @@ dev_dependencies:
   json_serializable: ^6.7.0
 flutter:
   uses-material-design: true
+  generate: true

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:provider/provider.dart';
+import 'package:simpledictionary/l10n/app_localizations.dart';
 
 import '../providers/dictionary_provider.dart';
 import '../screens/settings_screen.dart';
@@ -16,27 +17,8 @@ class _AppDrawerState extends State<AppDrawer> {
   String _appVersion = 'Loading...';
 
   @override
-  void initState() {
-    super.initState();
-    _loadVersion();
-  }
-
-  Future<void> _loadVersion() async {
-    try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      setState(() {
-        _appVersion = packageInfo.version;
-      });
-    } catch (e) {
-      setState(() {
-        _appVersion = 'Failed to load';
-      });
-      print('Error loading package info: $e');
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
     final dictionaryCount =
         context.watch<DictionaryProvider>().dictionaries.length;
 
@@ -59,7 +41,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Simple Dictionary',
+                  localization.myDictionaries,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
@@ -69,11 +51,11 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
           _DrawerInfoItem(
             icon: Icons.collections_bookmark_outlined,
-            text: 'Словники: $dictionaryCount',
+            text: localization.dictionariesCount(dictionaryCount),
           ),
-          const _DrawerInfoItem(
+          _DrawerInfoItem(
             icon: Icons.language_outlined,
-            text: 'Мова: Українська',
+            text: localization.languageDrawer,
           ),
           const Divider(),
           ListTile(
@@ -81,7 +63,7 @@ class _AppDrawerState extends State<AppDrawer> {
               Icons.settings_outlined,
               color: Theme.of(context).iconTheme.color,
             ),
-            title: const Text('Налаштування'),
+            title: Text(localization.settings),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
@@ -95,13 +77,13 @@ class _AppDrawerState extends State<AppDrawer> {
               Icons.info_outline,
               color: Theme.of(context).iconTheme.color,
             ),
-            title: const Text('Про додаток'),
+            title: Text(localization.aboutApp),
             onTap: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Інформація про додаток ще не доробленна.'),
-                  duration: Duration(seconds: 2),
+                SnackBar(
+                  content: Text(localization.aboutAppNotReady),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },
@@ -111,13 +93,33 @@ class _AppDrawerState extends State<AppDrawer> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Версія $_appVersion',
+              '${localization.version} $_appVersion',
               style: const TextStyle(color: Colors.grey),
             ),
           ),
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVersion();
+  }
+
+  Future<void> _loadVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      setState(() {
+        _appVersion = packageInfo.version;
+      });
+    } catch (e) {
+      setState(() {
+        _appVersion = 'Failed to load';
+      });
+      debugPrint('Error loading package info: $e');
+    }
   }
 }
 

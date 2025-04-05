@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:simpledictionary/l10n/app_localizations.dart';
+
 import '../providers/dictionary_provider.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/create_dictionary_dialog.dart';
 import '../widgets/dictionary_list.dart';
 import '../widgets/empty_state.dart';
-import '../widgets/create_dictionary_dialog.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,9 +14,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dictionaryProvider = Provider.of<DictionaryProvider>(context);
+    final localization = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Мої словники')),
+      appBar: AppBar(title: Text(localization.myDictionaries)),
       drawer: const AppDrawer(),
       body: RefreshIndicator(
         onRefresh: () => dictionaryProvider.loadDictionaries(),
@@ -60,7 +63,8 @@ class HomeScreen extends StatelessWidget {
                   provider.addDictionary(name, color: color).then((success) {
                     if (!success && dialogContext.mounted) {
                       final error =
-                          provider.error ?? 'Не вдалося створити словник.';
+                          provider.error ??
+                          localization.errorCreatingDictionary;
                       ScaffoldMessenger.of(dialogContext).showSnackBar(
                         SnackBar(
                           content: Text(error),
@@ -78,7 +82,7 @@ class HomeScreen extends StatelessWidget {
             },
           );
         },
-        tooltip: 'Додати словник',
+        tooltip: localization.addDictionary,
         child: const Icon(Icons.add),
       ),
     );

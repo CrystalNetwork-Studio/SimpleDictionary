@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -19,7 +20,7 @@ const String _fileName = 'words.json';
 Future<bool> deleteDictionaryDirectory(String dictionaryName) async {
   try {
     if (dictionaryName.isEmpty) {
-      print(
+      debugPrint(
         "Error: Cannot delete the main 'Dictionary' directory. Dictionary name is blank.",
       );
       return false;
@@ -29,18 +30,18 @@ Future<bool> deleteDictionaryDirectory(String dictionaryName) async {
 
     if (await dir.exists()) {
       await dir.delete(recursive: true);
-      print(
+      debugPrint(
         "Successfully deleted dictionary '$dictionaryName' at: $directoryPath",
       );
       return true;
     } else {
-      print(
+      debugPrint(
         "Directory for dictionary '$dictionaryName' not found at: $directoryPath",
       );
       return false;
     }
   } catch (e) {
-    print("Error deleting dictionary '$dictionaryName': $e");
+    debugPrint("Error deleting dictionary '$dictionaryName': $e");
     return false;
   }
 }
@@ -89,10 +90,10 @@ Future<List<String>> getDictionaryNames() async {
         dirNames.add(p.basename(entity.path));
       }
     }
-    print("Found dictionary directories: $dirNames");
+    debugPrint("Found dictionary directories: $dirNames");
     return dirNames;
   } catch (e) {
-    print("Error listing dictionary directories: $e");
+    debugPrint("Error listing dictionary directories: $e");
     return [];
   }
 }
@@ -117,11 +118,13 @@ Future<Dictionary?> loadDictionaryFromJson(String dictionaryName) async {
       final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
       return Dictionary.fromJson(jsonMap);
     } else {
-      print("Dictionary file not found for '$dictionaryName' at: $filePath");
+      debugPrint(
+        "Dictionary file not found for '$dictionaryName' at: $filePath",
+      );
       return null;
     }
   } catch (e) {
-    print("Error loading dictionary '$dictionaryName': $e");
+    debugPrint("Error loading dictionary '$dictionaryName': $e");
     return null;
   }
 }
@@ -142,7 +145,7 @@ Future<void> saveDictionaryToJson(Dictionary dictionary) async {
     final dir = Directory(directoryPath);
     if (!await dir.exists()) {
       await dir.create(recursive: true);
-      print(
+      debugPrint(
         "Directory for dictionary '${dictionary.name}' created at: $directoryPath",
       );
     }
@@ -150,9 +153,9 @@ Future<void> saveDictionaryToJson(Dictionary dictionary) async {
     final file = File(filePath);
     final jsonString = jsonEncode(dictionary.toJson());
     await file.writeAsString(jsonString);
-    print("Dictionary '${dictionary.name}' saved to: $filePath");
+    debugPrint("Dictionary '${dictionary.name}' saved to: $filePath");
   } catch (e) {
-    print("Error saving dictionary '${dictionary.name}': $e");
+    debugPrint("Error saving dictionary '${dictionary.name}': $e");
     rethrow; // Rethrow to allow caller to handle
   }
 }
@@ -170,7 +173,7 @@ Future<String> _getBaseDirectoryPath() async {
   final baseDir = Directory(baseDirPath);
   if (!await baseDir.exists()) {
     await baseDir.create(recursive: true);
-    print("Base 'Dictionary' directory created at: $baseDirPath");
+    debugPrint("Base 'Dictionary' directory created at: $baseDirPath");
   }
   return baseDirPath;
 }

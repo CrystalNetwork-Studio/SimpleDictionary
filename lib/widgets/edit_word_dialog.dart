@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
 import '../data/dictionary.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/dictionary_provider.dart';
-
-// Define result types
-enum EditWordDialogStatus { saved, deleted, cancelled, error }
-
-class EditWordDialogResult {
-  final EditWordDialogStatus status;
-  final String? deletedWordTerm;
-
-  EditWordDialogResult(this.status, {this.deletedWordTerm});
-}
 
 class EditWordDialog extends StatefulWidget {
   final String dictionaryName;
@@ -34,6 +26,15 @@ class EditWordDialog extends StatefulWidget {
   State<EditWordDialog> createState() => _EditWordDialogState();
 }
 
+class EditWordDialogResult {
+  final EditWordDialogStatus status;
+  final String? deletedWordTerm;
+
+  EditWordDialogResult(this.status, {this.deletedWordTerm});
+}
+
+enum EditWordDialogStatus { saved, deleted, cancelled, error }
+
 class _EditWordDialogState extends State<EditWordDialog> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _termController;
@@ -44,123 +45,12 @@ class _EditWordDialogState extends State<EditWordDialog> {
   String? _localError; // For displaying errors
 
   @override
-  void initState() {
-    super.initState();
-    _termController = TextEditingController(text: widget.initialWord.term);
-    _translationController = TextEditingController(
-      text: widget.initialWord.translation,
-    );
-    _descriptionController = TextEditingController(
-      text: widget.initialWord.description,
-    );
-  }
-
-  @override
-  void dispose() {
-    _termController.dispose();
-    _translationController.dispose();
-    _descriptionController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate() && !_isSaving && !_isDeleting) {
-      setState(() {
-        _isSaving = true;
-        _localError = null;
-      });
-
-      final updatedWord = Word(
-        term: _termController.text.trim(),
-        translation: _translationController.text.trim(),
-        description: _descriptionController.text.trim(),
-      );
-
-      final bool updatedSuccessfully = await widget.onWordUpdated(
-        widget.wordIndex,
-        updatedWord,
-      );
-
-      if (!mounted) return;
-
-      if (updatedSuccessfully) {
-        Navigator.of(
-          context,
-        ).pop(EditWordDialogResult(EditWordDialogStatus.saved));
-      } else {
-        final error =
-            Provider.of<DictionaryProvider>(context, listen: false).error;
-        setState(() {
-          _localError = error ?? 'Не вдалося оновити слово.';
-          _isSaving = false;
-        });
-        Provider.of<DictionaryProvider>(context, listen: false).clearError();
-      }
-    }
-  }
-
-  Future<void> _handleDelete() async {
-    if (_isSaving || _isDeleting) return;
-
-    final bool? confirm = await showDialog<bool>(
-      context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text('Підтвердити видалення'),
-            content: Text('Видалити слово "${widget.initialWord.term}"?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('Скасувати'),
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.error,
-                ),
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('Видалити'),
-              ),
-            ],
-          ),
-    );
-
-    if (confirm != true) {
-      return;
-    }
-
-    setState(() {
-      _isDeleting = true;
-      _localError = null;
-    });
-
-    final String? deletedTerm = await widget.onWordDeleted(widget.wordIndex);
-
-    if (!mounted) return;
-
-    if (deletedTerm != null) {
-      Navigator.of(context).pop(
-        EditWordDialogResult(
-          EditWordDialogStatus.deleted,
-          deletedWordTerm: deletedTerm,
-        ),
-      );
-    } else {
-      final error =
-          Provider.of<DictionaryProvider>(context, listen: false).error;
-      setState(() {
-        _localError = error ?? 'Не вдалося видалити слово.';
-        _isDeleting = false;
-      });
-      Provider.of<DictionaryProvider>(context, listen: false).clearError();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final bool canInteract = !_isSaving && !_isDeleting;
+    final localization = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      title: const Text('Редагувати слово'),
+      title: Text(localization.editWord),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -172,16 +62,16 @@ class _EditWordDialogState extends State<EditWordDialog> {
                 maxLength: 20,
                 inputFormatters: [LengthLimitingTextInputFormatter(20)],
                 decoration: InputDecoration(
-                  labelText: 'Слово',
+                  labelText: localization.word,
                   counterText: "",
                   border: const OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Будь ласка, введіть слово';
+                    return localization.pleaseEnterWord;
                   }
                   if (value.length > 20) {
-                    return 'Максимум 20 символів';
+                    return localization.maxLength20;
                   }
                   return null;
                 },
@@ -193,16 +83,16 @@ class _EditWordDialogState extends State<EditWordDialog> {
                 maxLength: 20,
                 inputFormatters: [LengthLimitingTextInputFormatter(20)],
                 decoration: InputDecoration(
-                  labelText: 'Переклад',
+                  labelText: localization.translation,
                   counterText: "",
                   border: const OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Будь ласка, введіть переклад';
+                    return localization.pleaseEnterTranslation;
                   }
                   if (value.length > 20) {
-                    return 'Максимум 20 символів';
+                    return localization.maxLength20;
                   }
                   return null;
                 },
@@ -211,9 +101,9 @@ class _EditWordDialogState extends State<EditWordDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Опис (необов\'язково)',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: localization.descriptionOptional,
+                  border: const OutlineInputBorder(),
                 ),
                 maxLines: 3,
                 enabled: canInteract,
@@ -248,7 +138,7 @@ class _EditWordDialogState extends State<EditWordDialog> {
                     color: Theme.of(context).colorScheme.error,
                   ),
           label: Text(
-            'Видалити',
+            localization.delete,
             style: TextStyle(color: Theme.of(context).colorScheme.error),
           ),
           onPressed: canInteract ? _handleDelete : null,
@@ -266,7 +156,7 @@ class _EditWordDialogState extends State<EditWordDialog> {
                         EditWordDialogResult(EditWordDialogStatus.cancelled),
                       )
                       : null,
-              child: const Text('Скасувати'),
+              child: Text(localization.cancel),
             ),
             const SizedBox(width: 8),
             ElevatedButton(
@@ -281,11 +171,128 @@ class _EditWordDialogState extends State<EditWordDialog> {
                           color: Theme.of(context).colorScheme.onPrimary,
                         ),
                       )
-                      : const Text('Зберегти'),
+                      : Text(localization.save),
             ),
           ],
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _termController.dispose();
+    _translationController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _termController = TextEditingController(text: widget.initialWord.term);
+    _translationController = TextEditingController(
+      text: widget.initialWord.translation,
+    );
+    _descriptionController = TextEditingController(
+      text: widget.initialWord.description,
+    );
+  }
+
+  Future<void> _handleDelete() async {
+    if (_isSaving || _isDeleting) return;
+
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: Text(AppLocalizations.of(context)!.confirmDeletion),
+            content: Text(
+              AppLocalizations.of(
+                context,
+              )!.confirmDeleteWord(widget.initialWord.term),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text(AppLocalizations.of(context)!.cancel),
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: Text(AppLocalizations.of(context)!.delete),
+              ),
+            ],
+          ),
+    );
+
+    if (confirm != true) {
+      return;
+    }
+
+    setState(() {
+      _isDeleting = true;
+      _localError = null;
+    });
+
+    final String? deletedTerm = await widget.onWordDeleted(widget.wordIndex);
+
+    if (!mounted) return;
+
+    if (deletedTerm != null) {
+      Navigator.of(context).pop(
+        EditWordDialogResult(
+          EditWordDialogStatus.deleted,
+          deletedWordTerm: deletedTerm,
+        ),
+      );
+    } else {
+      final error =
+          Provider.of<DictionaryProvider>(context, listen: false).error;
+      setState(() {
+        _localError = error ?? AppLocalizations.of(context)!.failedToDeleteWord;
+        _isDeleting = false;
+      });
+      Provider.of<DictionaryProvider>(context, listen: false).clearError();
+    }
+  }
+
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate() && !_isSaving && !_isDeleting) {
+      setState(() {
+        _isSaving = true;
+        _localError = null;
+      });
+
+      final updatedWord = Word(
+        term: _termController.text.trim(),
+        translation: _translationController.text.trim(),
+        description: _descriptionController.text.trim(),
+      );
+
+      final bool updatedSuccessfully = await widget.onWordUpdated(
+        widget.wordIndex,
+        updatedWord,
+      );
+
+      if (!mounted) return;
+
+      if (updatedSuccessfully) {
+        Navigator.of(
+          context,
+        ).pop(EditWordDialogResult(EditWordDialogStatus.saved));
+      } else {
+        final error =
+            Provider.of<DictionaryProvider>(context, listen: false).error;
+        setState(() {
+          _localError =
+              error ?? AppLocalizations.of(context)!.failedToUpdateWord;
+          _isSaving = false;
+        });
+        Provider.of<DictionaryProvider>(context, listen: false).clearError();
+      }
+    }
   }
 }

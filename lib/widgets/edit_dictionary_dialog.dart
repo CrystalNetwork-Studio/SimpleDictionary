@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../data/dictionary.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/dictionary_provider.dart';
-
-enum EditDictionaryDialogStatus { saved, cancelled, error }
-
-class EditDictionaryDialogResult {
-  final EditDictionaryDialogStatus status;
-  EditDictionaryDialogResult(this.status);
-}
 
 class EditDictionaryDialog extends StatefulWidget {
   final Dictionary initialDictionary;
@@ -26,6 +21,13 @@ class EditDictionaryDialog extends StatefulWidget {
   @override
   State<EditDictionaryDialog> createState() => _EditDictionaryDialogState();
 }
+
+class EditDictionaryDialogResult {
+  final EditDictionaryDialogStatus status;
+  EditDictionaryDialogResult(this.status);
+}
+
+enum EditDictionaryDialogStatus { saved, cancelled, error }
 
 class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
   final _formKey = GlobalKey<FormState>();
@@ -49,99 +51,13 @@ class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController(
-      text: widget.initialDictionary.name,
-    );
-    _selectedColor = widget.initialDictionary.color;
-    _nameController.addListener(() {
-      if (_localError != null) {
-        setState(() => _localError = null);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate() && !_isSaving) {
-      final String oldName = widget.initialDictionary.name;
-      final String newName = _nameController.text.trim();
-      final Color newColor = _selectedColor;
-
-      if (newName == oldName &&
-          newColor.value == widget.initialDictionary.color.value) {
-        Navigator.of(
-          context,
-        ).pop(EditDictionaryDialogResult(EditDictionaryDialogStatus.cancelled));
-        return;
-      }
-
-      setState(() {
-        _isSaving = true;
-        _localError = null;
-      });
-
-      bool nameConflict = false;
-      if (newName != oldName) {
-        try {
-          nameConflict = await widget.dictionaryExists(newName);
-        } catch (e) {
-          if (!mounted) return;
-          setState(() {
-            _localError = 'Помилка перевірки імені: $e';
-            _isSaving = false;
-          });
-          return;
-        }
-      }
-
-      if (nameConflict) {
-        if (!mounted) return;
-        setState(() {
-          _localError = 'Словник з назвою "$newName" вже існує.';
-          _isSaving = false;
-        });
-        return;
-      }
-
-      final bool updatedSuccessfully = await widget.onDictionaryUpdated(
-        oldName,
-        newName,
-        newColor,
-      );
-
-      if (!mounted) return;
-
-      if (updatedSuccessfully) {
-        Navigator.of(
-          context,
-        ).pop(EditDictionaryDialogResult(EditDictionaryDialogStatus.saved));
-      } else {
-        final error =
-            Provider.of<DictionaryProvider>(context, listen: false).error ??
-            'Не вдалося оновити словник.';
-        setState(() {
-          _localError = error;
-          _isSaving = false;
-        });
-        Provider.of<DictionaryProvider>(context, listen: false).clearError();
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
+    final localization = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      title: const Text('Редагувати Словник'),
+      title: Text(localization.editDictionary),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -149,15 +65,20 @@ class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Назва:', style: textTheme.titleSmall),
+              Text(
+                '${localization.dictionaryNameLabel}:',
+                style: textTheme.titleSmall,
+              ),
               const SizedBox(height: 8),
               TextFormField(
                 controller: _nameController,
                 autofocus: true,
-                decoration: const InputDecoration(hintText: 'Назва словнику'),
+                decoration: InputDecoration(
+                  hintText: localization.dictionaryNameHint,
+                ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Назва не може бути порожньою';
+                    return localization.dictionaryNameNotEmpty;
                   }
                   return null;
                 },
@@ -165,8 +86,7 @@ class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
                 onFieldSubmitted: (_) => _submitForm(),
               ),
               const SizedBox(height: 20),
-
-              Text('Колір папки:', style: textTheme.titleSmall),
+              Text('${localization.folderColor}:', style: textTheme.titleSmall),
               const SizedBox(height: 8),
               SizedBox(
                 height: 50,
@@ -231,7 +151,6 @@ class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
                   ),
                 ),
               ),
-
               if (_localError != null) ...[
                 const SizedBox(height: 16),
                 Text(
@@ -254,7 +173,7 @@ class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
                       EditDictionaryDialogStatus.cancelled,
                     ),
                   ),
-          child: const Text('Відмінити'),
+          child: Text(localization.cancel),
         ),
         ElevatedButton(
           onPressed: _isSaving ? null : _submitForm,
@@ -268,9 +187,96 @@ class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   )
-                  : const Text('Зберегти'),
+                  : Text(localization.save),
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(
+      text: widget.initialDictionary.name,
+    );
+    _selectedColor = widget.initialDictionary.color;
+    _nameController.addListener(() {
+      if (_localError != null) {
+        setState(() => _localError = null);
+      }
+    });
+  }
+
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate() && !_isSaving) {
+      final String oldName = widget.initialDictionary.name;
+      final String newName = _nameController.text.trim();
+      final Color newColor = _selectedColor;
+
+      if (newName == oldName &&
+          newColor.value == widget.initialDictionary.color.value) {
+        Navigator.of(
+          context,
+        ).pop(EditDictionaryDialogResult(EditDictionaryDialogStatus.cancelled));
+        return;
+      }
+
+      setState(() {
+        _isSaving = true;
+        _localError = null;
+      });
+
+      bool nameConflict = false;
+      if (newName != oldName) {
+        try {
+          nameConflict = await widget.dictionaryExists(newName);
+        } catch (e) {
+          if (!mounted) return;
+          setState(() {
+            _localError = 'Помилка перевірки імені: $e';
+            _isSaving = false;
+          });
+          return;
+        }
+      }
+
+      if (nameConflict) {
+        if (!mounted) return;
+        setState(() {
+          _localError = 'Словник з назвою "$newName" вже існує.';
+          _isSaving = false;
+        });
+        return;
+      }
+
+      final bool updatedSuccessfully = await widget.onDictionaryUpdated(
+        oldName,
+        newName,
+        newColor,
+      );
+
+      if (!mounted) return;
+
+      if (updatedSuccessfully) {
+        Navigator.of(
+          context,
+        ).pop(EditDictionaryDialogResult(EditDictionaryDialogStatus.saved));
+      } else {
+        final error =
+            Provider.of<DictionaryProvider>(context, listen: false).error ??
+            AppLocalizations.of(context)!.failedToUpdateDictionary;
+        setState(() {
+          _localError = error;
+          _isSaving = false;
+        });
+        Provider.of<DictionaryProvider>(context, listen: false).clearError();
+      }
+    }
   }
 }
