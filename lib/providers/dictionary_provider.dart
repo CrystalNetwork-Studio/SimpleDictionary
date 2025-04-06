@@ -22,6 +22,7 @@ class DictionaryProvider with ChangeNotifier {
     String name, {
     Color? color,
     BuildContext? context,
+    DictionaryType dictionaryType = DictionaryType.words,
   }) async {
     String? nameNotEmptyError;
     if (context != null) {
@@ -51,7 +52,11 @@ class DictionaryProvider with ChangeNotifier {
       return false;
     }
 
-    final newDictionary = Dictionary(name: trimmedName, color: color);
+    final newDictionary = Dictionary(
+      name: trimmedName,
+      color: color,
+      type: dictionaryType,
+    );
     bool success = false;
 
     await _performAction(() async {
@@ -97,15 +102,17 @@ class DictionaryProvider with ChangeNotifier {
 
       final dictionary = _dictionaries[index];
 
-      String? wordMaxLengthError;
-      if (context != null) {
-        wordMaxLengthError =
-            AppLocalizations.of(context)!.wordAndTranslationMaxLength20;
-      } else {
-        wordMaxLengthError = 'Context is null';
-      }
-      if (newWord.term.trim().length > 20 ||
-          newWord.translation.trim().length > 20) {
+      // Only enforce length limit for 'words' type dictionaries
+      if (dictionary.isWordsType &&
+          (newWord.term.trim().length > 20 ||
+              newWord.translation.trim().length > 20)) {
+        String? wordMaxLengthError;
+        if (context != null) {
+          wordMaxLengthError =
+              AppLocalizations.of(context)!.wordAndTranslationMaxLength20;
+        } else {
+          wordMaxLengthError = 'Context is null';
+        }
         _error = wordMaxLengthError;
         return;
       }
@@ -192,7 +199,7 @@ class DictionaryProvider with ChangeNotifier {
     return success;
   }
 
-  // Checks if a dictionary with the given name exists (case-insensitive)
+  /// Checks if a dictionary with the given name exists (case-insensitive)
   Future<bool> dictionaryExists(String name) async {
     final lowerCaseName = name.trim().toLowerCase();
     return _dictionaries.any((d) => d.name.toLowerCase() == lowerCaseName);
@@ -338,6 +345,7 @@ class DictionaryProvider with ChangeNotifier {
         final updatedDictionary = originalDictionary.copyWith(
           name: trimmedNewName,
           color: newColor,
+          // type should remain the same during property updates
         );
 
         if (trimmedNewName == oldName) {
@@ -424,15 +432,17 @@ class DictionaryProvider with ChangeNotifier {
           );
         }
 
-        String? wordMaxLengthError;
-        if (context != null) {
-          wordMaxLengthError =
-              AppLocalizations.of(context)!.wordAndTranslationMaxLength20;
-        } else {
-          wordMaxLengthError = 'Context is null';
-        }
-        if (updatedWord.term.trim().length > 20 ||
-            updatedWord.translation.trim().length > 20) {
+        // Only enforce length limit for 'words' type dictionaries
+        if (dictionary.isWordsType &&
+            (updatedWord.term.trim().length > 20 ||
+                updatedWord.translation.trim().length > 20)) {
+          String? wordMaxLengthError;
+          if (context != null) {
+            wordMaxLengthError =
+                AppLocalizations.of(context)!.wordAndTranslationMaxLength20;
+          } else {
+            wordMaxLengthError = 'Context is null';
+          }
           _error = wordMaxLengthError;
           return;
         }

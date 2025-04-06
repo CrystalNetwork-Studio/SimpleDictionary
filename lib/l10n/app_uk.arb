@@ -101,5 +101,8 @@
     "wordDeleted": "Слово видалено",
     "wordDeletedWithName": "Слово \"{wordName}\" видалено",
     "wordOrTranslationCannotBeEmpty": "Слово та переклад не можуть бути порожніми.",
-    "wordUpdatedSuccessfully": "Слово успішно оновлено!"
+    "wordUpdatedSuccessfully": "Слово успішно оновлено!",
+    "dictionaryType": "Тип словника",
+    "words": "Слова",
+    "sentences": "Речення"
 }

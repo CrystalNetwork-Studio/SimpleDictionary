@@ -377,4 +377,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wordUpdatedSuccessfully => 'Word updated successfully!';
+
+  @override
+  String get dictionaryType => 'Dictionary Type';
+
+  @override
+  String get words => 'Words';
+
+  @override
+  String get sentences => 'Sentences';
 }

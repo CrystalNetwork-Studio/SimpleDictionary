@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simpledictionary/l10n/app_localizations.dart';
 
+import '../data/dictionary.dart';
 import '../providers/dictionary_provider.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/create_dictionary_dialog.dart';
@@ -59,21 +60,31 @@ class HomeScreen extends StatelessWidget {
                 listen: false,
               );
               return CreateDictionaryDialog(
-                onCreate: (name, color) {
-                  provider.addDictionary(name, color: color).then((success) {
-                    if (!success && dialogContext.mounted) {
-                      final error =
-                          provider.error ??
-                          localization.errorCreatingDictionary;
-                      ScaffoldMessenger.of(dialogContext).showSnackBar(
-                        SnackBar(
-                          content: Text(error),
-                          backgroundColor: Colors.orange,
-                        ),
-                      );
-                      provider.clearError();
-                    }
-                  });
+                onCreate: (
+                  String name,
+                  Color color,
+                  DictionaryType dictionaryType,
+                ) {
+                  provider
+                      .addDictionary(
+                        name,
+                        color: color,
+                        dictionaryType: dictionaryType,
+                      )
+                      .then((success) {
+                        if (!success && dialogContext.mounted) {
+                          final error =
+                              provider.error ??
+                              localization.errorCreatingDictionary;
+                          ScaffoldMessenger.of(dialogContext).showSnackBar(
+                            SnackBar(
+                              content: Text(error),
+                              backgroundColor: Colors.orange,
+                            ),
+                          );
+                          provider.clearError();
+                        }
+                      });
                 },
                 dictionaryExists: (String name) async {
                   return await provider.dictionaryExists(name);

@@ -8,8 +8,13 @@ import '../providers/dictionary_provider.dart';
 
 class AddWordScreen extends StatefulWidget {
   final Future<bool> Function(Word) onWordAdded;
+  final DictionaryType dictionaryType;
 
-  const AddWordScreen({required this.onWordAdded, super.key});
+  const AddWordScreen({
+    required this.onWordAdded,
+    required this.dictionaryType,
+    super.key,
+  });
 
   @override
   State<AddWordScreen> createState() => _AddWordScreenState();
@@ -34,18 +39,24 @@ class _AddWordScreenState extends State<AddWordScreen> {
           children: [
             TextFormField(
               controller: _termController,
-              maxLength: 20,
-              inputFormatters: [LengthLimitingTextInputFormatter(20)],
+              maxLength:
+                  widget.dictionaryType == DictionaryType.words ? 20 : null,
+              inputFormatters:
+                  widget.dictionaryType == DictionaryType.words
+                      ? [LengthLimitingTextInputFormatter(20)]
+                      : null,
               decoration: InputDecoration(
                 labelText: l10n.word,
-                counterText: "",
+                counterText:
+                    widget.dictionaryType == DictionaryType.words ? "" : null,
                 border: const OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return l10n.pleaseEnterWord;
                 }
-                if (value.length > 20) {
+                if (widget.dictionaryType == DictionaryType.words &&
+                    value.length > 20) {
                   return l10n.maxLength20;
                 }
                 return null;
@@ -54,18 +65,24 @@ class _AddWordScreenState extends State<AddWordScreen> {
             const SizedBox(height: 16),
             TextFormField(
               controller: _translationController,
-              maxLength: 20,
-              inputFormatters: [LengthLimitingTextInputFormatter(20)],
+              maxLength:
+                  widget.dictionaryType == DictionaryType.words ? 20 : null,
+              inputFormatters:
+                  widget.dictionaryType == DictionaryType.words
+                      ? [LengthLimitingTextInputFormatter(20)]
+                      : null,
               decoration: InputDecoration(
                 labelText: l10n.translation,
-                counterText: "",
+                counterText:
+                    widget.dictionaryType == DictionaryType.words ? "" : null,
                 border: const OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return l10n.pleaseEnterTranslation;
                 }
-                if (value.length > 20) {
+                if (widget.dictionaryType == DictionaryType.words &&
+                    value.length > 20) {
                   return l10n.maxLength20;
                 }
                 return null;
@@ -124,7 +141,6 @@ class _AddWordScreenState extends State<AddWordScreen> {
         description: _descriptionController.text.trim(),
       );
 
-      // The length check is now primarily handled in the provider before saving
       final bool addedSuccessfully = await widget.onWordAdded(newWord);
 
       if (!mounted) return;

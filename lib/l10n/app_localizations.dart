@@ -706,6 +706,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Word updated successfully!'**
   String get wordUpdatedSuccessfully;
+
+  /// No description provided for @dictionaryType.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary Type'**
+  String get dictionaryType;
+
+  /// No description provided for @words.
+  ///
+  /// In en, this message translates to:
+  /// **'Words'**
+  String get words;
+
+  /// No description provided for @sentences.
+  ///
+  /// In en, this message translates to:
+  /// **'Sentences'**
+  String get sentences;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

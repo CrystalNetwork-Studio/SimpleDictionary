@@ -377,4 +377,13 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get wordUpdatedSuccessfully => 'Слово успішно оновлено!';
+
+  @override
+  String get dictionaryType => 'Тип словника';
+
+  @override
+  String get words => 'Слова';
+
+  @override
+  String get sentences => 'Речення';
 }

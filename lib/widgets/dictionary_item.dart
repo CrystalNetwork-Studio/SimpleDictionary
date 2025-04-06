@@ -22,16 +22,15 @@ class DictionaryItem extends StatelessWidget {
       builder: (context, provider, child) {
         final currentDictionary = provider.dictionaries.firstWhere(
           (d) => d.name == dictionary.name,
-          orElse: () {
-            final potentialMatch = provider.dictionaries.firstWhere(
-              (d) =>
-                  d.words.length == dictionary.words.length &&
-                  d.color == dictionary.color,
-              orElse: () => dictionary,
-            );
-            return potentialMatch;
-          },
+          orElse: () => dictionary,
         );
+
+        // Determine the icon based on the dictionary type
+        final IconData dictionaryIcon =
+            currentDictionary.type == DictionaryType.sentences
+                ? Icons
+                    .short_text // Icon for sentences
+                : Icons.translate_outlined; // Default icon for words
 
         return Card(
           child: InkWell(
@@ -56,7 +55,7 @@ class DictionaryItem extends StatelessWidget {
               child: Row(
                 children: <Widget>[
                   Icon(
-                    Icons.translate_outlined,
+                    dictionaryIcon,
                     color: currentDictionary.color,
                     size: 30,
                   ),
@@ -76,10 +75,10 @@ class DictionaryItem extends StatelessWidget {
                     onSelected: (String result) {
                       switch (result) {
                         case 'edit':
-                          _editDictionary(context);
+                          _editDictionary(context, currentDictionary);
                           break;
                         case 'delete':
-                          _deleteDictionary(context);
+                          _deleteDictionary(context, currentDictionary);
                           break;
                       }
                     },
@@ -127,12 +126,16 @@ class DictionaryItem extends StatelessWidget {
     );
   }
 
-  Future<void> _deleteDictionary(BuildContext context) async {
+  // Updated to accept the current dictionary state
+  Future<void> _deleteDictionary(
+    BuildContext context,
+    Dictionary currentDictionary,
+  ) async {
     final dictionaryProvider = Provider.of<DictionaryProvider>(
       context,
       listen: false,
     );
-    final originalName = dictionary.name;
+    final originalName = currentDictionary.name;
 
     final bool? shouldDelete = await showDialog<bool>(
       context: context,
@@ -165,7 +168,7 @@ class DictionaryItem extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                '${AppLocalizations.of(context)!.errorDeletingDictionary} "$originalName": ${dictionaryProvider.error ?? e.toString()}',
+                '${AppLocalizations.of(context)!.errorDeletingDictionary(originalName)}: ${dictionaryProvider.error ?? e.toString()}',
               ),
               backgroundColor: Theme.of(context).colorScheme.error,
               behavior: SnackBarBehavior.floating,
@@ -177,7 +180,11 @@ class DictionaryItem extends StatelessWidget {
     }
   }
 
-  Future<void> _editDictionary(BuildContext context) async {
+  // Updated to accept the current dictionary state
+  Future<void> _editDictionary(
+    BuildContext context,
+    Dictionary currentDictionary,
+  ) async {
     final provider = Provider.of<DictionaryProvider>(context, listen: false);
     provider.clearError();
 
@@ -185,12 +192,18 @@ class DictionaryItem extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
+        // Ensure the dialog uses the most current dictionary data
         final dialogProvider = Provider.of<DictionaryProvider>(
           dialogContext,
           listen: false,
         );
+        final latestDictionary = dialogProvider.dictionaries.firstWhere(
+          (d) => d.name == currentDictionary.name,
+          orElse: () => currentDictionary, // Fallback to passed dictionary
+        );
+
         return EditDictionaryDialog(
-          initialDictionary: dictionary,
+          initialDictionary: latestDictionary,
           onDictionaryUpdated: (oldName, newName, newColor) async {
             return await dialogProvider.updateDictionaryProperties(
               oldName,
@@ -207,6 +220,16 @@ class DictionaryItem extends StatelessWidget {
 
     if (!context.mounted || result == null) return;
 
+    // Fetch the updated name potentially after the edit
+    final potentiallyUpdatedDictionary = provider.dictionaries.firstWhere(
+      (d) =>
+          d.name == currentDictionary.name ||
+          (result.status ==
+              EditDictionaryDialogStatus
+                  .saved), // a bit of a guess if saved, might need better state passing from dialog
+      orElse: () => currentDictionary,
+    );
+
     switch (result.status) {
       case EditDictionaryDialogStatus.saved:
         ScaffoldMessenger.of(context).showSnackBar(
@@ -214,7 +237,7 @@ class DictionaryItem extends StatelessWidget {
             content: Text(
               AppLocalizations.of(
                 context,
-              )!.dictionaryUpdatedWithName(dictionary.name),
+              )!.dictionaryUpdatedWithName(potentiallyUpdatedDictionary.name),
             ),
             duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,

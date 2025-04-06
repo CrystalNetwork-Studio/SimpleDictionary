@@ -101,5 +101,8 @@
     "wordDeleted": "Word deleted",
     "wordDeletedWithName": "Word \"{wordName}\" deleted",
     "wordOrTranslationCannotBeEmpty": "Word and translation cannot be empty.",
-    "wordUpdatedSuccessfully": "Word updated successfully!"
+    "wordUpdatedSuccessfully": "Word updated successfully!",
+    "dictionaryType": "Dictionary Type",
+    "words": "Words",
+    "sentences": "Sentences"
 }

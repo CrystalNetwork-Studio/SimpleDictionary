@@ -12,6 +12,7 @@ class EditWordDialog extends StatefulWidget {
   final Word initialWord;
   final Future<bool> Function(int, Word) onWordUpdated;
   final Future<String?> Function(int) onWordDeleted;
+  final DictionaryType dictionaryType;
 
   const EditWordDialog({
     required this.dictionaryName,
@@ -19,6 +20,7 @@ class EditWordDialog extends StatefulWidget {
     required this.initialWord,
     required this.onWordUpdated,
     required this.onWordDeleted,
+    required this.dictionaryType,
     super.key,
   });
 
@@ -59,8 +61,13 @@ class _EditWordDialogState extends State<EditWordDialog> {
             children: [
               TextFormField(
                 controller: _termController,
-                maxLength: 20,
-                inputFormatters: [LengthLimitingTextInputFormatter(20)],
+                // Apply maxLength and formatter conditionally
+                maxLength:
+                    widget.dictionaryType == DictionaryType.words ? 20 : null,
+                inputFormatters:
+                    widget.dictionaryType == DictionaryType.words
+                        ? [LengthLimitingTextInputFormatter(20)]
+                        : null,
                 decoration: InputDecoration(
                   labelText: localization.word,
                   counterText: "",
@@ -70,7 +77,8 @@ class _EditWordDialogState extends State<EditWordDialog> {
                   if (value == null || value.trim().isEmpty) {
                     return localization.pleaseEnterWord;
                   }
-                  if (value.length > 20) {
+                  if (widget.dictionaryType == DictionaryType.words &&
+                      value.length > 20) {
                     return localization.maxLength20;
                   }
                   return null;
@@ -80,10 +88,16 @@ class _EditWordDialogState extends State<EditWordDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _translationController,
-                maxLength: 20,
-                inputFormatters: [LengthLimitingTextInputFormatter(20)],
+                // Apply maxLength and formatter conditionally
+                maxLength:
+                    widget.dictionaryType == DictionaryType.words ? 20 : null,
+                inputFormatters:
+                    widget.dictionaryType == DictionaryType.words
+                        ? [LengthLimitingTextInputFormatter(20)]
+                        : null,
                 decoration: InputDecoration(
                   labelText: localization.translation,
+                  // Hide counter if limit applies
                   counterText: "",
                   border: const OutlineInputBorder(),
                 ),
@@ -91,7 +105,8 @@ class _EditWordDialogState extends State<EditWordDialog> {
                   if (value == null || value.trim().isEmpty) {
                     return localization.pleaseEnterTranslation;
                   }
-                  if (value.length > 20) {
+                  if (widget.dictionaryType == DictionaryType.words &&
+                      value.length > 20) {
                     return localization.maxLength20;
                   }
                   return null;
