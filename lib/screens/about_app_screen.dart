@@ -14,30 +14,6 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
   String _version = '';
 
   @override
-  void initState() {
-    super.initState();
-    _loadVersionInfo();
-  }
-
-  Future<void> _loadVersionInfo() async {
-    try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      if (mounted) {
-        setState(() {
-          _version = packageInfo.version;
-        });
-      }
-    } catch (e) {
-      debugPrint('Error loading package info: $e');
-      if (mounted) {
-        setState(() {
-          _version = 'Error';
-        });
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
@@ -182,5 +158,29 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVersionInfo();
+  }
+
+  Future<void> _loadVersionInfo() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      if (mounted) {
+        setState(() {
+          _version = packageInfo.version;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading package info: $e');
+      if (mounted) {
+        setState(() {
+          _version = 'Error';
+        });
+      }
+    }
   }
 }

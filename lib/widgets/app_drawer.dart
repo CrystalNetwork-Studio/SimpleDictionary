@@ -81,7 +81,6 @@ class _AppDrawerState extends State<AppDrawer> {
             title: Text(localization.aboutApp),
             onTap: () {
               Navigator.pop(context);
-              // Navigate to the AboutAppScreen instead of showing SnackBar
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AboutAppScreen()),
@@ -112,14 +111,12 @@ class _AppDrawerState extends State<AppDrawer> {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
       if (mounted) {
-        // Check if the widget is still mounted
         setState(() {
           _appVersion = packageInfo.version;
         });
       }
     } catch (e) {
       if (mounted) {
-        // Check if the widget is still mounted
         setState(() {
           _appVersion = 'Failed to load';
         });
