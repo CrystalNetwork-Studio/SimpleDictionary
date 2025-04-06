@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:simpledictionary/l10n/app_localizations.dart';
 
 import '../providers/dictionary_provider.dart';
+import '../screens/about_app_screen.dart';
 import '../screens/settings_screen.dart';
 
 class AppDrawer extends StatefulWidget {
@@ -80,11 +81,10 @@ class _AppDrawerState extends State<AppDrawer> {
             title: Text(localization.aboutApp),
             onTap: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(localization.aboutAppNotReady),
-                  duration: const Duration(seconds: 2),
-                ),
+              // Navigate to the AboutAppScreen instead of showing SnackBar
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AboutAppScreen()),
               );
             },
           ),
@@ -111,13 +111,19 @@ class _AppDrawerState extends State<AppDrawer> {
   Future<void> _loadVersion() async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
-      setState(() {
-        _appVersion = packageInfo.version;
-      });
+      if (mounted) {
+        // Check if the widget is still mounted
+        setState(() {
+          _appVersion = packageInfo.version;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _appVersion = 'Failed to load';
-      });
+      if (mounted) {
+        // Check if the widget is still mounted
+        setState(() {
+          _appVersion = 'Failed to load';
+        });
+      }
       debugPrint('Error loading package info: $e');
     }
   }

@@ -95,11 +95,23 @@ abstract class AppLocalizations {
     Locale('uk')
   ];
 
-  /// No description provided for @myDictionaries.
+  /// No description provided for @aboutApp.
   ///
   /// In en, this message translates to:
-  /// **'My Dictionaries'**
-  String get myDictionaries;
+  /// **'About App'**
+  String get aboutApp;
+
+  /// No description provided for @aboutAppDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A simple application for creating and managing personal dictionaries.'**
+  String get aboutAppDescription;
+
+  /// No description provided for @aboutAppNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'About app info is not ready yet.'**
+  String get aboutAppNotReady;
 
   /// No description provided for @addDictionary.
   ///
@@ -107,191 +119,11 @@ abstract class AppLocalizations {
   /// **'Add Dictionary'**
   String get addDictionary;
 
-  /// No description provided for @settings.
-  ///
-  /// In en, this message translates to:
-  /// **'Settings'**
-  String get settings;
-
-  /// No description provided for @appearance.
-  ///
-  /// In en, this message translates to:
-  /// **'Appearance'**
-  String get appearance;
-
-  /// No description provided for @theme.
-  ///
-  /// In en, this message translates to:
-  /// **'Theme'**
-  String get theme;
-
-  /// No description provided for @systemDefault.
-  ///
-  /// In en, this message translates to:
-  /// **'System Default'**
-  String get systemDefault;
-
-  /// No description provided for @light.
-  ///
-  /// In en, this message translates to:
-  /// **'Light'**
-  String get light;
-
-  /// No description provided for @dark.
-  ///
-  /// In en, this message translates to:
-  /// **'Dark'**
-  String get dark;
-
-  /// No description provided for @dataManagement.
-  ///
-  /// In en, this message translates to:
-  /// **'Data Management'**
-  String get dataManagement;
-
-  /// No description provided for @importExportDictionaries.
-  ///
-  /// In en, this message translates to:
-  /// **'Import / Export Dictionaries'**
-  String get importExportDictionaries;
-
-  /// No description provided for @dictionaries.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionaries'**
-  String get dictionaries;
-
-  /// No description provided for @language.
-  ///
-  /// In en, this message translates to:
-  /// **'Language'**
-  String get language;
-
-  /// No description provided for @version.
-  ///
-  /// In en, this message translates to:
-  /// **'Version'**
-  String get version;
-
-  /// No description provided for @dictionaryName.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary Name'**
-  String get dictionaryName;
-
-  /// No description provided for @create.
-  ///
-  /// In en, this message translates to:
-  /// **'Create'**
-  String get create;
-
-  /// No description provided for @cancel.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel'**
-  String get cancel;
-
-  /// No description provided for @dictionaryNameNotEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary name cannot be empty'**
-  String get dictionaryNameNotEmpty;
-
-  /// No description provided for @dictionaryAlreadyExists.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary with this name already exists.'**
-  String get dictionaryAlreadyExists;
-
-  /// No description provided for @dictionaryCreated.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary \"{dictionaryName}\" created.'**
-  String dictionaryCreated(Object dictionaryName);
-
-  /// No description provided for @errorCreatingDictionary.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to create dictionary.'**
-  String get errorCreatingDictionary;
-
-  /// No description provided for @deleteDictionary.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete Dictionary?'**
-  String get deleteDictionary;
-
-  /// No description provided for @deleteDictionaryConfirmation.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to delete the dictionary \"{dictionaryName}\"? This action cannot be undone.'**
-  String deleteDictionaryConfirmation(Object dictionaryName);
-
-  /// No description provided for @delete.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get delete;
-
-  /// No description provided for @word.
-  ///
-  /// In en, this message translates to:
-  /// **'Word'**
-  String get word;
-
-  /// No description provided for @translation.
-  ///
-  /// In en, this message translates to:
-  /// **'Translation'**
-  String get translation;
-
-  /// No description provided for @description.
-  ///
-  /// In en, this message translates to:
-  /// **'Description'**
-  String get description;
-
   /// No description provided for @addNewWord.
   ///
   /// In en, this message translates to:
   /// **'Add New Word'**
   String get addNewWord;
-
-  /// No description provided for @save.
-  ///
-  /// In en, this message translates to:
-  /// **'Save'**
-  String get save;
-
-  /// No description provided for @pleaseEnterWord.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter a word'**
-  String get pleaseEnterWord;
-
-  /// No description provided for @pleaseEnterTranslation.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter a translation'**
-  String get pleaseEnterTranslation;
-
-  /// No description provided for @maxLength20.
-  ///
-  /// In en, this message translates to:
-  /// **'Maximum 20 characters'**
-  String get maxLength20;
-
-  /// No description provided for @failedToAddWord.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to add word.'**
-  String get failedToAddWord;
-
-  /// No description provided for @dictionaryEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary is empty'**
-  String get dictionaryEmpty;
 
   /// No description provided for @addWordsByPressingButton.
   ///
@@ -299,53 +131,53 @@ abstract class AppLocalizations {
   /// **'Add words by pressing the \'+\' button at the bottom of the screen'**
   String get addWordsByPressingButton;
 
-  /// No description provided for @sortByAlphabetical.
+  /// No description provided for @anotherWordWithSameTermExists.
   ///
   /// In en, this message translates to:
-  /// **'Sort Alphabetically'**
-  String get sortByAlphabetical;
+  /// **'Another word with the same term \"{term}\" / \"{translation}\" already exists.'**
+  String anotherWordWithSameTermExists(Object term, Object translation);
 
-  /// No description provided for @sortByLastAdded.
+  /// No description provided for @appearance.
   ///
   /// In en, this message translates to:
-  /// **'Sort by Last Added'**
-  String get sortByLastAdded;
+  /// **'Appearance'**
+  String get appearance;
 
-  /// No description provided for @editWord.
+  /// No description provided for @author.
   ///
   /// In en, this message translates to:
-  /// **'Edit Word'**
-  String get editWord;
+  /// **'Author'**
+  String get author;
 
-  /// No description provided for @updateWord.
+  /// No description provided for @baseDictionaryDirectoryCreated.
   ///
   /// In en, this message translates to:
-  /// **'Update Word'**
-  String get updateWord;
+  /// **'Base \'Dictionary\' directory created at: {baseDirPath}'**
+  String baseDictionaryDirectoryCreated(Object baseDirPath);
 
-  /// No description provided for @wordUpdatedSuccessfully.
+  /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
-  /// **'Word updated successfully!'**
-  String get wordUpdatedSuccessfully;
+  /// **'Cancel'**
+  String get cancel;
 
-  /// No description provided for @wordDeleted.
+  /// No description provided for @cannotDeleteMainDictionaryDirectory.
   ///
   /// In en, this message translates to:
-  /// **'Word deleted'**
-  String get wordDeleted;
+  /// **'Error: Cannot delete the main \'Dictionary\' directory. Dictionary name is blank.'**
+  String get cannotDeleteMainDictionaryDirectory;
 
-  /// No description provided for @wordDeletedWithName.
+  /// No description provided for @checkingAvailability.
   ///
   /// In en, this message translates to:
-  /// **'Word \"{wordName}\" deleted'**
-  String wordDeletedWithName(Object wordName);
+  /// **'Checking availability...'**
+  String get checkingAvailability;
 
-  /// No description provided for @failedToFindWordForEdit.
+  /// No description provided for @company.
   ///
   /// In en, this message translates to:
-  /// **'Failed to find word for editing/deleting.'**
-  String get failedToFindWordForEdit;
+  /// **'Company'**
+  String get company;
 
   /// No description provided for @confirmDeletion.
   ///
@@ -359,11 +191,359 @@ abstract class AppLocalizations {
   /// **'Delete word \"{wordName}\"?'**
   String confirmDeleteWord(Object wordName);
 
-  /// No description provided for @oopsImportExportNotReady.
+  /// No description provided for @create.
   ///
   /// In en, this message translates to:
-  /// **'Import/Export feature is not ready yet. :('**
-  String get oopsImportExportNotReady;
+  /// **'Create'**
+  String get create;
+
+  /// No description provided for @createDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Dictionary'**
+  String get createDictionary;
+
+  /// No description provided for @criticalErrorFailedToDeleteOldDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'CRITICAL: Failed to delete old directory \'{oldName}\' after renaming to \'{newName}\'. Manual cleanup might be needed.'**
+  String criticalErrorFailedToDeleteOldDictionary(Object newName, Object oldName);
+
+  /// No description provided for @dark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get dark;
+
+  /// No description provided for @dataManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Management'**
+  String get dataManagement;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @deleteDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Dictionary?'**
+  String get deleteDictionary;
+
+  /// No description provided for @deleteDictionaryConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the dictionary \"{dictionaryName}\"? This action cannot be undone.'**
+  String deleteDictionaryConfirmation(Object dictionaryName);
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @descriptionOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (optional)'**
+  String get descriptionOptional;
+
+  /// No description provided for @dictionaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionaries'**
+  String get dictionaries;
+
+  /// No description provided for @dictionariesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionaries: {count}'**
+  String dictionariesCount(Object count);
+
+  /// No description provided for @dictionaryAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary with this name already exists.'**
+  String get dictionaryAlreadyExists;
+
+  /// No description provided for @dictionaryCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary \"{dictionaryName}\" created.'**
+  String dictionaryCreated(Object dictionaryName);
+
+  /// No description provided for @dictionaryDeletedWithName.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary \"{dictionaryName}\" deleted.'**
+  String dictionaryDeletedWithName(Object dictionaryName);
+
+  /// No description provided for @dictionaryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary is empty'**
+  String get dictionaryEmpty;
+
+  /// No description provided for @dictionaryFileNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary file not found for \'{dictionaryName}\' at: {filePath}'**
+  String dictionaryFileNotFound(Object dictionaryName, Object filePath);
+
+  /// No description provided for @dictionaryMightBeDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'It might have been deleted.'**
+  String get dictionaryMightBeDeleted;
+
+  /// No description provided for @dictionaryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary Name'**
+  String get dictionaryName;
+
+  /// No description provided for @dictionaryNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter dictionary name'**
+  String get dictionaryNameHint;
+
+  /// No description provided for @dictionaryNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary Name'**
+  String get dictionaryNameLabel;
+
+  /// No description provided for @dictionaryNameNotEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary name cannot be empty.'**
+  String get dictionaryNameNotEmpty;
+
+  /// No description provided for @dictionaryNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary not found.'**
+  String get dictionaryNotFound;
+
+  /// No description provided for @dictionaryNotFoundForDeletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary \'{dictionaryName}\' not found for deletion.'**
+  String dictionaryNotFoundForDeletion(Object dictionaryName);
+
+  /// No description provided for @dictionaryNotFoundForUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary \'{dictionaryName}\' not found for update.'**
+  String dictionaryNotFoundForUpdate(Object dictionaryName);
+
+  /// No description provided for @dictionaryNotFoundForWordUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary \'{dictionaryName}\' not found for word update.'**
+  String dictionaryNotFoundForWordUpdate(Object dictionaryName);
+
+  /// No description provided for @dictionarySavedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary \'{dictionaryName}\' saved to: {filePath}'**
+  String dictionarySavedTo(Object dictionaryName, Object filePath);
+
+  /// No description provided for @dictionaryUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary \"{dictionaryName}\" updated.'**
+  String dictionaryUpdated(Object dictionaryName);
+
+  /// No description provided for @dictionaryUpdatedWithName.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary \"{dictionaryName}\" updated.'**
+  String dictionaryUpdatedWithName(Object dictionaryName);
+
+  /// No description provided for @directoryForDictionaryCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Directory for dictionary \'{dictionaryName}\' created at: {directoryPath}'**
+  String directoryForDictionaryCreated(Object dictionaryName, Object directoryPath);
+
+  /// No description provided for @directoryForDictionaryNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Directory for dictionary \'{dictionaryName}\' not found at: {directoryPath}'**
+  String directoryForDictionaryNotFound(Object dictionaryName, Object directoryPath);
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @editDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Dictionary'**
+  String get editDictionary;
+
+  /// No description provided for @editWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Word'**
+  String get editWord;
+
+  /// No description provided for @errorCheckingExistence.
+  ///
+  /// In en, this message translates to:
+  /// **'Error checking dictionary existence: {error}'**
+  String errorCheckingExistence(Object error);
+
+  /// No description provided for @errorCreatingDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create dictionary.'**
+  String get errorCreatingDictionary;
+
+  /// No description provided for @errorDeletingDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting dictionary \'{dictionaryName}\''**
+  String errorDeletingDictionary(Object dictionaryName);
+
+  /// No description provided for @errorDeletingDictionaryDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting dictionary \'{dictionaryName}\': {error}'**
+  String errorDeletingDictionaryDirectory(Object dictionaryName, Object error);
+
+  /// No description provided for @errorListingDictionaryDirectories.
+  ///
+  /// In en, this message translates to:
+  /// **'Error listing dictionary directories: {error}'**
+  String errorListingDictionaryDirectories(Object error);
+
+  /// No description provided for @errorLoadingDictionaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading dictionaries'**
+  String get errorLoadingDictionaries;
+
+  /// No description provided for @errorLoadingDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading dictionary \'{dictionaryName}\': {error}'**
+  String errorLoadingDictionary(Object dictionaryName, Object error);
+
+  /// No description provided for @errorLoadingSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading settings: {error}'**
+  String errorLoadingSettings(Object error);
+
+  /// No description provided for @errorRemovingWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Error removing word from \'{dictionaryName}\' at index {wordIndex}'**
+  String errorRemovingWord(Object dictionaryName, Object wordIndex);
+
+  /// No description provided for @errorSavingDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving dictionary \'{dictionaryName}\': {error}'**
+  String errorSavingDictionary(Object dictionaryName, Object error);
+
+  /// No description provided for @errorSavingThemeMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving theme mode: {error}'**
+  String errorSavingThemeMode(Object error);
+
+  /// No description provided for @errorUpdatingWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating word in \'{dictionaryName}\' at index {wordIndex}'**
+  String errorUpdatingWord(Object dictionaryName, Object wordIndex);
+
+  /// No description provided for @errorValidatingName.
+  ///
+  /// In en, this message translates to:
+  /// **'Error validating name: {error}'**
+  String errorValidatingName(Object error);
+
+  /// No description provided for @errorValidatingNameDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Error validating dictionary name.'**
+  String get errorValidatingNameDialog;
+
+  /// No description provided for @failedToDeleteWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete word.'**
+  String get failedToDeleteWord;
+
+  /// No description provided for @failedToFindWordForEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to find word for editing/deleting.'**
+  String get failedToFindWordForEdit;
+
+  /// No description provided for @failedToAddWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add word.'**
+  String get failedToAddWord;
+
+  /// No description provided for @failedToUpdateDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update dictionary.'**
+  String get failedToUpdateDictionary;
+
+  /// No description provided for @failedToUpdateWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update word.'**
+  String get failedToUpdateWord;
+
+  /// No description provided for @folderColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder Color'**
+  String get folderColor;
+
+  /// No description provided for @foundDictionaryDirectories.
+  ///
+  /// In en, this message translates to:
+  /// **'Found dictionary directories: {dirNames}'**
+  String foundDictionaryDirectories(Object dirNames);
+
+  /// No description provided for @importExportDictionaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Import / Export Dictionaries'**
+  String get importExportDictionaries;
+
+  /// No description provided for @invalidWordIndexForDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid word index {wordIndex} for dictionary \'{dictionaryName}\'. Max index is {maxIndex}.'**
+  String invalidWordIndexForDictionary(Object dictionaryName, Object maxIndex, Object wordIndex);
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @languageDrawer.
+  ///
+  /// In en, this message translates to:
+  /// **'Language: English'**
+  String get languageDrawer;
 
   /// No description provided for @languageEnglish.
   ///
@@ -377,287 +557,35 @@ abstract class AppLocalizations {
   /// **'Ukrainian'**
   String get languageUkrainian;
 
-  /// No description provided for @aboutApp.
+  /// No description provided for @license.
   ///
   /// In en, this message translates to:
-  /// **'About App'**
-  String get aboutApp;
+  /// **'License'**
+  String get license;
 
-  /// No description provided for @aboutAppNotReady.
+  /// No description provided for @light.
   ///
   /// In en, this message translates to:
-  /// **'About app info is not ready yet.'**
-  String get aboutAppNotReady;
+  /// **'Light'**
+  String get light;
 
-  /// No description provided for @editDictionary.
+  /// No description provided for @maxLength20.
   ///
   /// In en, this message translates to:
-  /// **'Edit Dictionary'**
-  String get editDictionary;
+  /// **'Maximum 20 characters'**
+  String get maxLength20;
 
-  /// No description provided for @updateDictionary.
+  /// No description provided for @myDictionaries.
   ///
   /// In en, this message translates to:
-  /// **'Update Dictionary'**
-  String get updateDictionary;
+  /// **'My Dictionaries'**
+  String get myDictionaries;
 
-  /// No description provided for @dictionaryUpdated.
+  /// No description provided for @oopsImportExportNotReady.
   ///
   /// In en, this message translates to:
-  /// **'Dictionary \"{dictionaryName}\" updated.'**
-  String dictionaryUpdated(Object dictionaryName);
-
-  /// No description provided for @failedToUpdateDictionary.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to update dictionary.'**
-  String get failedToUpdateDictionary;
-
-  /// No description provided for @errorValidatingName.
-  ///
-  /// In en, this message translates to:
-  /// **'Error validating name: {error}'**
-  String errorValidatingName(Object error);
-
-  /// No description provided for @errorCheckingExistence.
-  ///
-  /// In en, this message translates to:
-  /// **'Error checking dictionary existence: {error}'**
-  String errorCheckingExistence(Object error);
-
-  /// No description provided for @anotherWordWithSameTermExists.
-  ///
-  /// In en, this message translates to:
-  /// **'Another word with the same term \"{term}\" / \"{translation}\" already exists.'**
-  String anotherWordWithSameTermExists(Object term, Object translation);
-
-  /// No description provided for @wordOrTranslationCannotBeEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'Word and translation cannot be empty.'**
-  String get wordOrTranslationCannotBeEmpty;
-
-  /// No description provided for @wordAndTranslationMaxLength20.
-  ///
-  /// In en, this message translates to:
-  /// **'Word and translation length cannot exceed 20 characters.'**
-  String get wordAndTranslationMaxLength20;
-
-  /// No description provided for @errorUpdatingWord.
-  ///
-  /// In en, this message translates to:
-  /// **'Error updating word in \'{dictionaryName}\' at index {wordIndex}'**
-  String errorUpdatingWord(Object dictionaryName, Object wordIndex);
-
-  /// No description provided for @errorRemovingWord.
-  ///
-  /// In en, this message translates to:
-  /// **'Error removing word from \'{dictionaryName}\' at index {wordIndex}'**
-  String errorRemovingWord(Object dictionaryName, Object wordIndex);
-
-  /// No description provided for @errorDeletingDictionary.
-  ///
-  /// In en, this message translates to:
-  /// **'Error deleting dictionary \'{dictionaryName}\''**
-  String errorDeletingDictionary(Object dictionaryName);
-
-  /// No description provided for @errorLoadingDictionaries.
-  ///
-  /// In en, this message translates to:
-  /// **'Error loading dictionaries'**
-  String get errorLoadingDictionaries;
-
-  /// No description provided for @criticalErrorFailedToDeleteOldDictionary.
-  ///
-  /// In en, this message translates to:
-  /// **'CRITICAL: Failed to delete old directory \'{oldName}\' after renaming to \'{newName}\'. Manual cleanup might be needed.'**
-  String criticalErrorFailedToDeleteOldDictionary(Object newName, Object oldName);
-
-  /// No description provided for @dictionaryNotFoundForUpdate.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary \'{dictionaryName}\' not found for update.'**
-  String dictionaryNotFoundForUpdate(Object dictionaryName);
-
-  /// No description provided for @dictionaryNotFoundForDeletion.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary \'{dictionaryName}\' not found for deletion.'**
-  String dictionaryNotFoundForDeletion(Object dictionaryName);
-
-  /// No description provided for @invalidWordIndexForDictionary.
-  ///
-  /// In en, this message translates to:
-  /// **'Invalid word index {wordIndex} for dictionary \'{dictionaryName}\'. Max index is {maxIndex}.'**
-  String invalidWordIndexForDictionary(Object dictionaryName, Object maxIndex, Object wordIndex);
-
-  /// No description provided for @dictionaryNotFoundForWordUpdate.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary \'{dictionaryName}\' not found for word update.'**
-  String dictionaryNotFoundForWordUpdate(Object dictionaryName);
-
-  /// No description provided for @dictionaryFileNotFound.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary file not found for \'{dictionaryName}\' at: {filePath}'**
-  String dictionaryFileNotFound(Object dictionaryName, Object filePath);
-
-  /// No description provided for @errorLoadingDictionary.
-  ///
-  /// In en, this message translates to:
-  /// **'Error loading dictionary \'{dictionaryName}\': {error}'**
-  String errorLoadingDictionary(Object dictionaryName, Object error);
-
-  /// No description provided for @directoryForDictionaryCreated.
-  ///
-  /// In en, this message translates to:
-  /// **'Directory for dictionary \'{dictionaryName}\' created at: {directoryPath}'**
-  String directoryForDictionaryCreated(Object dictionaryName, Object directoryPath);
-
-  /// No description provided for @dictionarySavedTo.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary \'{dictionaryName}\' saved to: {filePath}'**
-  String dictionarySavedTo(Object dictionaryName, Object filePath);
-
-  /// No description provided for @errorSavingDictionary.
-  ///
-  /// In en, this message translates to:
-  /// **'Error saving dictionary \'{dictionaryName}\': {error}'**
-  String errorSavingDictionary(Object dictionaryName, Object error);
-
-  /// No description provided for @baseDictionaryDirectoryCreated.
-  ///
-  /// In en, this message translates to:
-  /// **'Base \'Dictionary\' directory created at: {baseDirPath}'**
-  String baseDictionaryDirectoryCreated(Object baseDirPath);
-
-  /// No description provided for @errorListingDictionaryDirectories.
-  ///
-  /// In en, this message translates to:
-  /// **'Error listing dictionary directories: {error}'**
-  String errorListingDictionaryDirectories(Object error);
-
-  /// No description provided for @foundDictionaryDirectories.
-  ///
-  /// In en, this message translates to:
-  /// **'Found dictionary directories: {dirNames}'**
-  String foundDictionaryDirectories(Object dirNames);
-
-  /// No description provided for @successfullyDeletedDictionary.
-  ///
-  /// In en, this message translates to:
-  /// **'Successfully deleted dictionary \'{dictionaryName}\' at: {directoryPath}'**
-  String successfullyDeletedDictionary(Object dictionaryName, Object directoryPath);
-
-  /// No description provided for @directoryForDictionaryNotFound.
-  ///
-  /// In en, this message translates to:
-  /// **'Directory for dictionary \'{dictionaryName}\' not found at: {directoryPath}'**
-  String directoryForDictionaryNotFound(Object dictionaryName, Object directoryPath);
-
-  /// No description provided for @errorDeletingDictionaryDirectory.
-  ///
-  /// In en, this message translates to:
-  /// **'Error deleting dictionary \'{dictionaryName}\': {error}'**
-  String errorDeletingDictionaryDirectory(Object dictionaryName, Object error);
-
-  /// No description provided for @cannotDeleteMainDictionaryDirectory.
-  ///
-  /// In en, this message translates to:
-  /// **'Error: Cannot delete the main \'Dictionary\' directory. Dictionary name is blank.'**
-  String get cannotDeleteMainDictionaryDirectory;
-
-  /// No description provided for @errorLoadingSettings.
-  ///
-  /// In en, this message translates to:
-  /// **'Error loading settings: {error}'**
-  String errorLoadingSettings(Object error);
-
-  /// No description provided for @errorSavingThemeMode.
-  ///
-  /// In en, this message translates to:
-  /// **'Error saving theme mode: {error}'**
-  String errorSavingThemeMode(Object error);
-
-  /// No description provided for @dictionariesCount.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionaries: {count}'**
-  String dictionariesCount(Object count);
-
-  /// No description provided for @languageDrawer.
-  ///
-  /// In en, this message translates to:
-  /// **'Language: English'**
-  String get languageDrawer;
-
-  /// No description provided for @dictionaryNotFound.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary not found.'**
-  String get dictionaryNotFound;
-
-  /// No description provided for @dictionaryMightBeDeleted.
-  ///
-  /// In en, this message translates to:
-  /// **'It might have been deleted.'**
-  String get dictionaryMightBeDeleted;
-
-  /// No description provided for @createDictionary.
-  ///
-  /// In en, this message translates to:
-  /// **'Create Dictionary'**
-  String get createDictionary;
-
-  /// No description provided for @dictionaryNameLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary Name'**
-  String get dictionaryNameLabel;
-
-  /// No description provided for @dictionaryNameHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter dictionary name'**
-  String get dictionaryNameHint;
-
-  /// No description provided for @folderColor.
-  ///
-  /// In en, this message translates to:
-  /// **'Folder Color'**
-  String get folderColor;
-
-  /// No description provided for @checkingAvailability.
-  ///
-  /// In en, this message translates to:
-  /// **'Checking availability...'**
-  String get checkingAvailability;
-
-  /// No description provided for @errorValidatingNameDialog.
-  ///
-  /// In en, this message translates to:
-  /// **'Error validating dictionary name.'**
-  String get errorValidatingNameDialog;
-
-  /// No description provided for @dictionaryUpdatedWithName.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary \"{dictionaryName}\" updated.'**
-  String dictionaryUpdatedWithName(Object dictionaryName);
-
-  /// No description provided for @dictionaryDeletedWithName.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary \"{dictionaryName}\" deleted.'**
-  String dictionaryDeletedWithName(Object dictionaryName);
-
-  /// No description provided for @edit.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit'**
-  String get edit;
+  /// **'Import/Export feature is not ready yet. :('**
+  String get oopsImportExportNotReady;
 
   /// No description provided for @options.
   ///
@@ -665,23 +593,119 @@ abstract class AppLocalizations {
   /// **'Options'**
   String get options;
 
-  /// No description provided for @failedToDeleteWord.
+  /// No description provided for @pleaseEnterTranslation.
   ///
   /// In en, this message translates to:
-  /// **'Failed to delete word.'**
-  String get failedToDeleteWord;
+  /// **'Please enter a translation'**
+  String get pleaseEnterTranslation;
 
-  /// No description provided for @descriptionOptional.
+  /// No description provided for @pleaseEnterWord.
   ///
   /// In en, this message translates to:
-  /// **'Description (optional)'**
-  String get descriptionOptional;
+  /// **'Please enter a word'**
+  String get pleaseEnterWord;
 
-  /// No description provided for @failedToUpdateWord.
+  /// No description provided for @save.
   ///
   /// In en, this message translates to:
-  /// **'Failed to update word.'**
-  String get failedToUpdateWord;
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @sortByAlphabetical.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Alphabetically'**
+  String get sortByAlphabetical;
+
+  /// No description provided for @sortByLastAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by Last Added'**
+  String get sortByLastAdded;
+
+  /// No description provided for @successfullyDeletedDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully deleted dictionary \'{dictionaryName}\' at: {directoryPath}'**
+  String successfullyDeletedDictionary(Object dictionaryName, Object directoryPath);
+
+  /// No description provided for @systemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get systemDefault;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @translation.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation'**
+  String get translation;
+
+  /// No description provided for @updateDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Dictionary'**
+  String get updateDictionary;
+
+  /// No description provided for @updateWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Word'**
+  String get updateWord;
+
+  /// No description provided for @version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
+
+  /// No description provided for @word.
+  ///
+  /// In en, this message translates to:
+  /// **'Word'**
+  String get word;
+
+  /// No description provided for @wordAndTranslationMaxLength20.
+  ///
+  /// In en, this message translates to:
+  /// **'Word and translation length cannot exceed 20 characters.'**
+  String get wordAndTranslationMaxLength20;
+
+  /// No description provided for @wordDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Word deleted'**
+  String get wordDeleted;
+
+  /// No description provided for @wordDeletedWithName.
+  ///
+  /// In en, this message translates to:
+  /// **'Word \"{wordName}\" deleted'**
+  String wordDeletedWithName(Object wordName);
+
+  /// No description provided for @wordOrTranslationCannotBeEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Word and translation cannot be empty.'**
+  String get wordOrTranslationCannotBeEmpty;
+
+  /// No description provided for @wordUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Word updated successfully!'**
+  String get wordUpdatedSuccessfully;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

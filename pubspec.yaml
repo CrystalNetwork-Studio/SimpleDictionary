@@ -21,6 +21,7 @@ dependencies:
   json_annotation: ^4.8.0 # For JSON serialization annotations
   shared_preferences: ^2.0.0 # Storing settings
   package_info_plus: ^8.3.0 # For getting app info
+  url_launcher: ^6.3.1 # For opening URLs
 
 dev_dependencies:
   flutter_test:
