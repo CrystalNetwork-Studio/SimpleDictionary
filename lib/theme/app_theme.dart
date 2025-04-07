@@ -54,7 +54,7 @@ class AppTheme {
     colorScheme: _lightColorScheme,
     useMaterial3: true,
     brightness: Brightness.light,
-    scaffoldBackgroundColor: _lightColorScheme.surface,
+    scaffoldBackgroundColor: _lightColorScheme.background,
     appBarTheme: AppBarTheme(
       backgroundColor: _lightColorScheme.surface, // Mantle
       foregroundColor: _lightColorScheme.onSurface, // Text
@@ -93,7 +93,7 @@ class AppTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: _lightColorScheme.surfaceContainerHighest, // Surface0
+      fillColor: _lightColorScheme.surfaceVariant, // Surface0
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none, // No border by default
@@ -138,7 +138,7 @@ class AppTheme {
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      backgroundColor: _lightColorScheme.surfaceContainerHighest, // Surface0
+      backgroundColor: _lightColorScheme.background, // Surface0
       contentTextStyle: TextStyle(
         color: _lightColorScheme.onSurfaceVariant,
       ), // Subtext0
@@ -158,7 +158,7 @@ class AppTheme {
     colorScheme: _darkColorScheme,
     useMaterial3: true,
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: _darkColorScheme.surface, // Base
+    scaffoldBackgroundColor: _darkColorScheme.background, // Base
     appBarTheme: AppBarTheme(
       backgroundColor: _darkColorScheme.surface, // Mantle
       foregroundColor: _darkColorScheme.onSurface, // Text
