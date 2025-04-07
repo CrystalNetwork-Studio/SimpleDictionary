@@ -15,7 +15,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get aboutAppDescription => 'Простий додаток для створення та керування особистими словниками.';
 
   @override
-  String get aboutAppNotReady => 'Інформація про додаток ще не доробленна.';
+  String get aboutAppNotReady => 'Інформація про додаток ще не готова.';
 
   @override
   String get addDictionary => 'Додати словник';
@@ -294,7 +294,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get languageDrawer => 'Мова: Українська';
 
   @override
-  String get languageEnglish => 'English';
+  String get languageEnglish => 'Англійська';
 
   @override
   String get languageUkrainian => 'Українська';
@@ -307,6 +307,11 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get maxLength20 => 'Максимум 20 символів';
+
+  @override
+  String maxLengthValidation(Object maxLength) {
+    return 'Максимальна довжина: $maxLength символів';
+  }
 
   @override
   String get myDictionaries => 'Мої словники';
@@ -362,7 +367,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get word => 'Слово';
 
   @override
-  String get wordAndTranslationMaxLength20 => 'Довжина слова та перекладу не може перевищувати 20 символів.';
+  String get wordAndTranslationMaxLength => 'Довжина слова та перекладу не може перевищувати 20 символів.';
 
   @override
   String get wordDeleted => 'Слово видалено';
@@ -385,5 +390,11 @@ class AppLocalizationsUk extends AppLocalizations {
   String get words => 'Слова';
 
   @override
-  String get sentences => 'Речення';
+  String get sentence => 'Речення';
+
+  @override
+  String get sentences => 'Фрази';
+
+  @override
+  String get goBack => 'Назад';
 }

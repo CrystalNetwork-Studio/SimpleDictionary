@@ -28,7 +28,7 @@
     "descriptionOptional": "Description (optional)",
     "dictionaries": "Dictionaries",
     "dictionariesCount": "Dictionaries: {count}",
-    "dictionaryAlreadyExists": "Dictionary with this name already exists.",
+    "dictionaryAlreadyExists": "Dictionary with this name exists.",
     "dictionaryCreated": "Dictionary \"{dictionaryName}\" created.",
     "dictionaryDeletedWithName": "Dictionary \"{dictionaryName}\" deleted.",
     "dictionaryEmpty": "Dictionary is empty",
@@ -80,6 +80,7 @@
     "license": "License",
     "light": "Light",
     "maxLength20": "Maximum 20 characters",
+    "maxLengthValidation": "Maximum length is {maxLength} characters",
     "myDictionaries": "My Dictionaries",
     "oopsImportExportNotReady": "Import/Export feature is not ready yet. :(",
     "options": "Options",
@@ -97,12 +98,14 @@
     "updateWord": "Update Word",
     "version": "Version",
     "word": "Word",
-    "wordAndTranslationMaxLength20": "Word and translation length cannot exceed 20 characters.",
+    "wordAndTranslationMaxLength": "Word and translation length cannot exceed 20 characters.",
     "wordDeleted": "Word deleted",
     "wordDeletedWithName": "Word \"{wordName}\" deleted",
     "wordOrTranslationCannotBeEmpty": "Word and translation cannot be empty.",
     "wordUpdatedSuccessfully": "Word updated successfully!",
     "dictionaryType": "Dictionary Type",
     "words": "Words",
-    "sentences": "Sentences"
+    "sentence": "Sentence",
+    "sentences": "Sentences",
+    "goBack": "Back"
 }

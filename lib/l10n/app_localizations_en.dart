@@ -105,7 +105,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get dictionaryAlreadyExists => 'Dictionary with this name already exists.';
+  String get dictionaryAlreadyExists => 'Dictionary with this name exists.';
 
   @override
   String dictionaryCreated(Object dictionaryName) {
@@ -309,6 +309,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get maxLength20 => 'Maximum 20 characters';
 
   @override
+  String maxLengthValidation(Object maxLength) {
+    return 'Maximum length is $maxLength characters';
+  }
+
+  @override
   String get myDictionaries => 'My Dictionaries';
 
   @override
@@ -362,7 +367,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get word => 'Word';
 
   @override
-  String get wordAndTranslationMaxLength20 => 'Word and translation length cannot exceed 20 characters.';
+  String get wordAndTranslationMaxLength => 'Word and translation length cannot exceed 20 characters.';
 
   @override
   String get wordDeleted => 'Word deleted';
@@ -385,5 +390,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get words => 'Words';
 
   @override
+  String get sentence => 'Sentence';
+
+  @override
   String get sentences => 'Sentences';
+
+  @override
+  String get goBack => 'Back';
 }

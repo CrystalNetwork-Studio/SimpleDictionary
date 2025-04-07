@@ -16,15 +16,34 @@ class Dictionary {
     required this.name,
     this.words = const [],
     Color? color,
-    this.type = DictionaryType.words,
+    this.type = DictionaryType.word,
   }) : color = color ?? Colors.blue;
 
   factory Dictionary.fromJson(Map<String, dynamic> json) =>
       _$DictionaryFromJson(json);
 
-  bool get isSentencesType => type == DictionaryType.sentences;
+  Map<String, dynamic> toJson() => _$DictionaryToJson(this);
 
-  bool get isWordsType => type == DictionaryType.words;
+  // Гетери для перевірки типу словника
+  bool get isSentenceType => type == DictionaryType.sentence;
+  bool get isWordType => type == DictionaryType.word;
+  bool get isPhraseType => type == DictionaryType.phrase;
+
+  // Допоміжний метод для отримання максимальної довжини символів
+  int? get maxCharsPerField {
+    switch (type) {
+      case DictionaryType.word:
+        return 14;
+      case DictionaryType.phrase:
+        return 23;
+      case DictionaryType.sentence:
+        return null; // Без обмежень
+    }
+  }
+
+  bool get isDescriptionAllowed {
+    return type == DictionaryType.word;
+  }
 
   void addWord(Word word) {
     words.add(word);
@@ -44,7 +63,6 @@ class Dictionary {
     );
   }
 
-  Map<String, dynamic> toJson() => _$DictionaryToJson(this);
   static Color _colorFromJson(int? value) {
     return value != null ? Color(value) : Colors.blue;
   }
@@ -54,18 +72,25 @@ class Dictionary {
   }
 }
 
-enum DictionaryType { words, sentences }
+// Оновлений enum з новими типами
+enum DictionaryType {
+  word, // Змінено з words
+  phrase, // Новий тип
+  sentence, // Змінено з sentences
+}
 
 @JsonSerializable()
 class Word {
   final String term;
   final String translation;
-  final String description;
+  // Опис тепер необов'язковий
+  @JsonKey(includeIfNull: false) // Не включати в JSON, якщо null
+  final String? description;
 
   Word({
     required this.term,
     required this.translation,
-    required this.description,
+    this.description, // Зроблено необов'язковим
   });
 
   factory Word.fromJson(Map<String, dynamic> json) => _$WordFromJson(json);

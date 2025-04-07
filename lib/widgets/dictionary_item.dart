@@ -4,7 +4,7 @@ import 'package:simpledictionary/l10n/app_localizations.dart';
 
 import '../data/dictionary.dart';
 import '../providers/dictionary_provider.dart';
-import '../screens/dictionary_detail_screen.dart';
+import '../screens/dictionary_detail_screen.dart' show DictionaryDetailScreen;
 import 'confirm_delete_dialog.dart';
 import 'edit_dictionary_dialog.dart';
 
@@ -27,23 +27,30 @@ class DictionaryItem extends StatelessWidget {
 
         // Determine the icon based on the dictionary type
         final IconData dictionaryIcon =
-            currentDictionary.type == DictionaryType.sentences
+            currentDictionary.type == DictionaryType.sentence
                 ? Icons
                     .short_text // Icon for sentences
+                : currentDictionary.type == DictionaryType.phrase
+                ? Icons.record_voice_over
                 : Icons.translate_outlined; // Default icon for words
 
         return Card(
           child: InkWell(
             borderRadius: BorderRadius.circular(12),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) =>
-                          DictionaryDetailScreen(dictionary: currentDictionary),
-                ),
-              );
+            onTap: () async {
+              await Future.delayed(const Duration(milliseconds: 80));
+
+              if (context.mounted) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => DictionaryDetailScreen(
+                          dictionary: currentDictionary,
+                        ),
+                  ),
+                );
+              }
             },
             child: Padding(
               padding: const EdgeInsets.only(

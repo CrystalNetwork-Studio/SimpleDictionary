@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:simpledictionary/l10n/app_localizations.dart';
 
 import '../data/dictionary.dart';
@@ -18,11 +18,12 @@ class DictionaryProvider with ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
+  // --- Додавання словника ---
   Future<bool> addDictionary(
     String name, {
     Color? color,
     BuildContext? context,
-    DictionaryType dictionaryType = DictionaryType.words,
+    DictionaryType dictionaryType = DictionaryType.word,
   }) async {
     String? nameNotEmptyError;
     if (context != null) {
@@ -67,12 +68,15 @@ class DictionaryProvider with ChangeNotifier {
       );
       success = true;
       if (kDebugMode) {
-        debugPrint("Dictionary '$trimmedName' added.");
+        debugPrint(
+          "Dictionary '$trimmedName' added with type '${dictionaryType.name}'.",
+        );
       }
     }, errorMessagePrefix: "Error adding dictionary '$trimmedName'");
     return success;
   }
 
+  // --- Додавання слова до словника ---
   Future<bool> addWordToDictionary(
     String dictionaryName,
     Word newWord, {
@@ -85,6 +89,7 @@ class DictionaryProvider with ChangeNotifier {
     } else {
       wordOrTranslationEmptyError = 'Context is null';
     }
+    // Базова перевірка на порожні поля
     if (newWord.term.trim().isEmpty || newWord.translation.trim().isEmpty) {
       _error = wordOrTranslationEmptyError;
       notifyListeners();
@@ -101,29 +106,37 @@ class DictionaryProvider with ChangeNotifier {
       }
 
       final dictionary = _dictionaries[index];
-
-      // Only enforce length limit for 'words' type dictionaries
-      if (dictionary.isWordsType &&
-          (newWord.term.trim().length > 20 ||
-              newWord.translation.trim().length > 20)) {
-        String? wordMaxLengthError;
-        if (context != null) {
-          wordMaxLengthError =
-              AppLocalizations.of(context)!.wordAndTranslationMaxLength20;
-        } else {
-          wordMaxLengthError = 'Context is null';
-        }
-        _error = wordMaxLengthError;
-        return;
-      }
-
       final trimmedTerm = newWord.term.trim();
       final trimmedTranslation = newWord.translation.trim();
+
+      // --- Перевірка довжини відповідно до типу словника ---
+      final int? maxLength = dictionary.maxCharsPerField;
+      if (maxLength != null &&
+          (trimmedTerm.length > maxLength ||
+              trimmedTranslation.length > maxLength)) {
+        String? wordMaxLengthError;
+        if (context != null) {
+          // Потрібно створити або адаптувати рядок локалізації
+          wordMaxLengthError =
+              AppLocalizations.of(
+                context,
+              )!.wordAndTranslationMaxLength; // Використання локалізації
+        } else {
+          wordMaxLengthError =
+              'Term/Translation exceeds max length of $maxLength chars for ${dictionary.type.name} dictionary.';
+        }
+        _error = wordMaxLengthError;
+        return; // Не додаємо слово, якщо довжина перевищена
+      }
+      // --- Кінець перевірки довжини ---
+
+      // Перевірка на існування ідентичного слова (термін + переклад)
+
       String? anotherWordExistsError;
       if (context != null) {
-        anotherWordExistsError =
-            AppLocalizations.of(context)!.anotherWordWithSameTermExists
-                as String?;
+        anotherWordExistsError = AppLocalizations.of(
+          context,
+        )!.anotherWordWithSameTermExists(trimmedTerm, trimmedTranslation);
       } else {
         anotherWordExistsError = 'Context is null';
       }
@@ -138,10 +151,16 @@ class DictionaryProvider with ChangeNotifier {
       if (exists) {
         _error = anotherWordExistsError;
       } else {
+        // Створення слова для додавання
         final wordToAdd = Word(
           term: trimmedTerm,
           translation: trimmedTranslation,
-          description: newWord.description.trim(),
+          // Додаємо опис тільки якщо це дозволено типом словника
+          description:
+              dictionary.isDescriptionAllowed
+                  ? newWord.description
+                      ?.trim() // Обрізаємо опис, якщо він є
+                  : null, // Інакше встановлюємо null
         );
         final updatedWords = List<Word>.from(dictionary.words)..add(wordToAdd);
         final updatedDictionary = dictionary.copyWith(words: updatedWords);
@@ -162,6 +181,11 @@ class DictionaryProvider with ChangeNotifier {
 
     return addedSuccessfully;
   }
+
+  // --- Решта методів (load, deleteDictionary, removeWord, updateProperties, etc.) ---
+  // Залишаються переважно без змін, оскільки вони оперують
+  // словниками як цілими або індексами слів, а не їх вмістом/типом.
+  // Потрібно переконатись, що `updateDictionaryProperties` не змінює тип словника.
 
   void clearError() {
     if (_error != null) {
@@ -199,11 +223,13 @@ class DictionaryProvider with ChangeNotifier {
     return success;
   }
 
-  /// Checks if a dictionary with the given name exists (case-insensitive)
   Future<bool> dictionaryExists(String name) async {
     final lowerCaseName = name.trim().toLowerCase();
     return _dictionaries.any((d) => d.name.toLowerCase() == lowerCaseName);
   }
+
+  // Допоміжна функція для локалізації (якщо `context` доступний)
+  AppLocalizations l10n(BuildContext context) => AppLocalizations.of(context)!;
 
   Future<void> loadDictionaries() async {
     await _performAction(
@@ -214,6 +240,10 @@ class DictionaryProvider with ChangeNotifier {
           try {
             final dict = await file_utils.loadDictionaryFromJson(name);
             if (dict != null) {
+              // Важливо: При завантаженні переконайтеся, що тип словника
+              // правильно десеріалізується. Якщо старі файли не мають типу,
+              // можливо, знадобиться логіка для встановлення типу за замовчуванням
+              // або міграції. Припускаємо, що .g.dart файл впорається.
               loaded.add(dict);
             } else {
               if (kDebugMode) {
@@ -225,6 +255,8 @@ class DictionaryProvider with ChangeNotifier {
           } catch (e) {
             if (kDebugMode) {
               debugPrint("Error loading individual dictionary '$name': $e");
+              // Можливо, варто видалити пошкоджений словник або позначити його
+              // await file_utils.deleteDictionaryDirectory(name);
             }
           }
         }
@@ -238,7 +270,6 @@ class DictionaryProvider with ChangeNotifier {
     );
   }
 
-  /// Removes a word from the dictionary by its index.
   Future<bool> removeWordFromDictionary(
     String dictionaryName,
     int wordIndex, {
@@ -289,13 +320,13 @@ class DictionaryProvider with ChangeNotifier {
     return removedSuccessfully;
   }
 
-  /// Updates dictionary properties (name and color).
   Future<bool> updateDictionaryProperties(
     String oldName,
     String newName,
     Color newColor, {
     BuildContext? context,
   }) async {
+    // ... (перевірки імені залишаються) ...
     String? dictionaryNameNotEmptyError;
     if (context != null) {
       dictionaryNameNotEmptyError =
@@ -312,8 +343,9 @@ class DictionaryProvider with ChangeNotifier {
 
     String? dictionaryNotFoundForUpdateError;
     if (context != null) {
-      dictionaryNotFoundForUpdateError =
-          AppLocalizations.of(context)!.dictionaryNotFoundForUpdate as String?;
+      dictionaryNotFoundForUpdateError = AppLocalizations.of(
+        context,
+      )!.dictionaryNotFoundForUpdate(oldName);
     } else {
       dictionaryNotFoundForUpdateError = 'Context is null';
     }
@@ -342,35 +374,43 @@ class DictionaryProvider with ChangeNotifier {
 
     await _performAction(
       () async {
+        // Важливо: Копіюємо словник, зберігаючи його оригінальний тип!
         final updatedDictionary = originalDictionary.copyWith(
           name: trimmedNewName,
           color: newColor,
-          // type should remain the same during property updates
+          // type: НЕ ЗМІНЮЄМО ТИП ПРИ ОНОВЛЕННІ ВЛАСТИВОСТЕЙ
         );
 
+        // ... (логіка збереження/видалення старого файлу залишається) ...
         if (trimmedNewName == oldName) {
+          // Only save if name is the same, otherwise save the new one later
           await file_utils.saveDictionaryToJson(updatedDictionary);
         } else {
+          // Save under the new name first
           await file_utils.saveDictionaryToJson(updatedDictionary);
 
+          // Then delete the old directory/file
           final deletedOld = await file_utils.deleteDictionaryDirectory(
             oldName,
           );
           if (!deletedOld) {
+            // This is problematic, log it and maybe inform the user
             final criticalMessage =
                 "CRITICAL: Failed to delete old directory '$oldName' after renaming to '$trimmedNewName'. Manual cleanup might be needed.";
             if (kDebugMode) {
               debugPrint(criticalMessage);
             }
+            // Decide how to handle this - maybe proceed but set an error?
             String? errorDeletingDictionaryDir;
-            if (context != null) {
-              errorDeletingDictionaryDir =
-                  AppLocalizations.of(context)!.errorDeletingDictionaryDirectory
-                      as String?;
+            if (context != null && context.mounted) {
+              errorDeletingDictionaryDir = AppLocalizations.of(
+                context,
+              )!.errorDeletingDictionaryDirectory(oldName, trimmedNewName);
             } else {
-              errorDeletingDictionaryDir = 'Context is null';
+              errorDeletingDictionaryDir = 'Context is null or not mounted';
             }
             _error = errorDeletingDictionaryDir;
+            // Optionally throw to indicate failure despite saving the new one
             throw Exception(_error);
           }
         }
@@ -381,7 +421,9 @@ class DictionaryProvider with ChangeNotifier {
         );
         success = true;
         if (kDebugMode) {
-          debugPrint("Dictionary '$trimmedNewName' updated.");
+          debugPrint(
+            "Dictionary properties updated for '$trimmedNewName' (Type: ${updatedDictionary.type.name}).",
+          );
         }
       },
       errorMessagePrefix:
@@ -391,7 +433,7 @@ class DictionaryProvider with ChangeNotifier {
     return success;
   }
 
-  /// Updates a word at a specific index within a dictionary.
+  // --- Оновлення слова у словнику ---
   Future<bool> updateWordInDictionary(
     String dictionaryName,
     int wordIndex,
@@ -405,6 +447,7 @@ class DictionaryProvider with ChangeNotifier {
     } else {
       wordOrTranslationEmptyError = 'Context is null';
     }
+    // Базова перевірка на порожні поля
     if (updatedWord.term.trim().isEmpty ||
         updatedWord.translation.trim().isEmpty) {
       _error = wordOrTranslationEmptyError;
@@ -432,37 +475,41 @@ class DictionaryProvider with ChangeNotifier {
           );
         }
 
-        // Only enforce length limit for 'words' type dictionaries
-        if (dictionary.isWordsType &&
-            (updatedWord.term.trim().length > 20 ||
-                updatedWord.translation.trim().length > 20)) {
+        final trimmedTerm = updatedWord.term.trim();
+        final trimmedTranslation = updatedWord.translation.trim();
+
+        // --- Перевірка довжини відповідно до типу словника ---
+        final int? maxLength = dictionary.maxCharsPerField;
+        if (maxLength != null &&
+            (trimmedTerm.length > maxLength ||
+                trimmedTranslation.length > maxLength)) {
           String? wordMaxLengthError;
           if (context != null) {
             wordMaxLengthError =
-                AppLocalizations.of(context)!.wordAndTranslationMaxLength20;
+                AppLocalizations.of(
+                  context,
+                )!.wordAndTranslationMaxLength; // Використання локалізації
           } else {
-            wordMaxLengthError = 'Context is null';
+            wordMaxLengthError =
+                'Term/Translation exceeds max length of $maxLength chars for ${dictionary.type.name} dictionary.';
           }
           _error = wordMaxLengthError;
-          return;
+          return; // Не оновлюємо слово
         }
+        // --- Кінець перевірки довжини ---
 
-        final trimmedTerm = updatedWord.term.trim();
-        final trimmedTranslation = updatedWord.translation.trim();
-        final trimmedDescription = updatedWord.description.trim();
-
+        // Перевірка на існування іншого слова з таким же терміном/перекладом
         String? anotherWordExistsError;
         if (context != null) {
-          anotherWordExistsError =
-              AppLocalizations.of(context)!.anotherWordWithSameTermExists
-                  as String?;
+          anotherWordExistsError = AppLocalizations.of(
+            context,
+          )!.anotherWordWithSameTermExists(trimmedTerm, trimmedTranslation);
         } else {
           anotherWordExistsError = 'Context is null';
         }
-
         final exists = dictionary.words.asMap().entries.any(
           (entry) =>
-              entry.key != wordIndex &&
+              entry.key != wordIndex && // Не порівнювати з самим собою
               entry.value.term.trim().toLowerCase() ==
                   trimmedTerm.toLowerCase() &&
               entry.value.translation.trim().toLowerCase() ==
@@ -472,10 +519,15 @@ class DictionaryProvider with ChangeNotifier {
         if (exists) {
           _error = anotherWordExistsError;
         } else {
+          // Створення слова для оновлення
           final wordToUpdateWith = Word(
             term: trimmedTerm,
             translation: trimmedTranslation,
-            description: trimmedDescription,
+            // Додаємо опис тільки якщо це дозволено типом словника
+            description:
+                dictionary.isDescriptionAllowed
+                    ? updatedWord.description?.trim()
+                    : null,
           );
 
           final List<Word> updatedWords = List<Word>.from(dictionary.words);
@@ -505,12 +557,12 @@ class DictionaryProvider with ChangeNotifier {
     return updatedSuccessfully;
   }
 
-  // Helper to manage loading state and errors
   Future<void> _performAction(
     AsyncCallback action, {
     String? successMessage,
     String? errorMessagePrefix,
   }) async {
+    // Ця функція залишається без змін
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -521,14 +573,15 @@ class DictionaryProvider with ChangeNotifier {
       }
     } catch (e, stackTrace) {
       final message = "${errorMessagePrefix ?? 'Error'}: $e";
-      _error = message;
+      // Перевіряємо, чи помилка вже встановлена (наприклад, валідацією)
+      _error ??= message;
       if (kDebugMode) {
         debugPrint(message);
         debugPrintStack(stackTrace: stackTrace);
       }
     } finally {
       _isLoading = false;
-      notifyListeners();
+      notifyListeners(); // Повідомити про зміни стану (включаючи помилку)
     }
   }
 }

@@ -2,11 +2,6 @@
 
 part of 'dictionary.dart';
 
-const _$DictionaryTypeEnumMap = {
-  DictionaryType.words: 'words',
-  DictionaryType.sentences: 'sentences',
-};
-
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
@@ -21,7 +16,7 @@ Dictionary _$DictionaryFromJson(Map<String, dynamic> json) => Dictionary(
   color: Dictionary._colorFromJson((json['color'] as num?)?.toInt()),
   type:
       $enumDecodeNullable(_$DictionaryTypeEnumMap, json['type']) ??
-      DictionaryType.words,
+      DictionaryType.word,
 );
 
 Map<String, dynamic> _$DictionaryToJson(Dictionary instance) =>
@@ -32,14 +27,20 @@ Map<String, dynamic> _$DictionaryToJson(Dictionary instance) =>
       'color': Dictionary._colorToJson(instance.color),
     };
 
+const _$DictionaryTypeEnumMap = {
+  DictionaryType.word: 'word',
+  DictionaryType.phrase: 'phrase',
+  DictionaryType.sentence: 'sentence',
+};
+
 Word _$WordFromJson(Map<String, dynamic> json) => Word(
   term: json['term'] as String,
   translation: json['translation'] as String,
-  description: json['description'] as String,
+  description: json['description'] as String?,
 );
 
 Map<String, dynamic> _$WordToJson(Word instance) => <String, dynamic>{
   'term': instance.term,
   'translation': instance.translation,
-  'description': instance.description,
+  if (instance.description case final value?) 'description': value,
 };

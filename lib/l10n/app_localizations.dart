@@ -266,7 +266,7 @@ abstract class AppLocalizations {
   /// No description provided for @dictionaryAlreadyExists.
   ///
   /// In en, this message translates to:
-  /// **'Dictionary with this name already exists.'**
+  /// **'Dictionary with this name exists.'**
   String get dictionaryAlreadyExists;
 
   /// No description provided for @dictionaryCreated.
@@ -575,6 +575,12 @@ abstract class AppLocalizations {
   /// **'Maximum 20 characters'**
   String get maxLength20;
 
+  /// No description provided for @maxLengthValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum length is {maxLength} characters'**
+  String maxLengthValidation(Object maxLength);
+
   /// No description provided for @myDictionaries.
   ///
   /// In en, this message translates to:
@@ -677,11 +683,11 @@ abstract class AppLocalizations {
   /// **'Word'**
   String get word;
 
-  /// No description provided for @wordAndTranslationMaxLength20.
+  /// No description provided for @wordAndTranslationMaxLength.
   ///
   /// In en, this message translates to:
   /// **'Word and translation length cannot exceed 20 characters.'**
-  String get wordAndTranslationMaxLength20;
+  String get wordAndTranslationMaxLength;
 
   /// No description provided for @wordDeleted.
   ///
@@ -719,11 +725,23 @@ abstract class AppLocalizations {
   /// **'Words'**
   String get words;
 
+  /// No description provided for @sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Sentence'**
+  String get sentence;
+
   /// No description provided for @sentences.
   ///
   /// In en, this message translates to:
   /// **'Sentences'**
   String get sentences;
+
+  /// No description provided for @goBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get goBack;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

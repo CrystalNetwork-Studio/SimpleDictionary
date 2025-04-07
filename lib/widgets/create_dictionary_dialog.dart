@@ -22,7 +22,7 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
   bool _canCreate = false;
   String? _errorMessage;
   Color _selectedColor = Colors.blue;
-  DictionaryType _selectedType = DictionaryType.words;
+  DictionaryType _selectedType = DictionaryType.word;
   bool _isLoading = false;
 
   final List<Color> _colorOptions = [
@@ -44,11 +44,6 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
     final localization = AppLocalizations.of(context)!;
-
-    // Temporary hardcoded strings - replace with localization keys once added
-    const String dictionaryTypeLabel = "Dictionary Type";
-    const String wordsLabel = "Words";
-    const String sentencesLabel = "Sentences";
 
     return AlertDialog(
       title: Text(localization.createDictionary),
@@ -87,7 +82,7 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
             Row(
               children: [
                 Text(
-                  '$dictionaryTypeLabel: ', // Use hardcoded label
+                  '${localization.dictionaryType}: ',
                   style: textTheme.titleSmall,
                 ),
                 InkWell(
@@ -96,10 +91,14 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
                           ? null
                           : () {
                             setState(() {
-                              _selectedType =
-                                  _selectedType == DictionaryType.words
-                                      ? DictionaryType.sentences
-                                      : DictionaryType.words;
+                              if (_selectedType == DictionaryType.word) {
+                                _selectedType = DictionaryType.phrase;
+                              } else if (_selectedType ==
+                                  DictionaryType.phrase) {
+                                _selectedType = DictionaryType.sentence;
+                              } else {
+                                _selectedType = DictionaryType.word;
+                              }
                             });
                           },
                   borderRadius: BorderRadius.circular(
@@ -115,9 +114,11 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          _selectedType == DictionaryType.words
-                              ? wordsLabel // Use hardcoded label
-                              : sentencesLabel, // Use hardcoded label
+                          _selectedType == DictionaryType.word
+                              ? localization.words
+                              : _selectedType == DictionaryType.phrase
+                              ? localization.sentences
+                              : localization.sentences,
                           style: textTheme.titleSmall?.copyWith(
                             color: colorScheme.primary,
                             fontWeight: FontWeight.bold,

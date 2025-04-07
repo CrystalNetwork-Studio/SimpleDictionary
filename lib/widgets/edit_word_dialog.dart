@@ -50,6 +50,7 @@ class _EditWordDialogState extends State<EditWordDialog> {
   Widget build(BuildContext context) {
     final bool canInteract = !_isSaving && !_isDeleting;
     final localization = AppLocalizations.of(context)!;
+    final bool isSentence = widget.dictionaryType == DictionaryType.sentence;
 
     return AlertDialog(
       title: Text(localization.editWord),
@@ -63,9 +64,9 @@ class _EditWordDialogState extends State<EditWordDialog> {
                 controller: _termController,
                 // Apply maxLength and formatter conditionally
                 maxLength:
-                    widget.dictionaryType == DictionaryType.words ? 20 : null,
+                    widget.dictionaryType == DictionaryType.word ? 20 : null,
                 inputFormatters:
-                    widget.dictionaryType == DictionaryType.words
+                    widget.dictionaryType == DictionaryType.word
                         ? [LengthLimitingTextInputFormatter(20)]
                         : null,
                 decoration: InputDecoration(
@@ -77,7 +78,7 @@ class _EditWordDialogState extends State<EditWordDialog> {
                   if (value == null || value.trim().isEmpty) {
                     return localization.pleaseEnterWord;
                   }
-                  if (widget.dictionaryType == DictionaryType.words &&
+                  if (widget.dictionaryType == DictionaryType.word &&
                       value.length > 20) {
                     return localization.maxLength20;
                   }
@@ -90,9 +91,9 @@ class _EditWordDialogState extends State<EditWordDialog> {
                 controller: _translationController,
                 // Apply maxLength and formatter conditionally
                 maxLength:
-                    widget.dictionaryType == DictionaryType.words ? 20 : null,
+                    widget.dictionaryType == DictionaryType.word ? 20 : null,
                 inputFormatters:
-                    widget.dictionaryType == DictionaryType.words
+                    widget.dictionaryType == DictionaryType.word
                         ? [LengthLimitingTextInputFormatter(20)]
                         : null,
                 decoration: InputDecoration(
@@ -105,7 +106,7 @@ class _EditWordDialogState extends State<EditWordDialog> {
                   if (value == null || value.trim().isEmpty) {
                     return localization.pleaseEnterTranslation;
                   }
-                  if (widget.dictionaryType == DictionaryType.words &&
+                  if (widget.dictionaryType == DictionaryType.word &&
                       value.length > 20) {
                     return localization.maxLength20;
                   }
@@ -114,15 +115,16 @@ class _EditWordDialogState extends State<EditWordDialog> {
                 enabled: canInteract,
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                  labelText: localization.descriptionOptional,
-                  border: const OutlineInputBorder(),
+              if (!isSentence)
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                    labelText: localization.descriptionOptional,
+                    border: const OutlineInputBorder(),
+                  ),
+                  maxLines: 3,
+                  enabled: canInteract,
                 ),
-                maxLines: 3,
-                enabled: canInteract,
-              ),
               if (_localError != null) ...[
                 const SizedBox(height: 16),
                 Text(
@@ -137,56 +139,63 @@ class _EditWordDialogState extends State<EditWordDialog> {
       ),
       actionsAlignment: MainAxisAlignment.spaceBetween,
       actions: <Widget>[
-        TextButton.icon(
-          icon:
-              _isDeleting
-                  ? SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  )
-                  : Icon(
-                    Icons.delete_outline,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-          label: Text(
-            localization.delete,
-            style: TextStyle(color: Theme.of(context).colorScheme.error),
-          ),
-          onPressed: canInteract ? _handleDelete : null,
-          style: TextButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.error,
-          ),
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
+        OverflowBar(
+          alignment: MainAxisAlignment.spaceBetween,
           children: [
-            TextButton(
-              onPressed:
-                  canInteract
-                      ? () => Navigator.of(context).pop(
-                        EditWordDialogResult(EditWordDialogStatus.cancelled),
-                      )
-                      : null,
-              child: Text(localization.cancel),
-            ),
-            const SizedBox(width: 8),
-            ElevatedButton(
-              onPressed: canInteract ? _submitForm : null,
-              child:
-                  _isSaving
+            TextButton.icon(
+              icon:
+                  _isDeleting
                       ? SizedBox(
-                        width: 20,
-                        height: 20,
+                        width: 16,
+                        height: 16,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          color: Theme.of(context).colorScheme.error,
                         ),
                       )
-                      : Text(localization.save),
+                      : Icon(
+                        Icons.delete_outline,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+              label: Text(
+                localization.delete,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+              onPressed: canInteract ? _handleDelete : null,
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.error,
+              ),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextButton(
+                  onPressed:
+                      canInteract
+                          ? () => Navigator.of(context).pop(
+                            EditWordDialogResult(
+                              EditWordDialogStatus.cancelled,
+                            ),
+                          )
+                          : null,
+                  child: Text(localization.cancel),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: canInteract ? _submitForm : null,
+                  child:
+                      _isSaving
+                          ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          )
+                          : Text(localization.save),
+                ),
+              ],
             ),
           ],
         ),
