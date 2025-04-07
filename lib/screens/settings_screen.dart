@@ -1,6 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:simpledictionary/data/dictionary.dart';
 import 'package:simpledictionary/l10n/app_localizations.dart';
+import 'package:simpledictionary/providers/dictionary_provider.dart';
 
 import '../providers/settings_provider.dart';
 
@@ -32,7 +40,10 @@ class SettingsScreen extends StatelessWidget {
                 context: context,
                 title: localizations.dataManagement,
                 leadingIcon: Icons.storage_outlined,
-                children: [_buildImportExportTile(context)],
+                children: [
+                  _buildImportTile(context),
+                  _buildExportTile(context),
+                ],
               ),
               _buildExpansionTile(
                 context: context,
@@ -47,7 +58,6 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // Helper widget to build an ExpansionTile for a settings section
   Widget _buildExpansionTile({
     required BuildContext context,
     required String title,
@@ -85,19 +95,38 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildImportExportTile(BuildContext context) {
+  Widget _buildExportTile(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    final provider = Provider.of<DictionaryProvider>(context, listen: false);
+
     return ListTile(
-      title: Text(AppLocalizations.of(context)!.importExportDictionaries),
+      leading: const Icon(Icons.upload_file_outlined, size: 24),
+      title: Text(localizations.exportDictionary),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
       dense: true,
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.oopsImportExportNotReady,
-            ),
-          ),
-        );
+      onTap: () async {
+        if (provider.dictionaries.isEmpty) {
+          _showSnackBar(
+            context,
+            localizations.noDictionariesToExport,
+            isError: true,
+          );
+          return;
+        }
+        await _exportDictionary(context);
+      },
+    );
+  }
+
+  Widget _buildImportTile(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    return ListTile(
+      leading: const Icon(Icons.download_for_offline_outlined, size: 24),
+      title: Text(localizations.importDictionary),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+      dense: true,
+      onTap: () async {
+        await _importDictionary(context);
       },
     );
   }
@@ -113,13 +142,11 @@ class SettingsScreen extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
       dense: true,
       onTap: () async {
-        // Read the current locale before showing the dialog
         final currentLocale = context.read<SettingsProvider>().locale;
 
         final selectedLocale = await showDialog<Locale?>(
           context: context,
           builder: (BuildContext dialogContext) {
-            // Use the provider instance passed to the builder for initial groupValue
             return SimpleDialog(
               title: Text(AppLocalizations.of(dialogContext)!.language),
               contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -128,7 +155,7 @@ class SettingsScreen extends StatelessWidget {
                   context: dialogContext,
                   title: AppLocalizations.of(dialogContext)!.languageEnglish,
                   value: const Locale('en'),
-                  groupValue: currentLocale, // Use locale read before dialog
+                  groupValue: currentLocale,
                   onChanged:
                       (Locale? value) => Navigator.pop(dialogContext, value),
                 ),
@@ -136,15 +163,15 @@ class SettingsScreen extends StatelessWidget {
                   context: dialogContext,
                   title: AppLocalizations.of(dialogContext)!.languageUkrainian,
                   value: const Locale('uk'),
-                  groupValue: currentLocale, // Use locale read before dialog
+                  groupValue: currentLocale,
                   onChanged:
                       (Locale? value) => Navigator.pop(dialogContext, value),
                 ),
                 _buildRadioListTile<Locale?>(
                   context: dialogContext,
                   title: AppLocalizations.of(dialogContext)!.systemDefault,
-                  value: null, // Represents system default
-                  groupValue: currentLocale, // Use locale read before dialog
+                  value: null,
+                  groupValue: currentLocale,
                   onChanged:
                       (Locale? value) => Navigator.pop(dialogContext, value),
                 ),
@@ -153,10 +180,8 @@ class SettingsScreen extends StatelessWidget {
           },
         );
 
-        // Check if widget is still mounted BEFORE using context
         if (!context.mounted) return;
 
-        // Check if a selection was made and it's different from the locale before the dialog
         if (selectedLocale != currentLocale) {
           context.read<SettingsProvider>().setLocale(selectedLocale);
         }
@@ -208,7 +233,6 @@ class SettingsScreen extends StatelessWidget {
           },
         );
 
-        // Check if the widget is still mounted
         if (!context.mounted) return;
         if (selectedTheme != null && selectedTheme != provider.themeMode) {
           context.read<SettingsProvider>().setThemeMode(selectedTheme);
@@ -217,7 +241,6 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // Helper for creating styled RadioListTile instances
   Widget _buildRadioListTile<T>({
     required BuildContext context,
     required String title,
@@ -236,6 +259,173 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _exportDictionary(BuildContext context) async {
+    final localizations = AppLocalizations.of(context)!;
+    Provider.of<DictionaryProvider>(context, listen: false);
+
+    final dictionaryToExport = await _showExportSelectionDialog(context);
+    if (dictionaryToExport == null || !context.mounted) return;
+
+    if (Platform.isAndroid || Platform.isIOS) {
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        status = await Permission.storage.request();
+      }
+      if (!status.isGranted) {
+        if (context.mounted) {
+          _showErrorSnackBar(context, localizations.permissionDenied);
+        }
+        return;
+      }
+    }
+
+    try {
+      final jsonString = jsonEncode(dictionaryToExport.toJson());
+      final Uint8List fileBytes = utf8.encode(jsonString);
+      final String suggestedName = '${dictionaryToExport.name}.json';
+
+      final String? outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: localizations.selectExportLocation,
+        fileName: suggestedName,
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        bytes: fileBytes,
+      );
+
+      if (outputFile == null) {
+        if (context.mounted) {
+          _showSnackBar(context, localizations.filePickerOperationCancelled);
+        }
+        return;
+      }
+
+      if (context.mounted) {
+        _showSnackBar(
+          context,
+          localizations.dictionaryExportedSuccess(
+            dictionaryToExport.name,
+            outputFile,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        _showErrorSnackBar(
+          context,
+          localizations.dictionaryExportFailed(
+            dictionaryToExport.name,
+            e.toString(),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _importDictionary(BuildContext context) async {
+    final localizations = AppLocalizations.of(context)!;
+    final provider = Provider.of<DictionaryProvider>(context, listen: false);
+
+    if (Platform.isAndroid || Platform.isIOS) {
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        status = await Permission.storage.request();
+      }
+      if (!status.isGranted) {
+        if (context.mounted) {
+          _showErrorSnackBar(context, localizations.permissionDenied);
+        }
+        return;
+      }
+    }
+
+    try {
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        dialogTitle: localizations.selectDictionaryFileToImport,
+      );
+
+      if (result == null || result.files.single.path == null) {
+        if (context.mounted) {
+          _showSnackBar(context, localizations.filePickerOperationCancelled);
+        }
+        return;
+      }
+
+      final String filePath = result.files.single.path!;
+      provider.clearError();
+      final Dictionary? importedDict = await provider.loadDictionaryForImport(
+        filePath,
+      );
+
+      if (!context.mounted) return;
+
+      if (importedDict == null) {
+        _showErrorSnackBar(
+          context,
+          provider.error ?? localizations.invalidDictionaryFile,
+        );
+        return;
+      }
+
+      final bool exists = await provider.dictionaryExists(importedDict.name);
+      Dictionary? finalDictToImport = importedDict;
+
+      if (exists) {
+        final conflictResult = await _showImportConflictDialog(
+          context,
+          importedDict.name,
+        );
+        if (conflictResult == null) return;
+
+        if (conflictResult == _ImportConflictAction.rename) {
+          final newName = await _showRenameDialog(context, importedDict.name);
+          if (newName == null || newName.trim().isEmpty) return;
+          if (await provider.dictionaryExists(newName)) {
+            if (!context.mounted) return;
+            _showErrorSnackBar(context, localizations.dictionaryAlreadyExists);
+            return;
+          }
+          finalDictToImport = importedDict.copyWith(name: newName);
+        } else if (conflictResult == _ImportConflictAction.overwrite) {
+          // Keep finalDictToImport as is, it will overwrite
+        }
+      }
+
+      provider.clearError();
+      final success = await provider.importDictionary(finalDictToImport);
+
+      if (!context.mounted) return;
+      if (success) {
+        _showSnackBar(
+          context,
+          localizations.dictionaryImportedSuccess(finalDictToImport.name),
+        );
+      } else {
+        _showErrorSnackBar(
+          context,
+          localizations.dictionaryImportFailed(
+            provider.error ?? 'Unknown error',
+          ),
+        );
+      }
+    } on FormatException catch (e) {
+      if (context.mounted) {
+        _showErrorSnackBar(
+          context,
+          '${localizations.invalidDictionaryFile} (${e.message})',
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        _showErrorSnackBar(
+          context,
+          localizations.dictionaryImportFailed(e.toString()),
+        );
+      }
+    }
+  }
+
   String _localeToString(Locale? locale, BuildContext context) {
     if (locale == null) {
       return AppLocalizations.of(context)!.systemDefault;
@@ -250,6 +440,154 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 
+  Future<Dictionary?> _showExportSelectionDialog(BuildContext context) async {
+    final localizations = AppLocalizations.of(context)!;
+    final provider = Provider.of<DictionaryProvider>(context, listen: false);
+    final dictionaries = provider.dictionaries;
+
+    return await showDialog<Dictionary?>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(localizations.selectDictionaryToExport),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: dictionaries.length,
+              itemBuilder: (context, index) {
+                final dict = dictionaries[index];
+                return ListTile(
+                  leading: Icon(Icons.book_outlined, color: dict.color),
+                  title: Text(dict.name),
+                  onTap: () => Navigator.of(dialogContext).pop(dict),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(null),
+              child: Text(localizations.cancel),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<_ImportConflictAction?> _showImportConflictDialog(
+    BuildContext context,
+    String dictionaryName,
+  ) async {
+    final localizations = AppLocalizations.of(context)!;
+    return await showDialog<_ImportConflictAction>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(localizations.importNameConflictTitle),
+          content: Text(
+            localizations.importNameConflictContent(dictionaryName),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(localizations.cancel),
+              onPressed: () => Navigator.of(dialogContext).pop(null),
+            ),
+            TextButton(
+              child: Text(localizations.rename),
+              onPressed:
+                  () => Navigator.of(
+                    dialogContext,
+                  ).pop(_ImportConflictAction.rename),
+            ),
+            ElevatedButton(
+              child: Text(localizations.overwrite),
+              onPressed:
+                  () => Navigator.of(
+                    dialogContext,
+                  ).pop(_ImportConflictAction.overwrite),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<String?> _showRenameDialog(
+    BuildContext context,
+    String currentName,
+  ) async {
+    final localizations = AppLocalizations.of(context)!;
+    final controller = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    return await showDialog<String?>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(localizations.rename),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: controller,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: localizations.enterNewName,
+                labelText: localizations.dictionaryName,
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return localizations.dictionaryNameNotEmpty;
+                }
+                if (value.trim() == currentName) {
+                  return 'Please enter a different name.';
+                }
+                return null;
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(localizations.cancel),
+              onPressed: () => Navigator.of(dialogContext).pop(null),
+            ),
+            ElevatedButton(
+              child: Text(localizations.rename),
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  Navigator.of(dialogContext).pop(controller.text.trim());
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorSnackBar(BuildContext context, String message) {
+    _showSnackBar(context, message, isError: true);
+  }
+
+  void _showSnackBar(
+    BuildContext context,
+    String message, {
+    bool isError = false,
+  }) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Theme.of(context).colorScheme.error : null,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
   String _themeModeToString(ThemeMode mode, BuildContext context) {
     switch (mode) {
       case ThemeMode.light:
@@ -261,3 +599,5 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 }
+
+enum _ImportConflictAction { overwrite, rename }

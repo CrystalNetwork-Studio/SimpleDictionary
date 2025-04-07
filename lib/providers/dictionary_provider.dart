@@ -270,6 +270,106 @@ class DictionaryProvider with ChangeNotifier {
     );
   }
 
+  // --- Експорт словника ---
+  Future<bool> exportDictionary(
+    String dictionaryName,
+    String exportPath,
+  ) async {
+    bool success = false;
+    await _performAction(
+      () async {
+        final dictionary = _dictionaries.firstWhere(
+          (d) => d.name == dictionaryName,
+          orElse:
+              () =>
+                  throw Exception(
+                    "Dictionary '$dictionaryName' not found for export.",
+                  ),
+        );
+        await file_utils.exportDictionaryToJsonFile(dictionary, exportPath);
+        success = true;
+      },
+      errorMessagePrefix:
+          "Error exporting dictionary '$dictionaryName' to '$exportPath'",
+    );
+    return success;
+  }
+
+  // --- Завантаження словника для імпорту (без додавання до стану) ---
+  Future<Dictionary?> loadDictionaryForImport(String importPath) async {
+    Dictionary? dictionary;
+    await _performAction(
+      () async {
+        dictionary = await file_utils.importDictionaryFromJsonFile(importPath);
+        if (dictionary == null) {
+          // file_utils already prints errors, but we can set a provider error
+          _error = "Failed to load dictionary from file or file not found.";
+        } else if (dictionary!.name.trim().isEmpty) {
+          _error = "Imported dictionary has an empty name.";
+          dictionary = null; // Invalidate dictionary with empty name
+        }
+      },
+      errorMessagePrefix:
+          "Error loading dictionary for import from '$importPath'",
+    );
+    // Notify listeners if an error occurred during the action
+    if (_error != null) {
+      notifyListeners();
+    }
+    return dictionary;
+  }
+
+  // --- Завершення імпорту словника (додавання до стану) ---
+  Future<bool> importDictionary(Dictionary dictionaryToImport) async {
+    bool success = false;
+    final String importName = dictionaryToImport.name;
+
+    // Ensure name is not empty after potential rename
+    if (importName.trim().isEmpty) {
+      _error = "Dictionary name cannot be empty for import.";
+      notifyListeners();
+      return false;
+    }
+
+    await _performAction(
+      () async {
+        final existingIndex = _dictionaries.indexWhere(
+          (d) => d.name.toLowerCase() == importName.toLowerCase(),
+        );
+
+        if (existingIndex != -1) {
+          // Overwrite existing dictionary
+          final oldDictionary = _dictionaries[existingIndex];
+          // Save the imported dictionary (this replaces the file content)
+          await file_utils.saveDictionaryToJson(dictionaryToImport);
+          // Update the dictionary in the provider list
+          _dictionaries[existingIndex] = dictionaryToImport;
+          if (kDebugMode) {
+            debugPrint(
+              "Dictionary '${oldDictionary.name}' overwritten by import with '${dictionaryToImport.name}'.",
+            );
+          }
+        } else {
+          // Add as a new dictionary
+          await file_utils.saveDictionaryToJson(dictionaryToImport);
+          _dictionaries.add(dictionaryToImport);
+          _dictionaries.sort(
+            (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+          );
+          if (kDebugMode) {
+            debugPrint(
+              "Dictionary '${dictionaryToImport.name}' imported successfully.",
+            );
+          }
+        }
+        success = true;
+      },
+      errorMessagePrefix:
+          "Error importing dictionary '${dictionaryToImport.name}'",
+    );
+    return success;
+  }
+
   Future<bool> removeWordFromDictionary(
     String dictionaryName,
     int wordIndex, {

@@ -397,4 +397,85 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goBack => 'Back';
+
+  @override
+  String get importDictionary => 'Import Dictionary';
+
+  @override
+  String get exportDictionary => 'Export Dictionary';
+
+  @override
+  String get selectDictionaryToExport => 'Select dictionary to export';
+
+  @override
+  String get selectExportLocation => 'Select export location';
+
+  @override
+  String get selectDictionaryFileToImport => 'Select dictionary file to import (.json)';
+
+  @override
+  String dictionaryExportedSuccess(Object dictionaryName, Object filePath) {
+    return 'Dictionary \"$dictionaryName\" exported successfully to $filePath';
+  }
+
+  @override
+  String dictionaryExportFailed(Object dictionaryName, Object error) {
+    return 'Failed to export dictionary \"$dictionaryName\": $error';
+  }
+
+  @override
+  String dictionaryImportedSuccess(Object dictionaryName) {
+    return 'Dictionary \"$dictionaryName\" imported successfully.';
+  }
+
+  @override
+  String dictionaryImportFailed(Object error) {
+    return 'Failed to import dictionary: $error';
+  }
+
+  @override
+  String get importNameConflictTitle => 'Name Conflict';
+
+  @override
+  String importNameConflictContent(Object dictionaryName) {
+    return 'A dictionary named \"$dictionaryName\" already exists. What would you like to do?';
+  }
+
+  @override
+  String get overwrite => 'Overwrite';
+
+  @override
+  String get rename => 'Rename';
+
+  @override
+  String get enterNewName => 'Enter new name';
+
+  @override
+  String get invalidDictionaryFile => 'Invalid dictionary file format or content.';
+
+  @override
+  String errorReadingFile(Object error) {
+    return 'Error reading file: $error';
+  }
+
+  @override
+  String get noDictionariesToExport => 'No dictionaries available to export.';
+
+  @override
+  String get export => 'Export';
+
+  @override
+  String get import => 'Import';
+
+  @override
+  String get filePickerOperationCancelled => 'File selection cancelled.';
+
+  @override
+  String get importError => 'Import Error';
+
+  @override
+  String get exportError => 'Export Error';
+
+  @override
+  String get permissionDenied => 'Storage permission denied.';
 }

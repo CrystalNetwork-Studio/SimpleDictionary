@@ -160,6 +160,78 @@ Future<void> saveDictionaryToJson(Dictionary dictionary) async {
   }
 }
 
+/// Exports a [Dictionary] object to a specified JSON file path.
+///
+/// Parameters:
+///   - [dictionary]: The Dictionary object to export.
+///   - [exportPath]: The full file path where the JSON file should be saved.
+///
+/// Throws:
+///   - Any exception that occurs during the saving process.
+Future<void> exportDictionaryToJsonFile(
+  Dictionary dictionary,
+  String exportPath,
+) async {
+  try {
+    final file = File(exportPath);
+    // Ensure the directory exists
+    final parentDir = file.parent;
+    if (!await parentDir.exists()) {
+      await parentDir.create(recursive: true);
+    }
+    final jsonString = jsonEncode(dictionary.toJson());
+    await file.writeAsString(jsonString);
+    debugPrint(
+      "Dictionary '${dictionary.name}' exported successfully to: $exportPath",
+    );
+  } catch (e) {
+    debugPrint(
+      "Error exporting dictionary '${dictionary.name}' to '$exportPath': $e",
+    );
+    rethrow; // Rethrow to allow caller to handle
+  }
+}
+
+/// Imports a [Dictionary] object from a specified JSON file path.
+///
+/// Parameters:
+///   - [importPath]: The full file path of the JSON file to import.
+///
+/// Returns:
+///   A Future<Dictionary?> that resolves to the imported Dictionary object,
+///   or null if the file doesn't exist, is invalid, or an error occurs.
+Future<Dictionary?> importDictionaryFromJsonFile(String importPath) async {
+  try {
+    final file = File(importPath);
+
+    if (!await file.exists()) {
+      debugPrint("Import file not found at: $importPath");
+      return null;
+    }
+
+    final jsonString = await file.readAsString();
+    final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
+
+    // Basic validation: Check if essential keys exist
+    if (!jsonMap.containsKey('name') || !jsonMap.containsKey('type')) {
+      debugPrint("Invalid dictionary format in file: $importPath");
+      throw const FormatException("Invalid dictionary file format.");
+    }
+
+    final dictionary = Dictionary.fromJson(jsonMap);
+    debugPrint(
+      "Dictionary '${dictionary.name}' imported successfully from: $importPath",
+    );
+    return dictionary;
+  } on FormatException catch (e) {
+    debugPrint("Error decoding JSON or invalid format in '$importPath': $e");
+    rethrow; // Rethrow specific format exception
+  } catch (e) {
+    debugPrint("Error importing dictionary from '$importPath': $e");
+    return null; // Return null for other general errors
+  }
+}
+
 /// Retrieves the path to the base directory where all dictionaries are stored.
 ///
 /// If the directory doesn't exist, it creates it. The base directory is located

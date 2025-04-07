@@ -397,4 +397,85 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get goBack => 'Назад';
+
+  @override
+  String get importDictionary => 'Імпортувати словник';
+
+  @override
+  String get exportDictionary => 'Експортувати словник';
+
+  @override
+  String get selectDictionaryToExport => 'Виберіть словник для експорту';
+
+  @override
+  String get selectExportLocation => 'Виберіть місце для експорту';
+
+  @override
+  String get selectDictionaryFileToImport => 'Виберіть файл словника для імпорту (.json)';
+
+  @override
+  String dictionaryExportedSuccess(Object dictionaryName, Object filePath) {
+    return 'Словник \"$dictionaryName\" успішно експортовано до $filePath';
+  }
+
+  @override
+  String dictionaryExportFailed(Object dictionaryName, Object error) {
+    return 'Не вдалося експортувати словник \"$dictionaryName\": $error';
+  }
+
+  @override
+  String dictionaryImportedSuccess(Object dictionaryName) {
+    return 'Словник \"$dictionaryName\" успішно імпортовано.';
+  }
+
+  @override
+  String dictionaryImportFailed(Object error) {
+    return 'Не вдалося імпортувати словник: $error';
+  }
+
+  @override
+  String get importNameConflictTitle => 'Конфлікт імен';
+
+  @override
+  String importNameConflictContent(Object dictionaryName) {
+    return 'Словник з назвою \"$dictionaryName\" вже існує. Що ви хочете зробити?';
+  }
+
+  @override
+  String get overwrite => 'Перезаписати';
+
+  @override
+  String get rename => 'Перейменувати';
+
+  @override
+  String get enterNewName => 'Введіть нову назву';
+
+  @override
+  String get invalidDictionaryFile => 'Недійсний формат або вміст файлу словника.';
+
+  @override
+  String errorReadingFile(Object error) {
+    return 'Помилка читання файлу: $error';
+  }
+
+  @override
+  String get noDictionariesToExport => 'Немає словників для експорту.';
+
+  @override
+  String get export => 'Експорт';
+
+  @override
+  String get import => 'Імпорт';
+
+  @override
+  String get filePickerOperationCancelled => 'Вибір файлу скасовано.';
+
+  @override
+  String get importError => 'Помилка імпорту';
+
+  @override
+  String get exportError => 'Помилка експорту';
+
+  @override
+  String get permissionDenied => 'Відмовлено у доступі до сховища.';
 }

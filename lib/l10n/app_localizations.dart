@@ -742,6 +742,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back'**
   String get goBack;
+
+  /// No description provided for @importDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Dictionary'**
+  String get importDictionary;
+
+  /// No description provided for @exportDictionary.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Dictionary'**
+  String get exportDictionary;
+
+  /// No description provided for @selectDictionaryToExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Select dictionary to export'**
+  String get selectDictionaryToExport;
+
+  /// No description provided for @selectExportLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Select export location'**
+  String get selectExportLocation;
+
+  /// No description provided for @selectDictionaryFileToImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Select dictionary file to import (.json)'**
+  String get selectDictionaryFileToImport;
+
+  /// No description provided for @dictionaryExportedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary \"{dictionaryName}\" exported successfully to {filePath}'**
+  String dictionaryExportedSuccess(Object dictionaryName, Object filePath);
+
+  /// No description provided for @dictionaryExportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to export dictionary \"{dictionaryName}\": {error}'**
+  String dictionaryExportFailed(Object dictionaryName, Object error);
+
+  /// No description provided for @dictionaryImportedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary \"{dictionaryName}\" imported successfully.'**
+  String dictionaryImportedSuccess(Object dictionaryName);
+
+  /// No description provided for @dictionaryImportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to import dictionary: {error}'**
+  String dictionaryImportFailed(Object error);
+
+  /// No description provided for @importNameConflictTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Name Conflict'**
+  String get importNameConflictTitle;
+
+  /// No description provided for @importNameConflictContent.
+  ///
+  /// In en, this message translates to:
+  /// **'A dictionary named \"{dictionaryName}\" already exists. What would you like to do?'**
+  String importNameConflictContent(Object dictionaryName);
+
+  /// No description provided for @overwrite.
+  ///
+  /// In en, this message translates to:
+  /// **'Overwrite'**
+  String get overwrite;
+
+  /// No description provided for @rename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get rename;
+
+  /// No description provided for @enterNewName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter new name'**
+  String get enterNewName;
+
+  /// No description provided for @invalidDictionaryFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid dictionary file format or content.'**
+  String get invalidDictionaryFile;
+
+  /// No description provided for @errorReadingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reading file: {error}'**
+  String errorReadingFile(Object error);
+
+  /// No description provided for @noDictionariesToExport.
+  ///
+  /// In en, this message translates to:
+  /// **'No dictionaries available to export.'**
+  String get noDictionariesToExport;
+
+  /// No description provided for @export.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get export;
+
+  /// No description provided for @import.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get import;
+
+  /// No description provided for @filePickerOperationCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'File selection cancelled.'**
+  String get filePickerOperationCancelled;
+
+  /// No description provided for @importError.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Error'**
+  String get importError;
+
+  /// No description provided for @exportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Error'**
+  String get exportError;
+
+  /// No description provided for @permissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage permission denied.'**
+  String get permissionDenied;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
