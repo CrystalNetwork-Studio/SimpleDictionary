@@ -25,7 +25,7 @@ class SettingsProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_localeKey, locale?.languageCode ?? '');
     } catch (e) {
-      print("Error saving locale: $e");
+      debugPrint("Error saving locale: $e");
     }
   }
 
@@ -37,7 +37,7 @@ class SettingsProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt(_themeModeKey, mode.index);
     } catch (e) {
-      print("Error saving theme mode: $e");
+      debugPrint("Error saving theme mode: $e");
     }
   }
 
@@ -60,7 +60,7 @@ class SettingsProvider with ChangeNotifier {
         _locale = null;
       }
     } catch (e) {
-      print("Error loading settings: $e");
+      debugPrint("Error loading settings: $e");
       _themeMode = ThemeMode.system;
       _locale = null;
     } finally {
