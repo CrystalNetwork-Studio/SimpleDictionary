@@ -2,7 +2,7 @@ name: simpledictionary
 description: "A simple dictionary application."
 publish_to: "none"
 
-version: 0.0.1+1
+version: 0.1.0+1
 platforms:
   android:
   ios:
@@ -12,11 +12,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl_utils: 2.8.10
   cupertino_icons: ^1.0.8
   provider: ^6.0.0 # For state management
   path_provider: ^2.0.0 # For finding the documents directory
   json_annotation: ^4.8.0 # For JSON serialization annotations
   shared_preferences: ^2.0.0 # Storing settings
+  package_info_plus: ^8.3.0 # For getting app info
+  url_launcher: ^6.3.1 # For opening URLs
+  file_picker: ^10.0.0 # For picking files - Updated version
+  permission_handler: ^11.3.1 # For handling permissions
 
 dev_dependencies:
   flutter_test:
@@ -24,5 +31,8 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner: ^2.4.0
   json_serializable: ^6.7.0
+  flutter_launcher_icons: ^0.13.0
 flutter:
   uses-material-design: true
+  generate: true
+

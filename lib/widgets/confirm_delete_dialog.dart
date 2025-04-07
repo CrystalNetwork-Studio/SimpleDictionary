@@ -1,38 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:simpledictionary/l10n/app_localizations.dart';
 
 class ConfirmDeleteDialog extends StatelessWidget {
   final String dictionaryName;
-  final VoidCallback onConfirm;
 
-  const ConfirmDeleteDialog({
-    required this.dictionaryName,
-    required this.onConfirm,
-    super.key,
-  });
+  const ConfirmDeleteDialog({required this.dictionaryName, super.key});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final localization = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      title: const Text('Видалити словник?'),
-      content: Text(
-        'Ви впевнені, що хочете видалити словник "$dictionaryName"? Цю дію неможливо скасувати.',
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      title: Text(localization.deleteDictionary),
+      content: Text(localization.deleteDictionaryConfirmation(dictionaryName)),
+      actionsPadding: const EdgeInsets.only(right: 16.0, bottom: 12.0),
       actions: <Widget>[
         TextButton(
-          child: const Text('Скасувати'),
+          child: Text(localization.cancel),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(false);
           },
         ),
         TextButton(
           style: TextButton.styleFrom(foregroundColor: colorScheme.error),
           onPressed: () {
-            onConfirm();
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(true);
           },
-          child: const Text('Видалити'),
+          child: Text(localization.delete),
         ),
       ],
     );

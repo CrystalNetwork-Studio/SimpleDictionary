@@ -1,56 +1,99 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:simpledictionary/l10n/app_localizations.dart';
+
+import '../data/dictionary.dart';
 import '../providers/dictionary_provider.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/create_dictionary_dialog.dart';
 import '../widgets/dictionary_list.dart';
 import '../widgets/empty_state.dart';
-import '../widgets/create_dictionary_dialog.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
     final dictionaryProvider = Provider.of<DictionaryProvider>(context);
+    final localization = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Simple Dictionary')),
+      appBar: AppBar(title: Text(localization.myDictionaries)),
       drawer: const AppDrawer(),
-      body: Consumer<DictionaryProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading && provider.dictionaries.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (provider.dictionaries.isEmpty) {
-            return const EmptyState();
-          } else {
-            return DictionaryList(dictionaries: provider.dictionaries);
-          }
-        },
+      body: RefreshIndicator(
+        onRefresh: () => dictionaryProvider.loadDictionaries(),
+        child: Builder(
+          builder: (context) {
+            if (dictionaryProvider.isLoading &&
+                dictionaryProvider.dictionaries.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (dictionaryProvider.dictionaries.isEmpty) {
+              return LayoutBuilder(
+                builder:
+                    (context, constraints) => SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: const EmptyState(),
+                      ),
+                    ),
+              );
+            } else {
+              return DictionaryList(
+                dictionaries: dictionaryProvider.dictionaries,
+              );
+            }
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
+        onPressed: () async {
+          Provider.of<DictionaryProvider>(context, listen: false).clearError();
+
+          await showDialog(
             context: context,
             builder: (BuildContext dialogContext) {
+              final provider = Provider.of<DictionaryProvider>(
+                dialogContext,
+                listen: false,
+              );
               return CreateDictionaryDialog(
-                onCreate: (name) {
-                  Provider.of<DictionaryProvider>(
-                    context,
-                    listen: false,
-                  ).addDictionary(name);
+                onCreate: (
+                  String name,
+                  Color color,
+                  DictionaryType dictionaryType,
+                ) {
+                  provider
+                      .addDictionary(
+                        name,
+                        color: color,
+                        dictionaryType: dictionaryType,
+                      )
+                      .then((success) {
+                        if (!success && dialogContext.mounted) {
+                          final error =
+                              provider.error ??
+                              localization.errorCreatingDictionary;
+                          ScaffoldMessenger.of(dialogContext).showSnackBar(
+                            SnackBar(
+                              content: Text(error),
+                              backgroundColor: Colors.orange,
+                            ),
+                          );
+                          provider.clearError();
+                        }
+                      });
                 },
                 dictionaryExists: (String name) async {
-                  return await Provider.of<DictionaryProvider>(
-                    context,
-                    listen: false,
-                  ).dictionaryExists(name);
+                  return await provider.dictionaryExists(name);
                 },
               );
             },
           );
         },
-        tooltip: 'Додати словник',
+        tooltip: localization.addDictionary,
         child: const Icon(Icons.add),
       ),
     );

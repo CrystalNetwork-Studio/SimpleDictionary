@@ -1,28 +1,49 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+
+import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+
 import '../data/dictionary.dart';
 
 const String _baseDirName = 'Dictionary';
 const String _fileName = 'words.json';
 
-/// Retrieves the path to the base directory where all dictionaries are stored.
+/// Deletes the directory of a specific dictionary.
 ///
-/// If the directory doesn't exist, it creates it. The base directory is located
-/// inside the application documents directory, under the name 'Dictionary'.
+/// Parameters:
+///   - [dictionaryName]: The name of the dictionary to delete.
 ///
 /// Returns:
-///   A Future<String> that resolves to the path of the base directory.
-Future<String> _getBaseDirectoryPath() async {
-  final directory = await getApplicationDocumentsDirectory();
-  final baseDirPath = p.join(directory.path, _baseDirName);
-  final baseDir = Directory(baseDirPath);
-  if (!await baseDir.exists()) {
-    await baseDir.create(recursive: true);
-    print("Base 'Dictionary' directory created at: $baseDirPath");
+///   A Future<bool> that resolves to true if the directory was successfully deleted, false otherwise.
+Future<bool> deleteDictionaryDirectory(String dictionaryName) async {
+  try {
+    if (dictionaryName.isEmpty) {
+      debugPrint(
+        "Error: Cannot delete the main 'Dictionary' directory. Dictionary name is blank.",
+      );
+      return false;
+    }
+    final directoryPath = await getDictionaryDirectoryPath(dictionaryName);
+    final dir = Directory(directoryPath);
+
+    if (await dir.exists()) {
+      await dir.delete(recursive: true);
+      debugPrint(
+        "Successfully deleted dictionary '$dictionaryName' at: $directoryPath",
+      );
+      return true;
+    } else {
+      debugPrint(
+        "Directory for dictionary '$dictionaryName' not found at: $directoryPath",
+      );
+      return false;
+    }
+  } catch (e) {
+    debugPrint("Error deleting dictionary '$dictionaryName': $e");
+    return false;
   }
-  return baseDirPath;
 }
 
 /// Retrieves the path to a specific dictionary directory.
@@ -48,34 +69,32 @@ Future<String> getDictionaryDirectoryPath(String dictionaryName) async {
   return p.join(baseDirPath, dictionaryName);
 }
 
-/// Saves a [Dictionary] object to a JSON file.
+/// Retrieves a list of all dictionary names.
 ///
-/// The file is saved in the directory corresponding to the dictionary's name.
-/// If the directory doesn't exist, it is created.
+/// It reads the names of the directories located inside the base dictionary directory.
 ///
-/// Parameters:
-///   - [dictionary]: The Dictionary object to save.
-///
-/// Throws:
-///   - Any exception that occurs during the saving process.
-Future<void> saveDictionaryToJson(Dictionary dictionary) async {
+/// Returns:
+///   A Future<List<String>> that resolves to a list of dictionary names.  Returns an empty list if no dictionaries are found, or if an error occurs.
+Future<List<String>> getDictionaryNames() async {
   try {
-    final directoryPath = await getDictionaryDirectoryPath(dictionary.name);
-    final dir = Directory(directoryPath);
-    if (!await dir.exists()) {
-      await dir.create(recursive: true);
-      print(
-        "Directory for dictionary '${dictionary.name}' created at: $directoryPath",
-      );
+    final baseDirPath = await _getBaseDirectoryPath();
+    final baseDir = Directory(baseDirPath);
+    if (!await baseDir.exists()) {
+      return [];
     }
-    final filePath = p.join(directoryPath, _fileName);
-    final file = File(filePath);
-    final jsonString = jsonEncode(dictionary.toJson());
-    await file.writeAsString(jsonString);
-    print("Dictionary '${dictionary.name}' saved to: $filePath");
+
+    final entities = baseDir.list();
+    final List<String> dirNames = [];
+    await for (final entity in entities) {
+      if (entity is Directory) {
+        dirNames.add(p.basename(entity.path));
+      }
+    }
+    debugPrint("Found dictionary directories: $dirNames");
+    return dirNames;
   } catch (e) {
-    print("Error saving dictionary '${dictionary.name}': $e");
-    rethrow; // Rethrow to allow caller to handle
+    debugPrint("Error listing dictionary directories: $e");
+    return [];
   }
 }
 
@@ -99,76 +118,134 @@ Future<Dictionary?> loadDictionaryFromJson(String dictionaryName) async {
       final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
       return Dictionary.fromJson(jsonMap);
     } else {
-      print("Dictionary file not found for '$dictionaryName' at: $filePath");
+      debugPrint(
+        "Dictionary file not found for '$dictionaryName' at: $filePath",
+      );
       return null;
     }
   } catch (e) {
-    print("Error loading dictionary '$dictionaryName': $e");
+    debugPrint("Error loading dictionary '$dictionaryName': $e");
     return null;
   }
 }
 
-/// Retrieves a list of all dictionary names.
+/// Saves a [Dictionary] object to a JSON file.
 ///
-/// It reads the names of the directories located inside the base dictionary directory.
+/// The file is saved in the directory corresponding to the dictionary's name.
+/// If the directory doesn't exist, it is created.
 ///
-/// Returns:
-///   A Future<List<String>> that resolves to a list of dictionary names.  Returns an empty list if no dictionaries are found, or if an error occurs.
-Future<List<String>> getDictionaryNames() async {
+/// Parameters:
+///   - [dictionary]: The Dictionary object to save.
+///
+/// Throws:
+///   - Any exception that occurs during the saving process.
+Future<void> saveDictionaryToJson(Dictionary dictionary) async {
   try {
-    final baseDirPath = await _getBaseDirectoryPath();
-    final baseDir = Directory(baseDirPath);
-    if (!await baseDir.exists()) {
-      return [];
+    final directoryPath = await getDictionaryDirectoryPath(dictionary.name);
+    final dir = Directory(directoryPath);
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+      debugPrint(
+        "Directory for dictionary '${dictionary.name}' created at: $directoryPath",
+      );
     }
-
-    final entities = baseDir.list();
-    final List<String> dirNames = [];
-    await for (final entity in entities) {
-      if (entity is Directory) {
-        dirNames.add(p.basename(entity.path));
-      }
-    }
-    print("Found dictionary directories: $dirNames");
-    return dirNames;
+    final filePath = p.join(directoryPath, _fileName);
+    final file = File(filePath);
+    final jsonString = jsonEncode(dictionary.toJson());
+    await file.writeAsString(jsonString);
+    debugPrint("Dictionary '${dictionary.name}' saved to: $filePath");
   } catch (e) {
-    print("Error listing dictionary directories: $e");
-    return [];
+    debugPrint("Error saving dictionary '${dictionary.name}': $e");
+    rethrow; // Rethrow to allow caller to handle
   }
 }
 
-/// Deletes the directory of a specific dictionary.
+/// Exports a [Dictionary] object to a specified JSON file path.
 ///
 /// Parameters:
-///   - [dictionaryName]: The name of the dictionary to delete.
+///   - [dictionary]: The Dictionary object to export.
+///   - [exportPath]: The full file path where the JSON file should be saved.
+///
+/// Throws:
+///   - Any exception that occurs during the saving process.
+Future<void> exportDictionaryToJsonFile(
+  Dictionary dictionary,
+  String exportPath,
+) async {
+  try {
+    final file = File(exportPath);
+    // Ensure the directory exists
+    final parentDir = file.parent;
+    if (!await parentDir.exists()) {
+      await parentDir.create(recursive: true);
+    }
+    final jsonString = jsonEncode(dictionary.toJson());
+    await file.writeAsString(jsonString);
+    debugPrint(
+      "Dictionary '${dictionary.name}' exported successfully to: $exportPath",
+    );
+  } catch (e) {
+    debugPrint(
+      "Error exporting dictionary '${dictionary.name}' to '$exportPath': $e",
+    );
+    rethrow; // Rethrow to allow caller to handle
+  }
+}
+
+/// Imports a [Dictionary] object from a specified JSON file path.
+///
+/// Parameters:
+///   - [importPath]: The full file path of the JSON file to import.
 ///
 /// Returns:
-///   A Future<bool> that resolves to true if the directory was successfully deleted, false otherwise.
-Future<bool> deleteDictionaryDirectory(String dictionaryName) async {
+///   A Future<Dictionary?> that resolves to the imported Dictionary object,
+///   or null if the file doesn't exist, is invalid, or an error occurs.
+Future<Dictionary?> importDictionaryFromJsonFile(String importPath) async {
   try {
-    if (dictionaryName.isEmpty) {
-      print(
-        "Error: Cannot delete the main 'Dictionary' directory. Dictionary name is blank.",
-      );
-      return false;
-    }
-    final directoryPath = await getDictionaryDirectoryPath(dictionaryName);
-    final dir = Directory(directoryPath);
+    final file = File(importPath);
 
-    if (await dir.exists()) {
-      await dir.delete(recursive: true);
-      print(
-        "Successfully deleted dictionary '$dictionaryName' at: $directoryPath",
-      );
-      return true;
-    } else {
-      print(
-        "Directory for dictionary '$dictionaryName' not found at: $directoryPath",
-      );
-      return false;
+    if (!await file.exists()) {
+      debugPrint("Import file not found at: $importPath");
+      return null;
     }
+
+    final jsonString = await file.readAsString();
+    final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
+
+    // Basic validation: Check if essential keys exist
+    if (!jsonMap.containsKey('name') || !jsonMap.containsKey('type')) {
+      debugPrint("Invalid dictionary format in file: $importPath");
+      throw const FormatException("Invalid dictionary file format.");
+    }
+
+    final dictionary = Dictionary.fromJson(jsonMap);
+    debugPrint(
+      "Dictionary '${dictionary.name}' imported successfully from: $importPath",
+    );
+    return dictionary;
+  } on FormatException catch (e) {
+    debugPrint("Error decoding JSON or invalid format in '$importPath': $e");
+    rethrow; // Rethrow specific format exception
   } catch (e) {
-    print("Error deleting dictionary '$dictionaryName': $e");
-    return false;
+    debugPrint("Error importing dictionary from '$importPath': $e");
+    return null; // Return null for other general errors
   }
+}
+
+/// Retrieves the path to the base directory where all dictionaries are stored.
+///
+/// If the directory doesn't exist, it creates it. The base directory is located
+/// inside the application documents directory, under the name 'Dictionary'.
+///
+/// Returns:
+///   A Future<String> that resolves to the path of the base directory.
+Future<String> _getBaseDirectoryPath() async {
+  final directory = await getApplicationDocumentsDirectory();
+  final baseDirPath = p.join(directory.path, _baseDirName);
+  final baseDir = Directory(baseDirPath);
+  if (!await baseDir.exists()) {
+    await baseDir.create(recursive: true);
+    debugPrint("Base 'Dictionary' directory created at: $baseDirPath");
+  }
+  return baseDirPath;
 }

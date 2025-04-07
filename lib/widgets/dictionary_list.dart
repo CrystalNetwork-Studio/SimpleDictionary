@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../data/dictionary.dart';
 import 'dictionary_item.dart';
 
@@ -9,19 +10,17 @@ class DictionaryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
+    return ListView.separated(
+      padding: const EdgeInsets.all(12.0),
       itemCount: dictionaries.length,
       itemBuilder: (context, index) {
         final dictionary = dictionaries[index];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: DictionaryItem(
-            key: ValueKey(dictionary.name),
-            dictionary: dictionary,
-          ),
+        return DictionaryItem(
+          key: ObjectKey(dictionary),
+          dictionary: dictionary,
         );
       },
+      separatorBuilder: (context, index) => const SizedBox(height: 4),
     );
   }
 }
