@@ -44,7 +44,7 @@ class _EditWordDialogState extends State<EditWordDialog> {
   late TextEditingController _descriptionController;
   bool _isSaving = false;
   bool _isDeleting = false;
-  String? _localError; // For displaying errors
+  String? _localError;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,6 @@ class _EditWordDialogState extends State<EditWordDialog> {
             children: [
               TextFormField(
                 controller: _termController,
-                // Apply maxLength and formatter conditionally
                 maxLength:
                     widget.dictionaryType == DictionaryType.word ? 20 : null,
                 inputFormatters:
@@ -89,7 +88,6 @@ class _EditWordDialogState extends State<EditWordDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _translationController,
-                // Apply maxLength and formatter conditionally
                 maxLength:
                     widget.dictionaryType == DictionaryType.word ? 20 : null,
                 inputFormatters:
@@ -98,7 +96,6 @@ class _EditWordDialogState extends State<EditWordDialog> {
                         : null,
                 decoration: InputDecoration(
                   labelText: localization.translation,
-                  // Hide counter if limit applies
                   counterText: "",
                   border: const OutlineInputBorder(),
                 ),

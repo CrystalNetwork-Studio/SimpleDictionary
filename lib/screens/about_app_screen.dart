@@ -175,7 +175,6 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
         });
       }
     } catch (e) {
-      debugPrint('Error loading package info: $e');
       if (mounted) {
         setState(() {
           _version = 'Error';

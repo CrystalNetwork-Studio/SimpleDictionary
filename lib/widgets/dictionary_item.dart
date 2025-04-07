@@ -25,14 +25,12 @@ class DictionaryItem extends StatelessWidget {
           orElse: () => dictionary,
         );
 
-        // Determine the icon based on the dictionary type
         final IconData dictionaryIcon =
             currentDictionary.type == DictionaryType.sentence
-                ? Icons
-                    .short_text // Icon for sentences
+                ? Icons.short_text
                 : currentDictionary.type == DictionaryType.phrase
                 ? Icons.record_voice_over
-                : Icons.translate_outlined; // Default icon for words
+                : Icons.translate_outlined;
 
         return Card(
           child: InkWell(
@@ -133,7 +131,6 @@ class DictionaryItem extends StatelessWidget {
     );
   }
 
-  // Updated to accept the current dictionary state
   Future<void> _deleteDictionary(
     BuildContext context,
     Dictionary currentDictionary,
@@ -187,7 +184,6 @@ class DictionaryItem extends StatelessWidget {
     }
   }
 
-  // Updated to accept the current dictionary state
   Future<void> _editDictionary(
     BuildContext context,
     Dictionary currentDictionary,
@@ -199,14 +195,13 @@ class DictionaryItem extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
-        // Ensure the dialog uses the most current dictionary data
         final dialogProvider = Provider.of<DictionaryProvider>(
           dialogContext,
           listen: false,
         );
         final latestDictionary = dialogProvider.dictionaries.firstWhere(
           (d) => d.name == currentDictionary.name,
-          orElse: () => currentDictionary, // Fallback to passed dictionary
+          orElse: () => currentDictionary,
         );
 
         return EditDictionaryDialog(
@@ -227,13 +222,10 @@ class DictionaryItem extends StatelessWidget {
 
     if (!context.mounted || result == null) return;
 
-    // Fetch the updated name potentially after the edit
     final potentiallyUpdatedDictionary = provider.dictionaries.firstWhere(
       (d) =>
           d.name == currentDictionary.name ||
-          (result.status ==
-              EditDictionaryDialogStatus
-                  .saved), // a bit of a guess if saved, might need better state passing from dialog
+          (result.status == EditDictionaryDialogStatus.saved),
       orElse: () => currentDictionary,
     );
 

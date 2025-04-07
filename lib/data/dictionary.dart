@@ -24,12 +24,10 @@ class Dictionary {
 
   Map<String, dynamic> toJson() => _$DictionaryToJson(this);
 
-  // Гетери для перевірки типу словника
   bool get isSentenceType => type == DictionaryType.sentence;
   bool get isWordType => type == DictionaryType.word;
   bool get isPhraseType => type == DictionaryType.phrase;
 
-  // Допоміжний метод для отримання максимальної довжини символів
   int? get maxCharsPerField {
     switch (type) {
       case DictionaryType.word:
@@ -37,7 +35,7 @@ class Dictionary {
       case DictionaryType.phrase:
         return 23;
       case DictionaryType.sentence:
-        return null; // Без обмежень
+        return null;
     }
   }
 
@@ -72,26 +70,16 @@ class Dictionary {
   }
 }
 
-// Оновлений enum з новими типами
-enum DictionaryType {
-  word, // Змінено з words
-  phrase, // Новий тип
-  sentence, // Змінено з sentences
-}
+enum DictionaryType { word, phrase, sentence }
 
 @JsonSerializable()
 class Word {
   final String term;
   final String translation;
-  // Опис тепер необов'язковий
-  @JsonKey(includeIfNull: false) // Не включати в JSON, якщо null
+  @JsonKey(includeIfNull: false)
   final String? description;
 
-  Word({
-    required this.term,
-    required this.translation,
-    this.description, // Зроблено необов'язковим
-  });
+  Word({required this.term, required this.translation, this.description});
 
   factory Word.fromJson(Map<String, dynamic> json) => _$WordFromJson(json);
   Map<String, dynamic> toJson() => _$WordToJson(this);

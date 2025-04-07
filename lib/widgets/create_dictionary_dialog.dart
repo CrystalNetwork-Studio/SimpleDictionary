@@ -39,6 +39,20 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
     Colors.grey,
   ];
 
+  String _getDictionaryTypeText(
+    DictionaryType type,
+    AppLocalizations localization,
+  ) {
+    switch (type) {
+      case DictionaryType.word:
+        return localization.words;
+      case DictionaryType.phrase:
+        return localization.sentences;
+      case DictionaryType.sentence:
+        return localization.sentence;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -78,58 +92,46 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
                   (_canCreate && !_isLoading) ? (_) => _submit() : null,
             ),
             const SizedBox(height: 16),
-            // Dictionary Type Selection Row
-            Row(
-              children: [
-                Text(
-                  '${localization.dictionaryType}: ',
-                  style: textTheme.titleSmall,
+            // Dictionary Type Selection
+            Text(localization.dictionaryType, style: textTheme.titleSmall),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<DictionaryType>(
+              value: _selectedType,
+              items:
+                  DictionaryType.values
+                      .map(
+                        (DictionaryType type) =>
+                            DropdownMenuItem<DictionaryType>(
+                              value: type,
+                              child: Text(
+                                _getDictionaryTypeText(type, localization),
+                              ),
+                            ),
+                      )
+                      .toList(),
+              onChanged:
+                  _isLoading
+                      ? null
+                      : (DictionaryType? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedType = newValue;
+                          });
+                        }
+                      },
+              decoration: InputDecoration(
+                // Optional: Add border or customize decoration
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
-                InkWell(
-                  onTap:
-                      _isLoading
-                          ? null
-                          : () {
-                            setState(() {
-                              if (_selectedType == DictionaryType.word) {
-                                _selectedType = DictionaryType.phrase;
-                              } else if (_selectedType ==
-                                  DictionaryType.phrase) {
-                                _selectedType = DictionaryType.sentence;
-                              } else {
-                                _selectedType = DictionaryType.word;
-                              }
-                            });
-                          },
-                  borderRadius: BorderRadius.circular(
-                    4,
-                  ), // Add splash effect area
-                  child: Padding(
-                    // Add padding for easier tapping
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4.0,
-                      vertical: 2.0,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _selectedType == DictionaryType.word
-                              ? localization.words
-                              : _selectedType == DictionaryType.phrase
-                              ? localization.sentences
-                              : localization.sentences,
-                          style: textTheme.titleSmall?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Icon(Icons.arrow_drop_down, color: colorScheme.primary),
-                      ],
-                    ),
-                  ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12.0,
+                  vertical: 8.0,
                 ),
-              ],
+              ),
+              disabledHint: Text(
+                _getDictionaryTypeText(_selectedType, localization),
+              ), // Show current value when disabled
             ),
             const SizedBox(height: 20),
             Text(localization.folderColor, style: textTheme.titleSmall),
@@ -203,8 +205,7 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
                 ),
               ),
             ],
-            if (_errorMessage != null) ...[
-              // Display error message if present
+            if (_errorMessage != null && !_isLoading) ...[
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -248,10 +249,10 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
     final dictionaryName = _textController.text.trim();
     if (dictionaryName.isEmpty || _isLoading) return;
 
-    // Clear previous error message before attempting to submit
     setState(() {
       _isLoading = true;
       _errorMessage = null;
+      _canCreate = false;
     });
 
     bool exists = false;
@@ -259,43 +260,51 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
     try {
       exists = await widget.dictionaryExists(dictionaryName);
     } catch (e) {
-      // Consider using a logging framework here instead of print
-      print('Error checking dictionary existence: $e');
-      checkErrorMsg = AppLocalizations.of(context)!.errorValidatingNameDialog;
+      debugPrint('Error checking dictionary existence: $e');
+      if (mounted) {
+        checkErrorMsg = AppLocalizations.of(context)!.errorValidatingNameDialog;
+      } else {
+        checkErrorMsg = 'Error validating name.';
+      }
     }
 
-    // Check if the widget is still mounted before updating state
     if (!mounted) return;
 
     setState(() {
-      _isLoading = false; // Stop loading indicator regardless of outcome
+      _isLoading = false;
       if (checkErrorMsg != null) {
         _errorMessage = checkErrorMsg;
         _canCreate = false;
       } else if (exists) {
         _errorMessage = AppLocalizations.of(context)!.dictionaryAlreadyExists;
-        _canCreate = false; // Prevent creation if name exists
+        _canCreate = false;
       } else {
-        // No errors, proceed with creation
         _errorMessage = null;
-        _canCreate = true; // Ensure create is enabled if validation passed
+        _canCreate = true;
         widget.onCreate(dictionaryName, _selectedColor, _selectedType);
-        Navigator.of(context).pop(); // Close dialog on success
+        Navigator.of(context).pop();
       }
     });
   }
 
   void _validateName() {
+    if (_isLoading) return;
+
     final text = _textController.text.trim();
     final isNotEmpty = text.isNotEmpty;
-    // Only update state if canCreate status changes OR if there's an error to clear
     final bool needsStateUpdate =
-        (isNotEmpty != _canCreate) || (_errorMessage != null);
+        (isNotEmpty != _canCreate) || (_errorMessage != null && isNotEmpty);
 
     if (needsStateUpdate) {
       setState(() {
         _canCreate = isNotEmpty;
-        _errorMessage = null; // Clear previous errors on text change
+        if (isNotEmpty) {
+          _errorMessage = null;
+        }
+      });
+    } else if (!isNotEmpty && _canCreate) {
+      setState(() {
+        _canCreate = false;
       });
     }
   }
