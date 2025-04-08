@@ -699,7 +699,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Word \"{wordName}\" deleted'**
-  String wordDeletedWithName(Object wordName);
+  String wordDeletedWithName(String word, Object wordName);
 
   /// No description provided for @wordOrTranslationCannotBeEmpty.
   ///
@@ -880,6 +880,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Storage permission denied.'**
   String get permissionDenied;
+
+  /// No description provided for @holdToEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold to edit...'**
+  String get holdToEdit;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

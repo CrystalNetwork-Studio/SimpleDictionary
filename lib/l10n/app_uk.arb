@@ -130,5 +130,13 @@
     "filePickerOperationCancelled": "Вибір файлу скасовано.",
     "importError": "Помилка імпорту",
     "exportError": "Помилка експорту",
-    "permissionDenied": "Відмовлено у доступі до сховища."
+    "permissionDenied": "Відмовлено у доступі до сховища.",
+    "holdToEdit": "Утримуйте для редагування...",
+    "@wordDeletedWithName": {
+        "placeholders": {
+            "word": {
+                "type": "String"
+            }
+        }
+    }
 }

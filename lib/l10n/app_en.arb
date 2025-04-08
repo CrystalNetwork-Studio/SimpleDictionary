@@ -130,5 +130,13 @@
     "filePickerOperationCancelled": "File selection cancelled.",
     "importError": "Import Error",
     "exportError": "Export Error",
-    "permissionDenied": "Storage permission denied."
+    "permissionDenied": "Storage permission denied.",
+    "holdToEdit": "Hold to edit...",
+    "@wordDeletedWithName": {
+        "placeholders": {
+            "word": {
+                "type": "String"
+            }
+        }
+    }
 }

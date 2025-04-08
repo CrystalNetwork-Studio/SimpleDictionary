@@ -373,7 +373,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wordDeleted => 'Word deleted';
 
   @override
-  String wordDeletedWithName(Object wordName) {
+  String wordDeletedWithName(String word, Object wordName) {
     return 'Word \"$wordName\" deleted';
   }
 
@@ -478,4 +478,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get permissionDenied => 'Storage permission denied.';
+
+  @override
+  String get holdToEdit => 'Hold to edit...';
 }

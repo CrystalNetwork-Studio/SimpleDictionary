@@ -373,7 +373,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get wordDeleted => 'Слово видалено';
 
   @override
-  String wordDeletedWithName(Object wordName) {
+  String wordDeletedWithName(String word, Object wordName) {
     return 'Слово \"$wordName\" видалено';
   }
 
@@ -478,4 +478,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get permissionDenied => 'Відмовлено у доступі до сховища.';
+
+  @override
+  String get holdToEdit => 'Утримуйте для редагування...';
 }

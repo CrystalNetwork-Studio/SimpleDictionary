@@ -98,10 +98,18 @@ class SettingsScreen extends StatelessWidget {
   Widget _buildExportTile(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final provider = Provider.of<DictionaryProvider>(context, listen: false);
+    final theme = Theme.of(context);
 
     return ListTile(
-      leading: const Icon(Icons.upload_file_outlined, size: 24),
-      title: Text(localizations.exportDictionary),
+      leading: Icon(
+        Icons.upload_file_outlined,
+        size: 24,
+        color: theme.iconTheme.color,
+      ),
+      title: Text(
+        localizations.exportDictionary,
+        style: TextStyle(color: theme.textTheme.bodyMedium?.color),
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
       dense: true,
       onTap: () async {
@@ -120,9 +128,17 @@ class SettingsScreen extends StatelessWidget {
 
   Widget _buildImportTile(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return ListTile(
-      leading: const Icon(Icons.download_for_offline_outlined, size: 24),
-      title: Text(localizations.importDictionary),
+      leading: Icon(
+        Icons.download_for_offline_outlined,
+        size: 24,
+        color: theme.iconTheme.color,
+      ),
+      title: Text(
+        localizations.importDictionary,
+        style: TextStyle(color: theme.textTheme.bodyMedium?.color),
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
       dense: true,
       onTap: () async {
@@ -325,16 +341,33 @@ class SettingsScreen extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
     final provider = Provider.of<DictionaryProvider>(context, listen: false);
 
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (Platform.isAndroid) {
+      if (await Permission.storage.status.isDenied) {
+        final permissions = [
+          Permission.storage,
+          Permission.manageExternalStorage,
+        ];
+
+        final statuses = await permissions.request();
+        final denied = statuses.values.any((status) => status.isDenied);
+
+        if (denied) {
+          if (context.mounted) {
+            _showErrorSnackBar(context, localizations.permissionDenied);
+          }
+          return;
+        }
+      }
+    } else if (Platform.isIOS) {
       var status = await Permission.storage.status;
       if (!status.isGranted) {
         status = await Permission.storage.request();
-      }
-      if (!status.isGranted) {
-        if (context.mounted) {
-          _showErrorSnackBar(context, localizations.permissionDenied);
+        if (!status.isGranted) {
+          if (context.mounted) {
+            _showErrorSnackBar(context, localizations.permissionDenied);
+          }
+          return;
         }
-        return;
       }
     }
 
@@ -387,8 +420,6 @@ class SettingsScreen extends StatelessWidget {
             return;
           }
           finalDictToImport = importedDict.copyWith(name: newName);
-        } else if (conflictResult == _ImportConflictAction.overwrite) {
-          // Keep finalDictToImport as is, it will overwrite
         }
       }
 
@@ -580,7 +611,10 @@ class SettingsScreen extends StatelessWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(
+          message,
+          style: TextStyle(color: isError ? Colors.white : null),
+        ),
         backgroundColor: isError ? Theme.of(context).colorScheme.error : null,
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 3),
