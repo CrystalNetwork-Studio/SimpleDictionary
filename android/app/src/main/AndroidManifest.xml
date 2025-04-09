@@ -1,13 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+  <!-- READ_EXTERNAL_STORAGE needed for file picking on Android <= 9 (API 28). -->
+  <!-- Newer versions use Storage Access Framework (handled by file_picker). -->
+  <uses-permission
+    android:name="android.permission.READ_EXTERNAL_STORAGE"
+    android:maxSdkVersion="28"
+  />
+  <!-- WRITE_EXTERNAL_STORAGE needed for file saving on Android <= 9 (API 28) as a fallback. -->
+  <!-- Newer versions use Storage Access Framework (handled by file_picker). -->
+  <uses-permission
+    android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    android:maxSdkVersion="28"
+  />
 
-    <application
+  <application
     android:label="SimpleDictionary"
     android:name="${applicationName}"
     android:icon="@mipmap/launcher_icon"
   >
-        <activity
+    <activity
       android:name=".MainActivity"
       android:exported="true"
       android:launchMode="singleTop"
@@ -17,26 +27,27 @@
       android:hardwareAccelerated="true"
       android:windowSoftInputMode="adjustResize"
     >
-            <meta-data
+      <meta-data
         android:name="io.flutter.embedding.android.NormalTheme"
         android:resource="@style/NormalTheme"
       />
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <meta-data android:name="flutterEmbedding" android:value="2" />
-    </application>
-    <!-- Required to query activities that can process text, see:
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+    <meta-data android:name="flutterEmbedding" android:value="2" />
+  </application>
+  <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.PROCESS_TEXT" />
-            <data android:mimeType="text/plain" />
-        </intent>
-    </queries>
+  <queries>
+    <!-- Intent to handle JSON files -->
+    <intent>
+      <action android:name="android.intent.action.GET_CONTENT" />
+      <data android:mimeType="application/json" />
+    </intent>
+  </queries>
 </manifest>

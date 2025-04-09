@@ -251,7 +251,7 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  localization.wordDeletedWithName(result.deletedWordTerm!),
+                  localization.wordDeletedWithName(result.deletedWordTerm!, ''),
                 ),
                 duration: const Duration(seconds: 2),
                 behavior: SnackBarBehavior.floating,
@@ -348,15 +348,29 @@ class WordCard extends StatelessWidget {
         descriptionVisible = false;
         break;
     }
+    final l10n = AppLocalizations.of(context)!;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: onEdit,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
+      child: GestureDetector(
+        onLongPressStart: (_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.holdToEdit),
+              duration: const Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        },
+        onLongPress: () {
+          Future.delayed(const Duration(seconds: 2), () {
+            onEdit();
+          });
+        },
+        child: Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           child: Column(
             crossAxisAlignment: crossAxisAlignmentItemAlignment,

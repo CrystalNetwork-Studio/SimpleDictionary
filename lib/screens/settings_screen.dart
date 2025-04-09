@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:simpledictionary/data/dictionary.dart';
 import 'package:simpledictionary/l10n/app_localizations.dart';
@@ -98,10 +96,18 @@ class SettingsScreen extends StatelessWidget {
   Widget _buildExportTile(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final provider = Provider.of<DictionaryProvider>(context, listen: false);
+    final theme = Theme.of(context);
 
     return ListTile(
-      leading: const Icon(Icons.upload_file_outlined, size: 24),
-      title: Text(localizations.exportDictionary),
+      leading: Icon(
+        Icons.upload_file_outlined,
+        size: 24,
+        color: theme.iconTheme.color,
+      ),
+      title: Text(
+        localizations.exportDictionary,
+        style: TextStyle(color: theme.textTheme.bodyMedium?.color),
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
       dense: true,
       onTap: () async {
@@ -120,9 +126,17 @@ class SettingsScreen extends StatelessWidget {
 
   Widget _buildImportTile(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return ListTile(
-      leading: const Icon(Icons.download_for_offline_outlined, size: 24),
-      title: Text(localizations.importDictionary),
+      leading: Icon(
+        Icons.download_for_offline_outlined,
+        size: 24,
+        color: theme.iconTheme.color,
+      ),
+      title: Text(
+        localizations.importDictionary,
+        style: TextStyle(color: theme.textTheme.bodyMedium?.color),
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
       dense: true,
       onTap: () async {
@@ -266,19 +280,6 @@ class SettingsScreen extends StatelessWidget {
     final dictionaryToExport = await _showExportSelectionDialog(context);
     if (dictionaryToExport == null || !context.mounted) return;
 
-    if (Platform.isAndroid || Platform.isIOS) {
-      var status = await Permission.storage.status;
-      if (!status.isGranted) {
-        status = await Permission.storage.request();
-      }
-      if (!status.isGranted) {
-        if (context.mounted) {
-          _showErrorSnackBar(context, localizations.permissionDenied);
-        }
-        return;
-      }
-    }
-
     try {
       final jsonString = jsonEncode(dictionaryToExport.toJson());
       final Uint8List fileBytes = utf8.encode(jsonString);
@@ -324,19 +325,6 @@ class SettingsScreen extends StatelessWidget {
   Future<void> _importDictionary(BuildContext context) async {
     final localizations = AppLocalizations.of(context)!;
     final provider = Provider.of<DictionaryProvider>(context, listen: false);
-
-    if (Platform.isAndroid || Platform.isIOS) {
-      var status = await Permission.storage.status;
-      if (!status.isGranted) {
-        status = await Permission.storage.request();
-      }
-      if (!status.isGranted) {
-        if (context.mounted) {
-          _showErrorSnackBar(context, localizations.permissionDenied);
-        }
-        return;
-      }
-    }
 
     try {
       final FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -387,8 +375,6 @@ class SettingsScreen extends StatelessWidget {
             return;
           }
           finalDictToImport = importedDict.copyWith(name: newName);
-        } else if (conflictResult == _ImportConflictAction.overwrite) {
-          // Keep finalDictToImport as is, it will overwrite
         }
       }
 
@@ -580,7 +566,10 @@ class SettingsScreen extends StatelessWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(
+          message,
+          style: TextStyle(color: isError ? Colors.white : null),
+        ),
         backgroundColor: isError ? Theme.of(context).colorScheme.error : null,
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 3),
