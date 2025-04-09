@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:simpledictionary/data/dictionary.dart';
 import 'package:simpledictionary/l10n/app_localizations.dart';
@@ -282,19 +280,6 @@ class SettingsScreen extends StatelessWidget {
     final dictionaryToExport = await _showExportSelectionDialog(context);
     if (dictionaryToExport == null || !context.mounted) return;
 
-    if (Platform.isAndroid || Platform.isIOS) {
-      var status = await Permission.storage.status;
-      if (!status.isGranted) {
-        status = await Permission.storage.request();
-      }
-      if (!status.isGranted) {
-        if (context.mounted) {
-          _showErrorSnackBar(context, localizations.permissionDenied);
-        }
-        return;
-      }
-    }
-
     try {
       final jsonString = jsonEncode(dictionaryToExport.toJson());
       final Uint8List fileBytes = utf8.encode(jsonString);
@@ -340,36 +325,6 @@ class SettingsScreen extends StatelessWidget {
   Future<void> _importDictionary(BuildContext context) async {
     final localizations = AppLocalizations.of(context)!;
     final provider = Provider.of<DictionaryProvider>(context, listen: false);
-
-    if (Platform.isAndroid) {
-      if (await Permission.storage.status.isDenied) {
-        final permissions = [
-          Permission.storage,
-          Permission.manageExternalStorage,
-        ];
-
-        final statuses = await permissions.request();
-        final denied = statuses.values.any((status) => status.isDenied);
-
-        if (denied) {
-          if (context.mounted) {
-            _showErrorSnackBar(context, localizations.permissionDenied);
-          }
-          return;
-        }
-      }
-    } else if (Platform.isIOS) {
-      var status = await Permission.storage.status;
-      if (!status.isGranted) {
-        status = await Permission.storage.request();
-        if (!status.isGranted) {
-          if (context.mounted) {
-            _showErrorSnackBar(context, localizations.permissionDenied);
-          }
-          return;
-        }
-      }
-    }
 
     try {
       final FilePickerResult? result = await FilePicker.platform.pickFiles(
