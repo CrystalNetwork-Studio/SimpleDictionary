@@ -1,11 +1,12 @@
 # Simple Dictionary
 
-A simple application for creating and managing personal dictionaries.
+A straightforward application for creating and managing personal dictionaries.
 
-## Features
+## Key Features
 
-*   **Create & Manage Dictionaries:** Easily create new dictionaries and view your list of dictionaries on the home screen.
-*   **Theme Customization:** Choose between Light, Dark, or System Default themes to personalize your experience. Your preferred theme is automatically saved.
-*   **Data Storage:** Your settings (like theme choice) and dictionary data are saved locally on your device. (Note: Dictionary saving to files is planned for future updates).
-*   **Word Management:** Add, edit, and delete word entries within each dictionary.
-*   **(Planned)** Import and Export dictionary data.
+*   **Create & Manage Dictionaries:** Easily create new dictionaries and view your collection from the main screen.
+*   **Theme Customization:** Select Light, Dark, or System default themes. Your preference is saved automatically.
+*   **Local Storage:** Theme settings and dictionary data are stored securely on your local device.
+*   **Vocabulary Management:** Add, edit, or delete terms and definitions within each dictionary.
+*   **Import/Export Functionality:** Import dictionaries from files or export your own for backup and sharing.
+

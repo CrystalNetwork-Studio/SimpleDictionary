@@ -45,6 +45,7 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
           debugPrint(
             "Dictionary '${widget.dictionary.name}' not found in provider. It might have been deleted.",
           );
+          // Return UI indicating dictionary not found
           return Scaffold(
             appBar: AppBar(title: Text(widget.dictionary.name)),
             body: Center(
@@ -110,6 +111,7 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
           body:
               sortedWords.isEmpty
                   ? Center(
+                    // UI for empty dictionary
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -139,6 +141,7 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
                     ),
                   )
                   : WordsList(
+                    // List of words
                     currentDict: currentDict,
                     words: sortedWords,
                     onEditWord: (context, dictionary, word) {
@@ -185,11 +188,13 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
     final localization = AppLocalizations.of(context)!;
     final provider = Provider.of<DictionaryProvider>(context, listen: false);
 
+    // Find the actual index in the potentially unsorted list from the provider
     final actualIndex = currentDictionary.words.indexWhere(
       (w) => w.term == word.term && w.translation == word.translation,
     );
 
     if (actualIndex == -1) {
+      // Handle case where word is not found (should ideally not happen if UI is in sync)
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -203,39 +208,46 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
 
     showDialog<EditWordDialogResult>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: false, // Prevent closing by tapping outside
       builder: (dialogContext) {
         return EditWordDialog(
           initialWord: word,
           dictionaryName: currentDictionary.name,
-          wordIndex: actualIndex,
+          wordIndex: actualIndex, // Use the found index
           dictionaryType: currentDictionary.type,
           onWordUpdated: (indexFromDialog, updatedWord) async {
             provider.clearError();
+            // Use indexFromDialog which corresponds to the actualIndex passed initially
             bool success = await provider.updateWordInDictionary(
               currentDictionary.name,
               indexFromDialog,
               updatedWord,
-              context: dialogContext,
+              context:
+                  dialogContext, // Use dialog context for provider operations
             );
             return success;
           },
           onWordDeleted: (indexFromDialog) async {
             provider.clearError();
+            // Use indexFromDialog which corresponds to the actualIndex passed initially
             final wordTermToDelete =
                 currentDictionary.words[indexFromDialog].term;
             bool success = await provider.removeWordFromDictionary(
               currentDictionary.name,
               indexFromDialog,
-              context: dialogContext,
+              context:
+                  dialogContext, // Use dialog context for provider operations
             );
             return success ? wordTermToDelete : null;
           },
         );
       },
     ).then((result) {
-      if (!mounted || result == null) return;
+      if (!mounted || result == null) {
+        return; // Check if widget is still mounted
+      }
 
+      // Handle the result from the dialog (show snackbars)
       switch (result.status) {
         case EditWordDialogStatus.saved:
           ScaffoldMessenger.of(context).showSnackBar(
@@ -251,7 +263,10 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  localization.wordDeletedWithName(result.deletedWordTerm!, ''),
+                  localization.wordDeletedWithName(
+                    result.deletedWordTerm!,
+                    '',
+                  ), // Ensure localization handles potential null
                 ),
                 duration: const Duration(seconds: 2),
                 behavior: SnackBarBehavior.floating,
@@ -260,7 +275,9 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(localization.wordDeleted),
+                content: Text(
+                  localization.wordDeleted,
+                ), // Generic deletion message
                 duration: const Duration(seconds: 2),
                 behavior: SnackBarBehavior.floating,
               ),
@@ -268,8 +285,11 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
           }
           break;
         case EditWordDialogStatus.cancelled:
+          // No action needed for cancellation
           break;
         case EditWordDialogStatus.error:
+          // Error handling might already be done by the provider,
+          // but you could show a generic error snackbar here if needed.
           break;
       }
     });
@@ -292,10 +312,12 @@ class WordsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      // Add padding around the list
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       itemCount: words.length,
       itemBuilder: (context, index) {
         final word = words[index];
+        // Use a unique key for each word card for better performance and state management
         final wordKey = ValueKey(
           '${currentDict.name}_${word.term}_${word.translation}',
         );
@@ -332,80 +354,94 @@ class WordCard extends StatelessWidget {
     Alignment rowChildAlignment;
     bool descriptionVisible = false;
 
+    // Determine layout based on dictionary type
     switch (dictionaryType) {
       case DictionaryType.word:
-        alignment = TextAlign.center;
-        crossAxisAlignmentItemAlignment = CrossAxisAlignment.center;
-        rowChildAlignment = Alignment.center;
+        alignment = TextAlign.center; // Center text within Text widget
+        crossAxisAlignmentItemAlignment =
+            CrossAxisAlignment.center; // Center items vertically in Column
+        rowChildAlignment =
+            Alignment.center; // Center Text widget within Expanded cell
         descriptionVisible =
             word.description != null && word.description!.isNotEmpty;
         break;
       case DictionaryType.phrase:
       case DictionaryType.sentence:
-        alignment = TextAlign.start;
-        crossAxisAlignmentItemAlignment = CrossAxisAlignment.start;
-        rowChildAlignment = Alignment.centerLeft;
-        descriptionVisible = false;
+        alignment =
+            TextAlign
+                .start; // Align text to the start (left) within Text widget
+        crossAxisAlignmentItemAlignment =
+            CrossAxisAlignment.start; // Align items to the top in Column
+        rowChildAlignment =
+            Alignment
+                .topLeft; // Align Text widget to top-left within Expanded cell
+        descriptionVisible =
+            false; // Description not shown for phrases/sentences
         break;
     }
-    final l10n = AppLocalizations.of(context)!;
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 12), // Spacing between cards
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      // Use GestureDetector for long press detection
       child: GestureDetector(
         onLongPressStart: (_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.holdToEdit),
-              duration: const Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          // Optionally show a hint that long press is available
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(
+          //     content: Text(l10n.holdToEdit),
+          //     duration: const Duration(milliseconds: 1500),
+          //     behavior: SnackBarBehavior.floating,
+          //   ),
+          // );
         },
-        onLongPress: () {
-          Future.delayed(const Duration(seconds: 2), () {
-            onEdit();
-          });
-        },
+        onLongPress: onEdit, // Trigger edit on long press
         child: Container(
+          // Ensure padding and decoration are applied to the container
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
           padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
           child: Column(
-            crossAxisAlignment: crossAxisAlignmentItemAlignment,
+            crossAxisAlignment:
+                crossAxisAlignmentItemAlignment, // Apply vertical alignment for Column children
             children: [
               IntrinsicHeight(
+                // Ensures Row children have the same height
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  // Default crossAxisAlignment is center, which works well here
                   children: [
                     Expanded(
                       child: Align(
-                        alignment: rowChildAlignment,
+                        alignment:
+                            rowChildAlignment, // Align Text within Expanded
                         child: Text(
                           word.term,
-                          textAlign: alignment,
+                          textAlign: alignment, // Align text lines within Text
                           style: textTheme.titleMedium?.copyWith(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.w500,
                           ),
-                          maxLines: null,
+                          maxLines: null, // Allow multiple lines
                           softWrap: true,
                         ),
                       ),
                     ),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: VerticalDivider(thickness: 1, width: 1),
+                      child: VerticalDivider(
+                        thickness: 1,
+                        width: 1,
+                      ), // Separator
                     ),
                     Expanded(
                       child: Align(
-                        alignment: rowChildAlignment,
+                        alignment:
+                            rowChildAlignment, // Align Text within Expanded
                         child: Text(
                           word.translation,
-                          textAlign: alignment,
+                          textAlign: alignment, // Align text lines within Text
                           style: textTheme.titleMedium,
-                          maxLines: null,
+                          maxLines: null, // Allow multiple lines
                           softWrap: true,
                         ),
                       ),
@@ -413,14 +449,21 @@ class WordCard extends StatelessWidget {
                   ],
                 ),
               ),
+              // Conditionally display description for word types
               if (descriptionVisible) ...[
-                const Divider(height: 20, thickness: 0.5),
+                const Divider(
+                  height: 20,
+                  thickness: 0.5,
+                ), // Separator for description
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment:
+                      Alignment.centerLeft, // Always align description left
                   child: Text(
                     word.description!,
                     style: textTheme.bodyMedium?.copyWith(
-                      color: textTheme.bodySmall?.color?.withOpacity(0.8),
+                      color: textTheme.bodySmall?.color?.withOpacity(
+                        0.8,
+                      ), // Slightly faded color
                     ),
                     textAlign: TextAlign.start,
                   ),
