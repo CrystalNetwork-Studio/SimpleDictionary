@@ -193,6 +193,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get editWord => 'Редагувати слово';
 
   @override
+  String get errorOccurred => 'Виникла помилка';
+
+  @override
   String errorCheckingExistence(Object error) {
     return 'Помилка перевірки існування словника: $error';
   }

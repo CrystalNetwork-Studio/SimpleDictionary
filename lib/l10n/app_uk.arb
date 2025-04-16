@@ -50,6 +50,7 @@
     "edit": "Редагувати",
     "editDictionary": "Редагувати словник",
     "editWord": "Редагувати слово",
+    "errorOccurred": "Виникла помилка",
     "errorCheckingExistence": "Помилка перевірки існування словника: {error}",
     "errorCreatingDictionary": "Не вдалося створити словник.",
     "errorDeletingDictionary": "Помилка видалення словника '{dictionaryName}'",

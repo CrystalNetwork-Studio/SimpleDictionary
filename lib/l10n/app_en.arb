@@ -50,6 +50,7 @@
     "edit": "Edit",
     "editDictionary": "Edit Dictionary",
     "editWord": "Edit Word",
+    "errorOccurred": "An error occurred",
     "errorCheckingExistence": "Error checking dictionary existence: {error}",
     "errorCreatingDictionary": "Failed to create dictionary.",
     "errorDeletingDictionary": "Error deleting dictionary '{dictionaryName}'",

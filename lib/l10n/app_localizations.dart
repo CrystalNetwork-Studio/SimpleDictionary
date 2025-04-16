@@ -395,6 +395,12 @@ abstract class AppLocalizations {
   /// **'Edit Word'**
   String get editWord;
 
+  /// No description provided for @errorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get errorOccurred;
+
   /// No description provided for @errorCheckingExistence.
   ///
   /// In en, this message translates to:

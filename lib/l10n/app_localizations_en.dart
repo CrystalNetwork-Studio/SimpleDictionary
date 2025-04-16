@@ -193,6 +193,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editWord => 'Edit Word';
 
   @override
+  String get errorOccurred => 'An error occurred';
+
+  @override
   String errorCheckingExistence(Object error) {
     return 'Error checking dictionary existence: $error';
   }
