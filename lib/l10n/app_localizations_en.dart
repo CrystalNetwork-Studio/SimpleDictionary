@@ -309,7 +309,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get light => 'Light';
 
   @override
-  String get maxLength20 => 'Maximum 20 characters';
+  String get maxLength23 => 'Maximum 23 characters';
 
   @override
   String maxLengthValidation(Object maxLength) {

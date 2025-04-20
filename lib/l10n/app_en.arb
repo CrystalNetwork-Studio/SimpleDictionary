@@ -80,7 +80,7 @@
     "languageUkrainian": "Ukrainian",
     "license": "License",
     "light": "Light",
-    "maxLength20": "Maximum 20 characters",
+    "maxLength23": "Maximum 23 characters",
     "maxLengthValidation": "Maximum length is {maxLength} characters",
     "myDictionaries": "My Dictionaries",
     "oopsImportExportNotReady": "Import/Export feature is not ready yet. :(",

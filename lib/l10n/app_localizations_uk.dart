@@ -309,7 +309,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get light => 'Світла';
 
   @override
-  String get maxLength20 => 'Максимум 20 символів';
+  String get maxLength23 => 'Максимум 23 символів';
 
   @override
   String maxLengthValidation(Object maxLength) {

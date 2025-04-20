@@ -235,7 +235,7 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
 
     showDialog<EditWordDialogResult>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (dialogContext) {
         return EditWordDialog(
           initialWord: word,
@@ -300,8 +300,6 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
               ),
             );
           }
-          break;
-        case EditWordDialogStatus.cancelled:
           break;
         case EditWordDialogStatus.error:
           ScaffoldMessenger.of(context).showSnackBar(

@@ -575,11 +575,11 @@ abstract class AppLocalizations {
   /// **'Light'**
   String get light;
 
-  /// No description provided for @maxLength20.
+  /// No description provided for @maxLength23.
   ///
   /// In en, this message translates to:
-  /// **'Maximum 20 characters'**
-  String get maxLength20;
+  /// **'Maximum 23 characters'**
+  String get maxLength23;
 
   /// No description provided for @maxLengthValidation.
   ///

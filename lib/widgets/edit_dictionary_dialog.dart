@@ -164,17 +164,6 @@ class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
         ),
       ),
       actions: <Widget>[
-        TextButton(
-          onPressed:
-              _isSaving
-                  ? null
-                  : () => Navigator.of(context).pop(
-                    EditDictionaryDialogResult(
-                      EditDictionaryDialogStatus.cancelled,
-                    ),
-                  ),
-          child: Text(localization.cancel),
-        ),
         ElevatedButton(
           onPressed: _isSaving ? null : _submitForm,
           child:

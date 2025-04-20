@@ -143,7 +143,7 @@ class DictionaryItem extends StatelessWidget {
 
     final bool? shouldDelete = await showDialog<bool>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (BuildContext dialogContext) {
         return ConfirmDeleteDialog(dictionaryName: originalName);
       },
@@ -193,7 +193,7 @@ class DictionaryItem extends StatelessWidget {
 
     final result = await showDialog<EditDictionaryDialogResult>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (dialogContext) {
         final dialogProvider = Provider.of<DictionaryProvider>(
           dialogContext,
