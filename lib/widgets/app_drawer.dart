@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:simpledictionary/l10n/app_localizations.dart';
+import 'package:simpledictionary/theme/app_theme.dart';
 
 import '../providers/dictionary_provider.dart';
 import '../screens/about_app_screen.dart';
@@ -30,7 +31,7 @@ class _AppDrawerState extends State<AppDrawer> {
             decoration: BoxDecoration(
               color: Theme.of(
                 context,
-              ).colorScheme.primary.withValues(alpha: 0.1),
+              ).colorScheme.primary.withValues(alpha: 0.1.toInt()),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -44,8 +45,8 @@ class _AppDrawerState extends State<AppDrawer> {
                 Text(
                   localization.myDictionaries,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
-                  ),
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
                 ),
               ],
             ),
@@ -143,7 +144,7 @@ class _DrawerInfoItem extends StatelessWidget {
             size: 24,
             color: Theme.of(
               context,
-            ).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
+            ).textTheme.bodySmall?.color?.withValues(alpha: 0.7.toInt()),
           ),
           const SizedBox(width: 16),
           Text(text, style: Theme.of(context).textTheme.bodyLarge),

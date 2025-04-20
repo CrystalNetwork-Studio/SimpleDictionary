@@ -1,7 +1,6 @@
 # Miscellaneous
 *.class
 *.log
-*.pyc
 ./*.png
 *.swp
 .DS_Store
@@ -19,9 +18,7 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
+# Visual Studio Code related
 !.vscode/
 .vscode/settings.json
 

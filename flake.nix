@@ -1,11 +1,9 @@
 {
-  description = "A Nix Flake for Flutter development";
-
+  description = "Flutter 3.13.x";
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
-
   outputs =
     {
       self,
@@ -18,68 +16,42 @@
         pkgs = import nixpkgs {
           inherit system;
           config = {
+            android_sdk.accept_license = true;
             allowUnfree = true;
           };
         };
-        lib = pkgs.lib;
-        linuxDeps = lib.optionals pkgs.stdenv.isLinux (
-          with pkgs;
-          [
-            clang
-            cmake
-            ninja
-            pkg-config
-            gtk3
-          ]
-        );
-
-        # Dependencies for macOS
-        darwinDeps = lib.optionals pkgs.stdenv.isDarwin (
-          with pkgs;
-          [
-            cocoapods
-            ios-deploy
-          ]
-        );
-        shellPackages =
-          with pkgs;
-          [
-            # Core Flutter
-            flutter
-            # Basic tools
-            git
-            jq
-            which
-          ]
-          ++ linuxDeps
-          ++ darwinDeps;
-
+        buildToolsVersion = "34.0.0";
+        androidComposition = pkgs.androidenv.composeAndroidPackages {
+          includeEmulator = false;
+          includeSystemImages = false;
+          buildToolsVersions = [
+            buildToolsVersion
+            "33.0.1"
+            "28.0.3"
+          ];
+          platformVersions = [
+            "35"
+            "34"
+            "28"
+          ];
+          abiVersions = [
+            "armeabi-v7a"
+            "arm64-v8a"
+          ];
+        };
+        androidSdk = androidComposition.androidsdk;
       in
       {
-        devShells.default = pkgs.mkShell {
-          name = "flutter-dev-shell";
-
-          packages = shellPackages;
-
-          shellHook = ''
-            # Changed Welcome Message
-            echo "--- Flutter Development Shell ---"
-            # add Flutter to PATH
-            export PATH="${lib.makeBinPath shellPackages}:$PATH"
-
-            # For MacOS
-            ${lib.optionalString pkgs.stdenv.isDarwin ''
-              echo "macOS detected:"
-              echo " - Ensure Xcode is installed and configured."
-              echo " - Check 'flutter doctor' for CocoaPods status."
-              echo ""
-            ''}
-
-            # Changed message
-            echo "Run 'flutter doctor -v' to check your setup (Android toolchain will be missing)."
-            echo "-------------------------------------------------------"
-          '';
-        };
+        devShell =
+          with pkgs;
+          mkShell {
+            ANDROID_SDK_ROOT = "${androidSdk}/libexec/android-sdk";
+            buildInputs = [
+              flutter327
+              androidSdk
+              jdk17
+            ];
+          };
       }
     );
 }

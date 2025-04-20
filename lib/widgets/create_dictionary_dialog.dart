@@ -74,17 +74,16 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
               decoration: InputDecoration(
                 hintText: localization.dictionaryNameHint,
                 errorText: _errorMessage,
-                suffixIcon:
-                    _isLoading
-                        ? const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        )
-                        : null,
+                suffixIcon: _isLoading
+                    ? const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
+                    : null,
               ),
               enabled: !_isLoading,
               onChanged: (_) => _validateName(),
@@ -97,28 +96,25 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
             const SizedBox(height: 8),
             DropdownButtonFormField<DictionaryType>(
               value: _selectedType,
-              items:
-                  DictionaryType.values
-                      .map(
-                        (DictionaryType type) =>
-                            DropdownMenuItem<DictionaryType>(
-                              value: type,
-                              child: Text(
-                                _getDictionaryTypeText(type, localization),
-                              ),
-                            ),
-                      )
-                      .toList(),
-              onChanged:
-                  _isLoading
-                      ? null
-                      : (DictionaryType? newValue) {
-                        if (newValue != null) {
-                          setState(() {
-                            _selectedType = newValue;
-                          });
-                        }
-                      },
+              items: DictionaryType.values
+                  .map(
+                    (DictionaryType type) => DropdownMenuItem<DictionaryType>(
+                      value: type,
+                      child: Text(
+                        _getDictionaryTypeText(type, localization),
+                      ),
+                    ),
+                  )
+                  .toList(),
+              onChanged: _isLoading
+                  ? null
+                  : (DictionaryType? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          _selectedType = newValue;
+                        });
+                      }
+                    },
               decoration: InputDecoration(
                 // Optional: Add border or customize decoration
                 border: OutlineInputBorder(
@@ -141,58 +137,53 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children:
-                      _colorOptions.map((color) {
-                        final isSelected = _selectedColor == color;
-                        return GestureDetector(
-                          onTap:
-                              _isLoading
-                                  ? null
-                                  : () {
-                                    setState(() => _selectedColor = color);
-                                  },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4.0,
-                            ),
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: color,
-                                shape: BoxShape.circle,
-                                border:
-                                    isSelected
-                                        ? Border.all(
-                                          color: colorScheme.onSurface
-                                              .withOpacity(0.9),
-                                          width: 3.0,
-                                        )
-                                        : Border.all(
-                                          color: colorScheme.outlineVariant,
-                                          width: 1,
-                                        ),
-                              ),
-                              child: Center(
-                                child:
-                                    isSelected
-                                        ? Icon(
-                                          Icons.check,
-                                          color:
-                                              ThemeData.estimateBrightnessForColor(
-                                                        color,
-                                                      ) ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                          size: 22,
-                                        )
-                                        : null,
-                              ),
-                            ),
+                  children: _colorOptions.map((color) {
+                    final isSelected = _selectedColor == color;
+                    return GestureDetector(
+                      onTap: _isLoading
+                          ? null
+                          : () {
+                              setState(() => _selectedColor = color);
+                            },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4.0,
+                        ),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                            border: isSelected
+                                ? Border.all(
+                                    color:
+                                        colorScheme.onSurface.withOpacity(0.9),
+                                    width: 3.0,
+                                  )
+                                : Border.all(
+                                    color: colorScheme.outlineVariant,
+                                    width: 1,
+                                  ),
                           ),
-                        );
-                      }).toList(),
+                          child: Center(
+                            child: isSelected
+                                ? Icon(
+                                    Icons.check,
+                                    color: ThemeData.estimateBrightnessForColor(
+                                              color,
+                                            ) ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    size: 22,
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
             ),
@@ -220,10 +211,6 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
         ),
       ),
       actions: <Widget>[
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          child: Text(localization.cancel),
-        ),
         TextButton(
           onPressed: (_canCreate && !_isLoading) ? _submit : null,
           child: Text(localization.create),
