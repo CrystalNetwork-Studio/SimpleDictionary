@@ -1,5 +1,5 @@
 {
-  description = "Flutter 3.13.x";
+  description = "Flutter for Android development by CrystalNetwork Studio";
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
