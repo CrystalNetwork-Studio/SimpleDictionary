@@ -71,8 +71,8 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
                         style: Theme.of(
                           context,
                         ).textTheme.headlineSmall?.copyWith(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
+                              color: Theme.of(context).colorScheme.error,
+                            ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
@@ -114,88 +114,84 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
                   ),
                   onPressed: () {
                     setState(() {
-                      _sortOrder =
-                          _sortOrder == SortOrder.alphabetical
-                              ? SortOrder.lastAdded
-                              : SortOrder.alphabetical;
+                      _sortOrder = _sortOrder == SortOrder.alphabetical
+                          ? SortOrder.lastAdded
+                          : SortOrder.alphabetical;
                     });
                   },
-                  tooltip:
-                      _sortOrder == SortOrder.alphabetical
-                          ? localization.sortByLastAdded
-                          : localization.sortByAlphabetical,
+                  tooltip: _sortOrder == SortOrder.alphabetical
+                      ? localization.sortByLastAdded
+                      : localization.sortByAlphabetical,
                 ),
               ],
             ),
-            body:
-                sortedWords.isEmpty
-                    ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.menu_book,
-                              size: 64,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.secondary.withOpacity(0.6),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              localization.dictionaryEmpty,
-                              style: Theme.of(
-                                context,
-                              ).textTheme.headlineSmall?.copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              localization.addWordsByPressingButton,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
+            body: sortedWords.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.menu_book,
+                            size: 64,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.secondary.withOpacity(0.6),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            localization.dictionaryEmpty,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.headlineSmall?.copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            localization.addWordsByPressingButton,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
                       ),
-                    )
-                    : WordsList(
-                      currentDict: currentDict,
-                      words: sortedWords,
-                      onEditWord: (context, dictionary, word) {
-                        _showEditWordDialog(
-                          context,
-                          dictionary,
-                          word,
-                          provider,
-                        );
-                      },
                     ),
+                  )
+                : WordsList(
+                    currentDict: currentDict,
+                    words: sortedWords,
+                    onEditWord: (context, dictionary, word) {
+                      _showEditWordDialog(
+                        context,
+                        dictionary,
+                        word,
+                        provider,
+                      );
+                    },
+                  ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder:
-                        (context) => AddWordScreen(
-                          dictionaryType: dictionaryType,
-                          onWordAdded: (newWord) async {
-                            final dictProvider =
-                                Provider.of<DictionaryProvider>(
-                                  context,
-                                  listen: false,
-                                );
-                            dictProvider.clearError();
-                            return await dictProvider.addWordToDictionary(
-                              currentDict!.name,
-                              newWord,
-                              context: context,
-                            );
-                          },
-                        ),
+                    builder: (context) => AddWordScreen(
+                      dictionaryType: dictionaryType,
+                      onWordAdded: (newWord) async {
+                        final dictProvider = Provider.of<DictionaryProvider>(
+                          context,
+                          listen: false,
+                        );
+                        dictProvider.clearError();
+                        return await dictProvider.addWordToDictionary(
+                          currentDict!.name,
+                          newWord,
+                          context: context,
+                        );
+                      },
+                    ),
                   ),
                 );
               },
@@ -320,7 +316,7 @@ class WordsList extends StatelessWidget {
   final Dictionary currentDict;
   final List<Word> words;
   final void Function(BuildContext context, Dictionary dictionary, Word word)
-  onEditWord;
+      onEditWord;
 
   const WordsList({
     required this.currentDict,

@@ -6,23 +6,6 @@ import '../data/dictionary.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/dictionary_provider.dart';
 
-/// Defines what is returned when the dialog is closed via actions (save/delete).
-class EditWordDialogResult {
-  final EditWordDialogStatus status;
-  final String? deletedWordTerm; // Term of the deleted word (for notifications)
-
-  EditWordDialogResult(this.status, {this.deletedWordTerm});
-}
-
-/// Defines the outcome of the operation within the dialog.
-enum EditWordDialogStatus {
-  saved,
-  deleted,
-  error,
-  // 'cancelled' is handled by showDialog returning null
-}
-
-/// Dialog widget for editing a word or phrase.
 class EditWordDialog extends StatefulWidget {
   final String dictionaryName;
   final int wordIndex;
@@ -34,6 +17,7 @@ class EditWordDialog extends StatefulWidget {
   /// Async function to delete the word. Returns the term of the deleted word on success, null on failure.
   final Future<String?> Function(int) onWordDeleted;
   final DictionaryType dictionaryType; // Affects fields and validation
+  final int? maxLength;
 
   const EditWordDialog({
     required this.dictionaryName,
@@ -42,11 +26,27 @@ class EditWordDialog extends StatefulWidget {
     required this.onWordUpdated,
     required this.onWordDeleted,
     required this.dictionaryType,
+    this.maxLength,
     super.key,
   });
 
   @override
   State<EditWordDialog> createState() => _EditWordDialogState();
+}
+
+class EditWordDialogResult {
+  final EditWordDialogStatus status;
+  final String? deletedWordTerm;
+
+  EditWordDialogResult(this.status, {this.deletedWordTerm});
+}
+
+// Defines the outcome of the operation within the dialog.
+enum EditWordDialogStatus {
+  saved,
+  deleted,
+  error,
+  // 'cancelled' is handled by showDialog returning null
 }
 
 class _EditWordDialogState extends State<EditWordDialog> {
@@ -59,27 +59,6 @@ class _EditWordDialogState extends State<EditWordDialog> {
   bool _isDeleting = false;
   // String to display local errors within the dialog.
   String? _localError;
-
-  @override
-  void initState() {
-    super.initState();
-    _termController = TextEditingController(text: widget.initialWord.term);
-    _translationController = TextEditingController(
-      text: widget.initialWord.translation,
-    );
-    _descriptionController = TextEditingController(
-      text: widget.initialWord.description ?? '',
-    );
-  }
-
-  @override
-  void dispose() {
-    // Dispose controllers to prevent memory leaks.
-    _termController.dispose();
-    _translationController.dispose();
-    _descriptionController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +106,7 @@ class _EditWordDialogState extends State<EditWordDialog> {
             children: [
               TextFormField(
                 controller: _termController,
-                maxLength: isWord ? 23 : null,
+                maxLength: isWord ? 13 : null,
                 inputFormatters:
                     isWord ? [LengthLimitingTextInputFormatter(23)] : null,
                 decoration: InputDecoration(
@@ -139,7 +118,7 @@ class _EditWordDialogState extends State<EditWordDialog> {
                   if (value == null || value.trim().isEmpty) {
                     return localization.pleaseEnterWord;
                   }
-                  if (isWord && value.length > 23) {
+                  if (isWord && value.length > 13) {
                     return localization.maxLength23;
                   }
                   return null;
@@ -149,7 +128,7 @@ class _EditWordDialogState extends State<EditWordDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _translationController,
-                maxLength: isWord ? 23 : null,
+                maxLength: isWord ? 13 : null,
                 inputFormatters:
                     isWord ? [LengthLimitingTextInputFormatter(23)] : null,
                 decoration: InputDecoration(
@@ -161,7 +140,7 @@ class _EditWordDialogState extends State<EditWordDialog> {
                   if (value == null || value.trim().isEmpty) {
                     return localization.pleaseEnterTranslation;
                   }
-                  if (isWord && value.length > 23) {
+                  if (isWord && value.length > 13) {
                     return localization.maxLength23;
                   }
                   return null;
@@ -213,6 +192,27 @@ class _EditWordDialogState extends State<EditWordDialog> {
         ),
       ],
       actionsAlignment: MainAxisAlignment.end,
+    );
+  }
+
+  @override
+  void dispose() {
+    // Dispose controllers to prevent memory leaks.
+    _termController.dispose();
+    _translationController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _termController = TextEditingController(text: widget.initialWord.term);
+    _translationController = TextEditingController(
+      text: widget.initialWord.translation,
+    );
+    _descriptionController = TextEditingController(
+      text: widget.initialWord.description ?? '',
     );
   }
 

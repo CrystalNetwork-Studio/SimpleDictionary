@@ -99,7 +99,7 @@
     "updateWord": "Update Word",
     "version": "Version",
     "word": "Word",
-    "wordAndTranslationMaxLength": "Word and translation length cannot exceed 20 characters.",
+    "wordAndTranslationMaxLength": "Word and translation length cannot exceed 13 characters.",
     "wordDeleted": "Word deleted",
     "wordDeletedWithName": "Word \"{wordName}\" deleted",
     "wordOrTranslationCannotBeEmpty": "Word and translation cannot be empty.",

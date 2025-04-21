@@ -86,7 +86,6 @@ class DictionaryProvider with ChangeNotifier {
     }
 
     bool addedSuccessfully = false;
-    String? wordTermForMessage;
 
     await _performAction(() async {
       final index = _dictionaries.indexWhere((d) => d.name == dictionaryName);
@@ -150,7 +149,6 @@ class DictionaryProvider with ChangeNotifier {
         await file_utils.saveDictionaryToJson(updatedDictionary);
         _dictionaries[index] = updatedDictionary;
         addedSuccessfully = true;
-        wordTermForMessage = wordToAdd.term;
       }
     }, errorMessagePrefix: "Error adding word to '$dictionaryName'");
 
@@ -333,7 +331,6 @@ class DictionaryProvider with ChangeNotifier {
     BuildContext? context,
   }) async {
     bool removedSuccessfully = false;
-    String? removedWordTerm;
 
     await _performAction(
       () async {
@@ -353,8 +350,6 @@ class DictionaryProvider with ChangeNotifier {
             "Invalid word index $wordIndex for dictionary '$dictionaryName'. Max index is ${dictionary.words.length - 1}.",
           );
         }
-
-        removedWordTerm = dictionary.words[wordIndex].term;
 
         final List<Word> updatedWords = List<Word>.from(dictionary.words);
         updatedWords.removeAt(wordIndex);

@@ -368,7 +368,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get word => 'Word';
 
   @override
-  String get wordAndTranslationMaxLength => 'Word and translation length cannot exceed 20 characters.';
+  String get wordAndTranslationMaxLength => 'Word and translation length cannot exceed 13 characters.';
 
   @override
   String get wordDeleted => 'Word deleted';

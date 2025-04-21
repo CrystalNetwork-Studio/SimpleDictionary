@@ -31,11 +31,11 @@ class Dictionary {
   int? get maxCharsPerField {
     switch (type) {
       case DictionaryType.word:
-        return 14;
+        return 14; // Max length for Word type
       case DictionaryType.phrase:
-        return 23;
+        return 23; // Max length for Phrase type
       case DictionaryType.sentence:
-        return null;
+        return null; // No limit for Sentence type
     }
   }
 

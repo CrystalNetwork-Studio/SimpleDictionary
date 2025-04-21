@@ -50,6 +50,13 @@
               flutter327
               androidSdk
               jdk17
+              
+              # For Build Desktop
+              clang
+              cmake
+              ninja
+              pkg-config
+              gtk3
             ];
           };
       }

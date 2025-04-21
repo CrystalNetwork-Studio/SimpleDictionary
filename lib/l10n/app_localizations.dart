@@ -692,7 +692,7 @@ abstract class AppLocalizations {
   /// No description provided for @wordAndTranslationMaxLength.
   ///
   /// In en, this message translates to:
-  /// **'Word and translation length cannot exceed 20 characters.'**
+  /// **'Word and translation length cannot exceed 13 characters.'**
   String get wordAndTranslationMaxLength;
 
   /// No description provided for @wordDeleted.

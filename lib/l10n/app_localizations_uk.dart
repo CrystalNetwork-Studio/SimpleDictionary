@@ -368,7 +368,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get word => 'Слово';
 
   @override
-  String get wordAndTranslationMaxLength => 'Довжина слова та перекладу не може перевищувати 20 символів.';
+  String get wordAndTranslationMaxLength => 'Довжина слова та перекладу не може перевищувати 14 символів.';
 
   @override
   String get wordDeleted => 'Слово видалено';

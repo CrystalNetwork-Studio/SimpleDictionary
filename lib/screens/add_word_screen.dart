@@ -27,35 +27,15 @@ class _AddWordScreenState extends State<AddWordScreen> {
   final _descriptionController = TextEditingController();
   bool _isSaving = false;
 
-  int? _maxLength;
+  int? maxLength;
   bool _descriptionAllowed = true;
-
-  @override
-  void initState() {
-    super.initState();
-    switch (widget.dictionaryType) {
-      case DictionaryType.word:
-        _maxLength = 14;
-        _descriptionAllowed = true;
-        break;
-      case DictionaryType.phrase:
-        _maxLength = 23;
-        _descriptionAllowed = false;
-        break;
-      case DictionaryType.sentence:
-        _maxLength = null;
-        _descriptionAllowed = false;
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final lengthFormatters =
-        _maxLength != null
-            ? [LengthLimitingTextInputFormatter(_maxLength)]
-            : <TextInputFormatter>[];
+    final lengthFormatters = maxLength != null
+        ? [LengthLimitingTextInputFormatter(maxLength)]
+        : <TextInputFormatter>[];
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.addNewWord)),
@@ -66,46 +46,44 @@ class _AddWordScreenState extends State<AddWordScreen> {
           children: [
             TextFormField(
               controller: _termController,
-              maxLength: _maxLength,
+              maxLength: maxLength,
               inputFormatters: lengthFormatters,
               decoration: InputDecoration(
                 labelText: l10n.word,
-                counterText: _maxLength != null ? "" : null,
+                counterText: maxLength != null ? "" : null,
                 border: const OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return l10n.pleaseEnterWord;
                 }
-                if (_maxLength != null && value.length > _maxLength!) {
-                  return l10n.maxLengthValidation(_maxLength!);
+                if (maxLength != null && value.length > maxLength!) {
+                  return l10n.maxLengthValidation(maxLength!);
                 }
                 return null;
               },
             ),
             const SizedBox(height: 16),
-
             TextFormField(
               controller: _translationController,
-              maxLength: _maxLength,
+              maxLength: maxLength,
               inputFormatters: lengthFormatters,
               decoration: InputDecoration(
                 labelText: l10n.translation,
-                counterText: _maxLength != null ? "" : null,
+                counterText: maxLength != null ? "" : null,
                 border: const OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return l10n.pleaseEnterTranslation;
                 }
-                if (_maxLength != null && value.length > _maxLength!) {
-                  return l10n.maxLengthValidation(_maxLength!);
+                if (maxLength != null && value.length > maxLength!) {
+                  return l10n.maxLengthValidation(maxLength!);
                 }
                 return null;
               },
             ),
             const SizedBox(height: 16),
-
             if (_descriptionAllowed)
               TextFormField(
                 controller: _descriptionController,
@@ -117,23 +95,21 @@ class _AddWordScreenState extends State<AddWordScreen> {
               ),
             if (_descriptionAllowed) const SizedBox(height: 24),
             if (!_descriptionAllowed) const SizedBox(height: 16),
-
             ElevatedButton(
               onPressed: _isSaving ? null : _submitForm,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              child:
-                  _isSaving
-                      ? SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      )
-                      : Text(l10n.save),
+              child: _isSaving
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    )
+                  : Text(l10n.save),
             ),
           ],
         ),
@@ -147,6 +123,13 @@ class _AddWordScreenState extends State<AddWordScreen> {
     _translationController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _descriptionAllowed = widget.dictionaryType == DictionaryType.word;
   }
 
   Future<void> _submitForm() async {

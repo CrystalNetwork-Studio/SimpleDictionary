@@ -4,6 +4,7 @@
 ./*.png
 *.swp
 .DS_Store
+.direnv/
 .atom/
 .build/
 .buildlog/

@@ -97,7 +97,7 @@
     "updateDictionary": "Оновити словник",
     "updateWord": "Оновити слово",
     "version": "Версія",
-    "wordAndTranslationMaxLength": "Довжина слова та перекладу не може перевищувати 20 символів.",
+    "wordAndTranslationMaxLength": "Довжина слова та перекладу не може перевищувати 14 символів.",
     "wordDeleted": "Слово видалено",
     "wordDeletedWithName": "Слово \"{wordName}\" видалено",
     "wordOrTranslationCannotBeEmpty": "Слово та переклад не можуть бути порожніми.",
