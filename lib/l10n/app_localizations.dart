@@ -125,6 +125,18 @@ abstract class AppLocalizations {
   /// **'Add New Word'**
   String get addNewWord;
 
+  /// No description provided for @addNewPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Phrase'**
+  String get addNewPhrase;
+
+  /// No description provided for @addNewSentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Sentence'**
+  String get addNewSentence;
+
   /// No description provided for @addWordsByPressingButton.
   ///
   /// In en, this message translates to:
@@ -731,11 +743,11 @@ abstract class AppLocalizations {
   /// **'Text'**
   String get sentence;
 
-  /// No description provided for @sentences.
+  /// No description provided for @phrases.
   ///
   /// In en, this message translates to:
   /// **'Phrases'**
-  String get sentences;
+  String get phrases;
 
   /// No description provided for @goBack.
   ///
@@ -880,12 +892,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Storage permission denied.'**
   String get permissionDenied;
-
-  /// No description provided for @holdToEdit.
-  ///
-  /// In en, this message translates to:
-  /// **'Hold to edit...'**
-  String get holdToEdit;
 
   /// No description provided for @noNewlinesAllowed.
   ///

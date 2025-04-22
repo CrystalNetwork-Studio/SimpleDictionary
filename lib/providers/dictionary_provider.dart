@@ -187,7 +187,8 @@ class DictionaryProvider with ChangeNotifier {
 
       // If the deletion was successful or the directory doesn't exist anymore,
       // consider it a success and remove the dictionary from the list
-      final directoryPath = await file_utils.getDictionaryDirectoryPath(dictionaryName);
+      final directoryPath =
+          await file_utils.getDictionaryDirectoryPath(dictionaryName);
       final dir = Directory(directoryPath);
       final directoryExists = await dir.exists();
 

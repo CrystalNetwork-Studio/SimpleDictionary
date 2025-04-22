@@ -29,8 +29,8 @@ class DictionaryItem extends StatelessWidget {
             currentDictionary.type == DictionaryType.sentence
                 ? Icons.short_text
                 : currentDictionary.type == DictionaryType.phrase
-                ? Icons.record_voice_over
-                : Icons.translate_outlined;
+                    ? Icons.record_voice_over
+                    : Icons.translate_outlined;
 
         return Card(
           child: InkWell(
@@ -42,10 +42,9 @@ class DictionaryItem extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder:
-                        (context) => DictionaryDetailScreen(
-                          dictionary: currentDictionary,
-                        ),
+                    builder: (context) => DictionaryDetailScreen(
+                      dictionary: currentDictionary,
+                    ),
                   ),
                 );
               }
@@ -87,33 +86,33 @@ class DictionaryItem extends StatelessWidget {
                           break;
                       }
                     },
-                    itemBuilder:
-                        (BuildContext context) => <PopupMenuEntry<String>>[
-                          PopupMenuItem<String>(
-                            value: 'edit',
-                            child: ListTile(
-                              leading: const Icon(Icons.edit_outlined),
-                              title: Text(AppLocalizations.of(context)!.edit),
-                              dense: true,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              visualDensity: VisualDensity.compact,
-                            ),
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<String>>[
+                      PopupMenuItem<String>(
+                        value: 'edit',
+                        child: ListTile(
+                          leading: const Icon(Icons.edit_outlined),
+                          title: Text(AppLocalizations.of(context)!.edit),
+                          dense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
                           ),
-                          PopupMenuItem<String>(
-                            value: 'delete',
-                            child: ListTile(
-                              leading: const Icon(Icons.delete_outline),
-                              title: Text(AppLocalizations.of(context)!.delete),
-                              dense: true,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              visualDensity: VisualDensity.compact,
-                            ),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'delete',
+                        child: ListTile(
+                          leading: const Icon(Icons.delete_outline),
+                          title: Text(AppLocalizations.of(context)!.delete),
+                          dense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
                           ),
-                        ],
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      ),
+                    ],
                     icon: Icon(
                       Icons.more_vert,
                       color: colorScheme.onSurfaceVariant,
@@ -159,7 +158,8 @@ class DictionaryItem extends StatelessWidget {
               content: Text(
                 AppLocalizations.of(
                   context,
-                )!.dictionaryDeletedWithName(originalName),
+                )!
+                    .dictionaryDeletedWithName(originalName),
               ),
               duration: const Duration(seconds: 2),
               behavior: SnackBarBehavior.floating,
@@ -236,7 +236,8 @@ class DictionaryItem extends StatelessWidget {
             content: Text(
               AppLocalizations.of(
                 context,
-              )!.dictionaryUpdated(potentiallyUpdatedDictionary.name),
+              )!
+                  .dictionaryUpdated(potentiallyUpdatedDictionary.name),
             ),
             duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,

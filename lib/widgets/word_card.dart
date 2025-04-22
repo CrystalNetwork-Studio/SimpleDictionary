@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:simpledictionary/l10n/app_localizations.dart';
 
 import '../data/dictionary.dart';
-import '../l10n/app_localizations.dart';
 
 /// A card widget that displays a word and its translation.
 class WordCard extends StatelessWidget {
@@ -20,22 +20,31 @@ class WordCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
-    final localization = AppLocalizations.of(context)!;
 
     TextAlign alignment;
     CrossAxisAlignment crossAxisAlignmentItemAlignment;
-    Alignment rowChildAlignment;
+    Alignment rowChildAlignment = Alignment.topLeft;
     bool descriptionVisible = false;
 
     switch (dictionaryType) {
       case DictionaryType.word:
         alignment = TextAlign.center;
         crossAxisAlignmentItemAlignment = CrossAxisAlignment.center;
-        rowChildAlignment = Alignment.center;
-        descriptionVisible =
-            word.description != null && word.description!.trim().isNotEmpty;
+        rowChildAlignment = Alignment.topLeft;
+        // descriptionVisible = dictionaryType != DictionaryType.sentence &&
+        //     word.description != null &&
+        //     word.description!.trim().isNotEmpty;
+        descriptionVisible = false;
         break;
       case DictionaryType.phrase:
+        alignment = TextAlign.start;
+        crossAxisAlignmentItemAlignment = CrossAxisAlignment.start;
+        // descriptionVisible = dictionaryType != DictionaryType.phrase &&
+        //     word.description != null &&
+        //     word.description!.trim().isNotEmpty;
+        descriptionVisible = false;
+
+        break;
       case DictionaryType.sentence:
         alignment = TextAlign.start;
         crossAxisAlignmentItemAlignment = CrossAxisAlignment.start;
@@ -50,9 +59,13 @@ class WordCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onLongPress: onEdit,
+        onTap: onEdit,
         child: Tooltip(
-          message: localization.holdToEdit,
+          message: dictionaryType == DictionaryType.word
+              ? AppLocalizations.of(context)!.word
+              : dictionaryType == DictionaryType.phrase
+                  ? AppLocalizations.of(context)!.phrases
+                  : AppLocalizations.of(context)!.sentence,
           child: Padding(
             padding: const EdgeInsets.symmetric(
               vertical: 12.0,

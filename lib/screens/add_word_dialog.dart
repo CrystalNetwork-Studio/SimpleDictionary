@@ -19,7 +19,13 @@ class AddWordDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(AppLocalizations.of(context)!.addNewWord),
+      title: Text(
+        dictionaryType == DictionaryType.word
+            ? AppLocalizations.of(context)!.addNewWord
+            : dictionaryType == DictionaryType.phrase
+                ? AppLocalizations.of(context)!.addNewPhrase
+                : AppLocalizations.of(context)!.addNewSentence,
+      ),
       content: SingleChildScrollView(
         child: WordFormWidget(
           dictionaryType: dictionaryType,

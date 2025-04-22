@@ -69,7 +69,7 @@ class Dictionary {
     if (color == null) {
       throw ArgumentError('Color cannot be null');
     }
-    
+
     return color.toARGB32();
   }
 }

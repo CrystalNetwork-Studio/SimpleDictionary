@@ -79,11 +79,11 @@ class _WordFormWidgetState extends State<WordFormWidget> {
     switch (widget.dictionaryType) {
       case DictionaryType.word:
         _effectiveMaxLength = widget.maxLength ?? 14;
-        _descriptionAllowed = true;
+        _descriptionAllowed = false;
         break;
       case DictionaryType.phrase:
         _effectiveMaxLength = widget.maxLength ?? 23;
-        _descriptionAllowed = true;
+        _descriptionAllowed = false;
         break;
       case DictionaryType.sentence:
         _effectiveMaxLength = widget.maxLength;
@@ -135,134 +135,145 @@ class _WordFormWidgetState extends State<WordFormWidget> {
     return Material(
       color: Colors.transparent,
       child: Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextFormField(
-            controller: _termController,
-            maxLength: _effectiveMaxLength,
-            inputFormatters: lengthFormatters,
-            decoration: InputDecoration(
-              labelText: l10n.word,
-              counterText: _effectiveMaxLength != null ? "" : null,
-              border: const OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return l10n.pleaseEnterWord;
-              }
-              if (_effectiveMaxLength != null && value.length > _effectiveMaxLength!) {
-                return l10n.maxLengthValidation(_effectiveMaxLength!);
-              }
-              if (value.contains('\n') || value.contains('/n')) {
-                return l10n.noNewlinesAllowed;
-              }
-              return null;
-            },
-            enabled: canInteract,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _translationController,
-            maxLength: _effectiveMaxLength,
-            inputFormatters: lengthFormatters,
-            decoration: InputDecoration(
-              labelText: l10n.translation,
-              counterText: _effectiveMaxLength != null ? "" : null,
-              border: const OutlineInputBorder(),
-            ),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return l10n.pleaseEnterTranslation;
-              }
-              if (_effectiveMaxLength != null && value.length > _effectiveMaxLength!) {
-                return l10n.maxLengthValidation(_effectiveMaxLength!);
-              }
-              if (value.contains('\n') || value.contains('/n')) {
-                return l10n.noNewlinesAllowed;
-              }
-              return null;
-            },
-            enabled: canInteract,
-          ),
-          const SizedBox(height: 16),
-          if (_descriptionAllowed)
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             TextFormField(
-              controller: _descriptionController,
+              controller: _termController,
+              maxLength: _effectiveMaxLength,
+              inputFormatters: lengthFormatters,
               decoration: InputDecoration(
-                labelText: l10n.descriptionOptional,
+                labelText: widget.dictionaryType == DictionaryType.word
+                    ? l10n.word
+                    : widget.dictionaryType == DictionaryType.phrase
+                        ? l10n.phrases
+                        : l10n.sentence,
+                counterText: _effectiveMaxLength != null ? "" : null,
                 border: const OutlineInputBorder(),
               ),
-              maxLines: 3,
-              enabled: canInteract,
               validator: (value) {
-                if (value != null && (value.contains('\n') || value.contains('/n'))) {
+                if (value == null || value.trim().isEmpty) {
+                  return l10n.pleaseEnterWord;
+                }
+                if (_effectiveMaxLength != null &&
+                    value.length > _effectiveMaxLength!) {
+                  return l10n.maxLengthValidation(_effectiveMaxLength!);
+                }
+                if (value.contains('\n') || value.contains('/n')) {
                   return l10n.noNewlinesAllowed;
                 }
                 return null;
               },
-            ),
-          if (_descriptionAllowed) const SizedBox(height: 24),
-          if (!_descriptionAllowed) const SizedBox(height: 16),
-
-          // Error message display
-          if (_localError != null) ...[
-            const SizedBox(height: 16),
-            Text(
-              _localError!,
-              style: TextStyle(color: errorColor),
-              textAlign: TextAlign.center,
+              enabled: canInteract,
             ),
             const SizedBox(height: 16),
-          ],
+            TextFormField(
+              controller: _translationController,
+              maxLength: _effectiveMaxLength,
+              inputFormatters: lengthFormatters,
+              decoration: InputDecoration(
+                labelText: widget.dictionaryType == DictionaryType.word
+                    ? l10n.word
+                    : widget.dictionaryType == DictionaryType.phrase
+                        ? l10n.phrases
+                        : l10n.sentence,
+                counterText: _effectiveMaxLength != null ? "" : null,
+                border: const OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return l10n.pleaseEnterTranslation;
+                }
+                if (_effectiveMaxLength != null &&
+                    value.length > _effectiveMaxLength!) {
+                  return l10n.maxLengthValidation(_effectiveMaxLength!);
+                }
+                if (value.contains('\n') || value.contains('/n')) {
+                  return l10n.noNewlinesAllowed;
+                }
+                return null;
+              },
+              enabled: canInteract,
+            ),
+            const SizedBox(height: 16),
+            if (_descriptionAllowed)
+              TextFormField(
+                controller: _descriptionController,
+                decoration: InputDecoration(
+                  labelText: l10n.descriptionOptional,
+                  border: const OutlineInputBorder(),
+                ),
+                maxLines: 3,
+                enabled: canInteract,
+                validator: (value) {
+                  if (value != null &&
+                      (value.contains('\n') || value.contains('/n'))) {
+                    return l10n.noNewlinesAllowed;
+                  }
+                  return null;
+                },
+              ),
+            if (_descriptionAllowed) const SizedBox(height: 24),
+            if (!_descriptionAllowed) const SizedBox(height: 16),
 
-          // Action buttons
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (widget.isEditMode && widget.onDelete != null)
-                  IconButton(
-                    onPressed: canInteract ? _handleDelete : null,
-                    icon: _isDeleting
+            // Error message display
+            if (_localError != null) ...[
+              const SizedBox(height: 16),
+              Text(
+                _localError!,
+                style: TextStyle(color: errorColor),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+            ],
+
+            // Action buttons
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (widget.isEditMode && widget.onDelete != null)
+                    IconButton(
+                      onPressed: canInteract ? _handleDelete : null,
+                      icon: _isDeleting
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: errorColor,
+                              ),
+                            )
+                          : Icon(Icons.delete_outline, color: errorColor),
+                      tooltip: l10n.delete,
+                    )
+                  else
+                    const SizedBox(),
+                  ElevatedButton(
+                    onPressed: canInteract ? _submitForm : null,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16),
+                    ),
+                    child: _isSaving
                         ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: errorColor,
+                              color: onPrimaryColor,
                             ),
                           )
-                        : Icon(Icons.delete_outline, color: errorColor),
-                    tooltip: l10n.delete,
-                  )
-                else
-                  const SizedBox(),
-
-                ElevatedButton(
-                  onPressed: canInteract ? _submitForm : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        : Text(l10n.save),
                   ),
-                  child: _isSaving
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: onPrimaryColor,
-                          ),
-                        )
-                      : Text(l10n.save),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
     );
   }
 
@@ -273,12 +284,17 @@ class _WordFormWidgetState extends State<WordFormWidget> {
         _localError = null;
       });
 
+      // Determine description based on type and input
+      String? descriptionValue;
+      if (widget.dictionaryType != DictionaryType.sentence &&
+          _descriptionController.text.trim().isNotEmpty) {
+        descriptionValue = _descriptionController.text.trim();
+      }
+
       final word = Word(
         term: _termController.text.trim(),
         translation: _translationController.text.trim(),
-        description: _descriptionAllowed && _descriptionController.text.trim().isNotEmpty
-            ? _descriptionController.text.trim()
-            : null,
+        description: descriptionValue, // Assign determined value
       );
 
       try {
@@ -291,9 +307,11 @@ class _WordFormWidgetState extends State<WordFormWidget> {
           return;
         } else {
           // Show error from provider
-          final error = Provider.of<DictionaryProvider>(context, listen: false).error;
+          final error =
+              Provider.of<DictionaryProvider>(context, listen: false).error;
           setState(() {
-            _localError = error ?? AppLocalizations.of(context)!.failedToUpdateWord;
+            _localError =
+                error ?? AppLocalizations.of(context)!.failedToUpdateWord;
             _isSaving = false;
           });
           Provider.of<DictionaryProvider>(context, listen: false).clearError();
@@ -352,7 +370,8 @@ class _WordFormWidgetState extends State<WordFormWidget> {
         return;
       } else {
         // Show error from provider
-        final error = Provider.of<DictionaryProvider>(context, listen: false).error;
+        final error =
+            Provider.of<DictionaryProvider>(context, listen: false).error;
         setState(() {
           _localError = error ?? l10n.failedToDeleteWord;
           _isDeleting = false;

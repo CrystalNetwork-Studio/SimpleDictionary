@@ -104,7 +104,11 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
               onPressed: () => currentDict != null
                   ? _navigateToAddWord(context, currentDict, dictionaryType)
                   : null,
-              tooltip: localization.addNewWord,
+              tooltip: dictionaryType == DictionaryType.word
+                  ? localization.addNewWord
+                  : dictionaryType == DictionaryType.phrase
+                      ? localization.addNewPhrase
+                      : localization.addNewSentence,
               child: const Icon(Icons.add),
             ),
           );
@@ -166,7 +170,10 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
             Icon(
               Icons.menu_book,
               size: 64,
-              color: Theme.of(context).colorScheme.secondary.withAlpha((0.6 * 255).round()),
+              color: Theme.of(context)
+                  .colorScheme
+                  .secondary
+                  .withAlpha((0.6 * 255).round()),
             ),
             const SizedBox(height: 16),
             Text(
@@ -188,7 +195,8 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
     );
   }
 
-  void _navigateToAddWord(BuildContext context, Dictionary currentDict, DictionaryType dictionaryType) {
+  void _navigateToAddWord(BuildContext context, Dictionary currentDict,
+      DictionaryType dictionaryType) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -292,7 +300,8 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: // Assuming you want to show the deleted word term
-Text(localization.wordDeletedWithName(result.deletedWordTerm!)),
+                      Text(localization
+                          .wordDeletedWithName(result.deletedWordTerm!)),
                   duration: const Duration(seconds: 2),
                   behavior: SnackBarBehavior.floating,
                 ),
