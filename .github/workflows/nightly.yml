@@ -1,0 +1,58 @@
+name: Nightly Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * *" # Run at midnight UTC every day
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.29.3"
+          channel: "stable"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze project source
+        run: flutter analyze
+
+      - name: Build APK
+        run: flutter build apk --split-per-abi
+
+      - name: Rename APK files
+        run: |
+          mkdir -p build/outputs
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk build/outputs/apk/SimpleDictionary-Nightly-arm64-v8a.apk
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk build/outputs/apk/SimpleDictionary-Nightly-armeabi-v7a.apk
+          cp build/app/outputs/flutter-apk/app-x86_64-release.apk build/outputs/apk/SimpleDictionary-Nightly-x86_64.apk
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk-files
+          path: |
+            build/outputs/apk/SimpleDictionary-Nightly-arm64-v8a.apk
+            build/outputs/apk/SimpleDictionary-Nightly-armeabi-v7a.apk
+            build/outputs/apk/SimpleDictionary-Nightly-x86_64.apk

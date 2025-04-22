@@ -7,6 +7,8 @@ gradle-wrapper.jar
 GeneratedPluginRegistrant.java
 
 
+/app/.cxx
+
 key.properties
 **/*.keystore
 **/*.jks

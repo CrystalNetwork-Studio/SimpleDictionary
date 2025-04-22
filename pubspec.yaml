@@ -1,8 +1,9 @@
 name: simpledictionary
 description: "A simple dictionary application."
 publish_to: "none"
-
-version: 0.1.2
+repository: "https://github.com/CrystalNetwork-Studio/SimpleDictionary"
+issue_tracker: "https://github.com/CrystalNetwork-Studio/SimpleDictionary/issues"
+version: 0.1.5
 
 platforms:
   android:
@@ -25,7 +26,7 @@ dependencies:
   package_info_plus: ^8.3.0 # For getting app info
   url_launcher: ^6.3.1 # For opening URLs
   file_picker: ^10.0.0 # For picking files - Updated version
-  permission_handler: ^11.3.1 # For handling permissions
+  permission_handler: ^12.0.0+1 # For handling permissions
 
 dev_dependencies:
   flutter_test:
@@ -33,7 +34,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner: ^2.4.0
   json_serializable: ^6.7.0
-  flutter_launcher_icons: ^0.13.0
+  flutter_launcher_icons: ^0.14.3
 
 flutter:
   uses-material-design: true
