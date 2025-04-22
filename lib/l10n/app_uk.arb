@@ -44,12 +44,12 @@
     "dictionaryNotFoundForWordUpdate": "Словник '{dictionaryName}' не знайдено для оновлення слова.",
     "dictionarySavedTo": "Словник '{dictionaryName}' збережено до: {filePath}",
     "dictionaryUpdated": "Словник \"{dictionaryName}\" оновлено.",
-    "dictionaryUpdatedWithName": "Словник \"{dictionaryName}\" оновлено.",
     "directoryForDictionaryCreated": "Каталог для словника '{dictionaryName}' створено за шляхом: {directoryPath}",
     "directoryForDictionaryNotFound": "Каталог для словника '{dictionaryName}' не знайдено за шляхом: {directoryPath}",
     "edit": "Редагувати",
     "editDictionary": "Редагувати словник",
     "editWord": "Редагувати слово",
+    "errorOccurred": "Виникла помилка",
     "errorCheckingExistence": "Помилка перевірки існування словника: {error}",
     "errorCreatingDictionary": "Не вдалося створити словник.",
     "errorDeletingDictionary": "Помилка видалення словника '{dictionaryName}'",
@@ -79,7 +79,7 @@
     "languageUkrainian": "Українська",
     "license": "Ліцензія",
     "light": "Світла",
-    "maxLength20": "Максимум 20 символів",
+    "maxLength23": "Максимум 23 символів",
     "myDictionaries": "Мої словники",
     "oopsImportExportNotReady": "Функція Імпорту/Експорту ще не готова. :(",
     "options": "Опції",
@@ -96,7 +96,7 @@
     "updateDictionary": "Оновити словник",
     "updateWord": "Оновити слово",
     "version": "Версія",
-    "wordAndTranslationMaxLength": "Довжина слова та перекладу не може перевищувати 20 символів.",
+    "wordAndTranslationMaxLength": "Довжина слова та перекладу не може перевищувати 14 символів.",
     "wordDeleted": "Слово видалено",
     "wordDeletedWithName": "Слово \"{wordName}\" видалено",
     "wordOrTranslationCannotBeEmpty": "Слово та переклад не можуть бути порожніми.",
@@ -104,7 +104,7 @@
     "dictionaryType": "Тип словника",
     "word": "Слово",
     "words": "Слова",
-    "sentence": "Речення",
+    "sentence": "Текст",
     "sentences": "Фрази",
     "maxLengthValidation": "Максимальна довжина: {maxLength} символів",
     "goBack": "Назад",
@@ -132,11 +132,6 @@
     "exportError": "Помилка експорту",
     "permissionDenied": "Відмовлено у доступі до сховища.",
     "holdToEdit": "Утримуйте для редагування...",
-    "@wordDeletedWithName": {
-        "placeholders": {
-            "word": {
-                "type": "String"
-            }
-        }
-    }
+    "noNewlinesAllowed": "Символи переносу рядка не дозволені",
+    "invalidFolderNameChars": "Назва словника містить недопустимі символи. Уникайте використання: / \\ : * ? \" < > |"
 }

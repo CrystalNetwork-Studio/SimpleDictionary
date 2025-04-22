@@ -29,16 +29,15 @@ class HomeScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             } else if (dictionaryProvider.dictionaries.isEmpty) {
               return LayoutBuilder(
-                builder:
-                    (context, constraints) => SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
-                        ),
-                        child: const EmptyState(),
-                      ),
+                builder: (context, constraints) => SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
                     ),
+                    child: const EmptyState(),
+                  ),
+                ),
               );
             } else {
               return DictionaryList(
@@ -67,24 +66,23 @@ class HomeScreen extends StatelessWidget {
                 ) {
                   provider
                       .addDictionary(
-                        name,
-                        color: color,
-                        dictionaryType: dictionaryType,
-                      )
+                    name,
+                    color: color,
+                    dictionaryType: dictionaryType,
+                  )
                       .then((success) {
-                        if (!success && dialogContext.mounted) {
-                          final error =
-                              provider.error ??
-                              localization.errorCreatingDictionary;
-                          ScaffoldMessenger.of(dialogContext).showSnackBar(
-                            SnackBar(
-                              content: Text(error),
-                              backgroundColor: Colors.orange,
-                            ),
-                          );
-                          provider.clearError();
-                        }
-                      });
+                    if (!success && dialogContext.mounted) {
+                      final error = provider.error ??
+                          localization.errorCreatingDictionary;
+                      ScaffoldMessenger.of(dialogContext).showSnackBar(
+                        SnackBar(
+                          content: Text(error),
+                          backgroundColor: Colors.orange,
+                        ),
+                      );
+                      provider.clearError();
+                    }
+                  });
                 },
                 dictionaryExists: (String name) async {
                   return await provider.dictionaryExists(name);

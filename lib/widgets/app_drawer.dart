@@ -44,8 +44,8 @@ class _AppDrawerState extends State<AppDrawer> {
                 Text(
                   localization.myDictionaries,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
-                  ),
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
                 ),
               ],
             ),

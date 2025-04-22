@@ -169,11 +169,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String dictionaryUpdatedWithName(Object dictionaryName) {
-    return 'Dictionary \"$dictionaryName\" updated.';
-  }
-
-  @override
   String directoryForDictionaryCreated(Object dictionaryName, Object directoryPath) {
     return 'Directory for dictionary \'$dictionaryName\' created at: $directoryPath';
   }
@@ -191,6 +186,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editWord => 'Edit Word';
+
+  @override
+  String get errorOccurred => 'An error occurred';
 
   @override
   String errorCheckingExistence(Object error) {
@@ -306,7 +304,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get light => 'Light';
 
   @override
-  String get maxLength20 => 'Maximum 20 characters';
+  String get maxLength23 => 'Maximum 23 characters';
 
   @override
   String maxLengthValidation(Object maxLength) {
@@ -367,13 +365,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get word => 'Word';
 
   @override
-  String get wordAndTranslationMaxLength => 'Word and translation length cannot exceed 20 characters.';
+  String get wordAndTranslationMaxLength => 'Word and translation length cannot exceed 13 characters.';
 
   @override
   String get wordDeleted => 'Word deleted';
 
   @override
-  String wordDeletedWithName(String word, Object wordName) {
+  String wordDeletedWithName(Object wordName) {
     return 'Word \"$wordName\" deleted';
   }
 
@@ -390,10 +388,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get words => 'Words';
 
   @override
-  String get sentence => 'Sentence';
+  String get sentence => 'Text';
 
   @override
-  String get sentences => 'Sentences';
+  String get sentences => 'Phrases';
 
   @override
   String get goBack => 'Back';
@@ -481,4 +479,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get holdToEdit => 'Hold to edit...';
+
+  @override
+  String get noNewlinesAllowed => 'Newline characters are not allowed';
+
+  @override
+  String get invalidFolderNameChars => 'Dictionary name contains invalid characters. Avoid using: / \\ : * ? \" < > |';
 }

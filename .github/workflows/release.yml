@@ -1,0 +1,94 @@
+name: Release Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: "Release Type"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  build_and_release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.29.3"
+          channel: "stable"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Extract version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep 'version:' pubspec.yaml | sed 's/version: //g' | tr -d '"' | tr -d "'")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Version: $VERSION"
+
+      - name: Extract release notes from CHANGELOG.md
+        id: changelog
+        run: |
+          VERSION_HEADER="## [${{ env.VERSION }}]"
+          NEXT_VERSION_PATTERN="## \["
+
+          # Extract content between current version header and the next version header
+          RELEASE_NOTES=$(awk "/$VERSION_HEADER/,/$NEXT_VERSION_PATTERN/ { if (!/^## \[/ || /^$VERSION_HEADER/) print }" CHANGELOG.md | sed '1d' | sed '$d')
+
+          # If there's no next version, extract until the end of the file
+          if [ -z "$RELEASE_NOTES" ]; then
+            RELEASE_NOTES=$(awk "/$VERSION_HEADER/,/^$/ { print }" CHANGELOG.md | sed '1d')
+          fi
+
+          # Escape newlines for GitHub Actions
+          RELEASE_NOTES="${RELEASE_NOTES//'%'/'%25'}"
+          RELEASE_NOTES="${RELEASE_NOTES//$'\n'/'%0A'}"
+          RELEASE_NOTES="${RELEASE_NOTES//$'\r'/'%0D'}"
+
+          echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
+          echo "Release notes extracted"
+
+      - name: Build APK
+        run: flutter build apk --split-per-abi
+
+      - name: Rename APK files
+        run: |
+          mkdir -p build/outputs
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk build/outputs/apk/SimpleDictionary-arm64-v8a.apk
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk build/outputs/apk/SimpleDictionary-armeabi-v7a.apk
+          cp build/app/outputs/flutter-apk/app-x86_64-release.apk build/outputs/apk/SimpleDictionary-x86_64.apk
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          body: ${{ env.RELEASE_NOTES }}
+          draft: false
+          prerelease: false
+          files: |
+            build/outputs/apk/SimpleDictionary-armeabi-v7a.apk
+            build/outputs/apk/SimpleDictionary-arm64-v8a.apk
+            build/outputs/apk/SimpleDictionary-x86_64.apk
+          token: ${{ secrets.GITHUB_TOKEN }}

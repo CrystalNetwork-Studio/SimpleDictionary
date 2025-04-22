@@ -6,17 +6,18 @@ class AppTheme {
     seedColor: _CatppuccinColors.latteBlue, // Using Blue as the primary seed
     brightness: Brightness.light,
     // Override specific colors for better Catppuccin Latte mapping
-    background: _CatppuccinColors.latteBase,
-    surface: _CatppuccinColors.latteMantle,
+    surface: _CatppuccinColors.latteBase,
+    surfaceContainerHighest: _CatppuccinColors.latteMantle,
     onSurface: _CatppuccinColors.latteText,
-    onBackground: _CatppuccinColors.latteText,
     primary: _CatppuccinColors.latteBlue,
     onPrimary: _CatppuccinColors.latteBase, // High contrast text on primary
     secondary: _CatppuccinColors.latteMauve, // Using Mauve as secondary
     onSecondary: _CatppuccinColors.latteBase, // High contrast text on secondary
+    tertiary: _CatppuccinColors.latteSky, // Using Sky as tertiary accent
+    onTertiary: _CatppuccinColors.latteBase, // High contrast text on tertiary
     error: _CatppuccinColors.latteRed,
     onError: _CatppuccinColors.latteBase,
-    surfaceVariant:
+    surfaceContainerLow:
         _CatppuccinColors.latteSurface0, // Use for card/dialog backgrounds etc.
     onSurfaceVariant:
         _CatppuccinColors.latteSubtext0, // Text on surface variants
@@ -29,18 +30,19 @@ class AppTheme {
     seedColor: _CatppuccinColors.mochaBlue, // Using Blue as the primary seed
     brightness: Brightness.dark,
     // Override specific colors for better Catppuccin Mocha mapping
-    background: _CatppuccinColors.mochaBase,
-    surface: _CatppuccinColors.mochaMantle, // Use for AppBars, Cards, Dialogs
+    surface: _CatppuccinColors.mochaBase,
+    surfaceContainerHighest: _CatppuccinColors.mochaMantle, // Use for AppBars, Cards, Dialogs
     onSurface: _CatppuccinColors.mochaText,
-    onBackground: _CatppuccinColors.mochaText,
     primary: _CatppuccinColors.mochaBlue,
     onPrimary: _CatppuccinColors.mochaCrust, // High contrast text on primary
     secondary: _CatppuccinColors.mochaMauve, // Using Mauve as secondary
     onSecondary:
         _CatppuccinColors.mochaCrust, // High contrast text on secondary
+    tertiary: _CatppuccinColors.mochaSky, // Using Sky as tertiary accent
+    onTertiary: _CatppuccinColors.mochaCrust, // High contrast text on tertiary
     error: _CatppuccinColors.mochaRed,
     onError: _CatppuccinColors.mochaCrust,
-    surfaceVariant:
+    surfaceContainerLow:
         _CatppuccinColors
             .mochaSurface0, // Use for input fields, chip backgrounds
     onSurfaceVariant:
@@ -54,7 +56,7 @@ class AppTheme {
     colorScheme: _lightColorScheme,
     useMaterial3: true,
     brightness: Brightness.light,
-    scaffoldBackgroundColor: _lightColorScheme.background,
+    scaffoldBackgroundColor: _lightColorScheme.surface,
     appBarTheme: AppBarTheme(
       backgroundColor: _lightColorScheme.surface, // Mantle
       foregroundColor: _lightColorScheme.onSurface, // Text
@@ -80,7 +82,7 @@ class AppTheme {
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: _lightColorScheme.primary, // Blue
+        foregroundColor: _CatppuccinColors.latteSapphire, // Sapphire for text buttons
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -91,9 +93,34 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     ),
+    // Add switch theme for tertiary color
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return _lightColorScheme.tertiary; // Sky for selected switch
+        }
+        return null;
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return _lightColorScheme.tertiary.withValues(alpha: 0.5 * 255.0); // Transparent Sky for track
+        }
+        return null;
+      }),
+    ),
+    // Add progress indicator theme for tertiary color
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: _lightColorScheme.tertiary, // Sky for progress indicators
+    ),
+    // Add text selection theme for tertiary color
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: _lightColorScheme.tertiary, // Sky for cursor
+      selectionColor: _lightColorScheme.tertiary.withValues(alpha: 0.3 * 255.0), // Transparent Sky for selection
+      selectionHandleColor: _lightColorScheme.tertiary, // Sky for selection handles
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: _lightColorScheme.surfaceVariant, // Surface0
+      fillColor: _lightColorScheme.surfaceContainerHighest, // Surface0
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none, // No border by default
@@ -101,7 +128,7 @@ class AppTheme {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: _lightColorScheme.primary, // Blue
+          color: _CatppuccinColors.latteSapphire, // Sapphire for focused borders
           width: 2,
         ),
       ),
@@ -109,7 +136,7 @@ class AppTheme {
         color: _lightColorScheme.onSurfaceVariant,
       ), // Subtext0
       hintStyle: TextStyle(
-        color: _lightColorScheme.onSurfaceVariant.withOpacity(0.7),
+        color: _lightColorScheme.onSurfaceVariant.withValues(alpha: 0.7 * 255.0),
       ), // Subtext0 slightly faded
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 16,
@@ -138,7 +165,7 @@ class AppTheme {
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      backgroundColor: _lightColorScheme.background, // Surface0
+      backgroundColor: _lightColorScheme.surface, // Surface0
       contentTextStyle: TextStyle(
         color: _lightColorScheme.onSurfaceVariant,
       ), // Subtext0
@@ -158,7 +185,7 @@ class AppTheme {
     colorScheme: _darkColorScheme,
     useMaterial3: true,
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: _darkColorScheme.background, // Base
+    scaffoldBackgroundColor: _darkColorScheme.surface, // Base
     appBarTheme: AppBarTheme(
       backgroundColor: _darkColorScheme.surface, // Mantle
       foregroundColor: _darkColorScheme.onSurface, // Text
@@ -184,7 +211,7 @@ class AppTheme {
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: _darkColorScheme.primary, // Blue
+        foregroundColor: _CatppuccinColors.mochaSapphire, // Sapphire for text buttons
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -195,9 +222,34 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     ),
+    // Add switch theme for tertiary color
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return _darkColorScheme.tertiary; // Sky for selected switch
+        }
+        return null;
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return _darkColorScheme.tertiary.withValues(alpha: 0.5 * 255.0); // Transparent Sky for track
+        }
+        return null;
+      }),
+    ),
+    // Add progress indicator theme for tertiary color
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: _darkColorScheme.tertiary, // Sky for progress indicators
+    ),
+    // Add text selection theme for tertiary color
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: _darkColorScheme.tertiary, // Sky for cursor
+      selectionColor: _darkColorScheme.tertiary.withValues(alpha: 0.3 * 255.0), // Transparent Sky for selection
+      selectionHandleColor: _darkColorScheme.tertiary, // Sky for selection handles
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: _darkColorScheme.surfaceVariant, // Surface0
+      fillColor: _darkColorScheme.surfaceContainerHighest, // Surface0
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none, // No border by default
@@ -205,7 +257,7 @@ class AppTheme {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: _darkColorScheme.primary, // Blue
+          color: _CatppuccinColors.mochaSapphire, // Sapphire for focused borders
           width: 2,
         ),
       ),
@@ -213,7 +265,7 @@ class AppTheme {
         color: _darkColorScheme.onSurfaceVariant,
       ), // Subtext0
       hintStyle: TextStyle(
-        color: _darkColorScheme.onSurfaceVariant.withOpacity(0.7),
+        color: _darkColorScheme.onSurfaceVariant.withValues(alpha: 0.7 * 255.0),
       ), // Subtext0 slightly faded
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     ),
@@ -239,7 +291,7 @@ class AppTheme {
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      backgroundColor: _darkColorScheme.surfaceVariant, // Surface0
+      backgroundColor: _darkColorScheme.surfaceContainerHighest, // Surface0
       contentTextStyle: TextStyle(
         color: _darkColorScheme.onSurfaceVariant,
       ), // Subtext0
@@ -261,6 +313,8 @@ class _CatppuccinColors {
   static const Color latteMauve = Color(0xff8839ef);
   static const Color latteRed = Color(0xffd20f39);
   static const Color latteBlue = Color(0xff1e66f5); // Primary accent
+  static const Color latteSky = Color(0xff04a5e5); // Lighter blue shade
+  static const Color latteSapphire = Color(0xff209fb5); // Deeper blue shade
   static const Color latteText = Color(0xff4c4f69);
   static const Color latteSubtext0 = Color(0xff6c6f85);
   static const Color latteSurface1 = Color(0xffbcc0cc);
@@ -272,6 +326,8 @@ class _CatppuccinColors {
   static const Color mochaMauve = Color(0xffcba6f7);
   static const Color mochaRed = Color(0xfff38ba8);
   static const Color mochaBlue = Color(0xff89b4fa); // Primary accent
+  static const Color mochaSky = Color(0xff89dceb); // Lighter blue shade
+  static const Color mochaSapphire = Color(0xff74c7ec); // Deeper blue shade
   static const Color mochaText = Color(0xffcdd6f4);
   static const Color mochaSubtext0 = Color(0xffa6adc8);
   static const Color mochaSurface1 = Color(0xff45475a);
@@ -283,7 +339,8 @@ class _CatppuccinColors {
 
 // Extension for easier alpha modification if needed later
 extension ColorAlpha on Color {
-  Color withValues({int? alpha}) {
-    return withAlpha(alpha ?? this.alpha);
+  Color withValues({double? alpha}) {
+    int alphaInt = (alpha ?? a.toDouble()).toInt();
+    return withAlpha(alphaInt);
   }
 }

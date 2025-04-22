@@ -169,11 +169,6 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String dictionaryUpdatedWithName(Object dictionaryName) {
-    return 'Словник \"$dictionaryName\" оновлено.';
-  }
-
-  @override
   String directoryForDictionaryCreated(Object dictionaryName, Object directoryPath) {
     return 'Каталог для словника \'$dictionaryName\' створено за шляхом: $directoryPath';
   }
@@ -191,6 +186,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get editWord => 'Редагувати слово';
+
+  @override
+  String get errorOccurred => 'Виникла помилка';
 
   @override
   String errorCheckingExistence(Object error) {
@@ -306,7 +304,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get light => 'Світла';
 
   @override
-  String get maxLength20 => 'Максимум 20 символів';
+  String get maxLength23 => 'Максимум 23 символів';
 
   @override
   String maxLengthValidation(Object maxLength) {
@@ -367,13 +365,13 @@ class AppLocalizationsUk extends AppLocalizations {
   String get word => 'Слово';
 
   @override
-  String get wordAndTranslationMaxLength => 'Довжина слова та перекладу не може перевищувати 20 символів.';
+  String get wordAndTranslationMaxLength => 'Довжина слова та перекладу не може перевищувати 14 символів.';
 
   @override
   String get wordDeleted => 'Слово видалено';
 
   @override
-  String wordDeletedWithName(String word, Object wordName) {
+  String wordDeletedWithName(Object wordName) {
     return 'Слово \"$wordName\" видалено';
   }
 
@@ -390,7 +388,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get words => 'Слова';
 
   @override
-  String get sentence => 'Речення';
+  String get sentence => 'Текст';
 
   @override
   String get sentences => 'Фрази';
@@ -481,4 +479,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get holdToEdit => 'Утримуйте для редагування...';
+
+  @override
+  String get noNewlinesAllowed => 'Символи переносу рядка не дозволені';
+
+  @override
+  String get invalidFolderNameChars => 'Назва словника містить недопустимі символи. Уникайте використання: / \\ : * ? \" < > |';
 }

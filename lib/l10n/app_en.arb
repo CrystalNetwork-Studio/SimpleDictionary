@@ -44,12 +44,12 @@
     "dictionaryNotFoundForWordUpdate": "Dictionary '{dictionaryName}' not found for word update.",
     "dictionarySavedTo": "Dictionary '{dictionaryName}' saved to: {filePath}",
     "dictionaryUpdated": "Dictionary \"{dictionaryName}\" updated.",
-    "dictionaryUpdatedWithName": "Dictionary \"{dictionaryName}\" updated.",
     "directoryForDictionaryCreated": "Directory for dictionary '{dictionaryName}' created at: {directoryPath}",
     "directoryForDictionaryNotFound": "Directory for dictionary '{dictionaryName}' not found at: {directoryPath}",
     "edit": "Edit",
     "editDictionary": "Edit Dictionary",
     "editWord": "Edit Word",
+    "errorOccurred": "An error occurred",
     "errorCheckingExistence": "Error checking dictionary existence: {error}",
     "errorCreatingDictionary": "Failed to create dictionary.",
     "errorDeletingDictionary": "Error deleting dictionary '{dictionaryName}'",
@@ -79,7 +79,7 @@
     "languageUkrainian": "Ukrainian",
     "license": "License",
     "light": "Light",
-    "maxLength20": "Maximum 20 characters",
+    "maxLength23": "Maximum 23 characters",
     "maxLengthValidation": "Maximum length is {maxLength} characters",
     "myDictionaries": "My Dictionaries",
     "oopsImportExportNotReady": "Import/Export feature is not ready yet. :(",
@@ -98,15 +98,15 @@
     "updateWord": "Update Word",
     "version": "Version",
     "word": "Word",
-    "wordAndTranslationMaxLength": "Word and translation length cannot exceed 20 characters.",
+    "wordAndTranslationMaxLength": "Word and translation length cannot exceed 13 characters.",
     "wordDeleted": "Word deleted",
     "wordDeletedWithName": "Word \"{wordName}\" deleted",
     "wordOrTranslationCannotBeEmpty": "Word and translation cannot be empty.",
     "wordUpdatedSuccessfully": "Word updated successfully!",
     "dictionaryType": "Dictionary Type",
     "words": "Words",
-    "sentence": "Sentence",
-    "sentences": "Sentences",
+    "sentence": "Text",
+    "sentences": "Phrases",
     "goBack": "Back",
     "importDictionary": "Import Dictionary",
     "exportDictionary": "Export Dictionary",
@@ -132,11 +132,6 @@
     "exportError": "Export Error",
     "permissionDenied": "Storage permission denied.",
     "holdToEdit": "Hold to edit...",
-    "@wordDeletedWithName": {
-        "placeholders": {
-            "word": {
-                "type": "String"
-            }
-        }
-    }
+    "noNewlinesAllowed": "Newline characters are not allowed",
+    "invalidFolderNameChars": "Dictionary name contains invalid characters. Avoid using: / \\ : * ? \" < > |"
 }

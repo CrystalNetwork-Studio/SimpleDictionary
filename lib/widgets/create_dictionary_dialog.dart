@@ -61,22 +61,22 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
 
     return AlertDialog(
       title: Text(localization.createDictionary),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(localization.dictionaryNameLabel, style: textTheme.titleSmall),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _textController,
-              autofocus: true,
-              decoration: InputDecoration(
-                hintText: localization.dictionaryNameHint,
-                errorText: _errorMessage,
-                suffixIcon:
-                    _isLoading
-                        ? const Padding(
+      content: Material(
+        color: Colors.transparent,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(localization.dictionaryNameLabel, style: textTheme.titleSmall),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _textController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: localization.dictionaryNameHint,
+                  suffixIcon: _isLoading
+                      ? const Padding(
                           padding: EdgeInsets.all(12.0),
                           child: SizedBox(
                             width: 16,
@@ -84,146 +84,135 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           ),
                         )
-                        : null,
+                      : null,
+                ),
+                enabled: !_isLoading,
+                onChanged: (_) => _validateName(),
+                onSubmitted:
+                    (_canCreate && !_isLoading) ? (_) => _submit() : null,
               ),
-              enabled: !_isLoading,
-              onChanged: (_) => _validateName(),
-              onSubmitted:
-                  (_canCreate && !_isLoading) ? (_) => _submit() : null,
-            ),
-            const SizedBox(height: 16),
-            // Dictionary Type Selection
-            Text(localization.dictionaryType, style: textTheme.titleSmall),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<DictionaryType>(
-              value: _selectedType,
-              items:
-                  DictionaryType.values
-                      .map(
-                        (DictionaryType type) =>
-                            DropdownMenuItem<DictionaryType>(
-                              value: type,
-                              child: Text(
-                                _getDictionaryTypeText(type, localization),
-                              ),
-                            ),
-                      )
-                      .toList(),
-              onChanged:
-                  _isLoading
-                      ? null
-                      : (DictionaryType? newValue) {
+              const SizedBox(height: 16),
+              // Dictionary Type Selection
+              Text(localization.dictionaryType, style: textTheme.titleSmall),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<DictionaryType>(
+                value: _selectedType,
+                items: DictionaryType.values
+                    .map(
+                      (DictionaryType type) => DropdownMenuItem<DictionaryType>(
+                        value: type,
+                        child: Text(
+                          _getDictionaryTypeText(type, localization),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: _isLoading
+                    ? null
+                    : (DictionaryType? newValue) {
                         if (newValue != null) {
                           setState(() {
                             _selectedType = newValue;
                           });
                         }
                       },
-              decoration: InputDecoration(
-                // Optional: Add border or customize decoration
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                decoration: InputDecoration(
+                  // Optional: Add border or customize decoration
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12.0,
+                    vertical: 8.0,
+                  ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12.0,
-                  vertical: 8.0,
-                ),
+                disabledHint: Text(
+                  _getDictionaryTypeText(_selectedType, localization),
+                ), // Show current value when disabled
               ),
-              disabledHint: Text(
-                _getDictionaryTypeText(_selectedType, localization),
-              ), // Show current value when disabled
-            ),
-            const SizedBox(height: 20),
-            Text(localization.folderColor, style: textTheme.titleSmall),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 50,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children:
-                      _colorOptions.map((color) {
-                        final isSelected = _selectedColor == color;
-                        return GestureDetector(
-                          onTap:
-                              _isLoading
-                                  ? null
-                                  : () {
-                                    setState(() => _selectedColor = color);
-                                  },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4.0,
+              const SizedBox(height: 20),
+              Text(localization.folderColor, style: textTheme.titleSmall),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 50,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: _colorOptions.map((color) {
+                      final isSelected = _selectedColor == color;
+                      return GestureDetector(
+                        onTap: _isLoading
+                            ? null
+                            : () {
+                                setState(() => _selectedColor = color);
+                              },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4.0,
+                          ),
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                              border: isSelected
+                                  ? Border.all(
+                                      color:
+                                          colorScheme.onSurface.withValues(alpha: 0.9 * 255.0),
+                                      width: 3.0,
+                                    )
+                                  : Border.all(
+                                      color: colorScheme.outlineVariant,
+                                      width: 1,
+                                    ),
                             ),
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: color,
-                                shape: BoxShape.circle,
-                                border:
-                                    isSelected
-                                        ? Border.all(
-                                          color: colorScheme.onSurface
-                                              .withOpacity(0.9),
-                                          width: 3.0,
-                                        )
-                                        : Border.all(
-                                          color: colorScheme.outlineVariant,
-                                          width: 1,
-                                        ),
-                              ),
-                              child: Center(
-                                child:
-                                    isSelected
-                                        ? Icon(
-                                          Icons.check,
-                                          color:
-                                              ThemeData.estimateBrightnessForColor(
-                                                        color,
-                                                      ) ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                          size: 22,
-                                        )
-                                        : null,
-                              ),
+                            child: Center(
+                              child: isSelected
+                                  ? Icon(
+                                      Icons.check,
+                                      color: ThemeData.estimateBrightnessForColor(
+                                                color,
+                                              ) ==
+                                              Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      size: 22,
+                                    )
+                                  : null,
                             ),
                           ),
-                        );
-                      }).toList(),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
-            ),
-            if (_isLoading) ...[
-              const SizedBox(height: 16),
-              Center(
-                child: Text(
-                  localization.checkingAvailability,
-                  style: const TextStyle(fontStyle: FontStyle.italic),
+              if (_isLoading) ...[
+                const SizedBox(height: 16),
+                Center(
+                  child: Text(
+                    localization.checkingAvailability,
+                    style: const TextStyle(fontStyle: FontStyle.italic),
+                  ),
                 ),
-              ),
+              ],
+              if (_errorMessage != null && !_isLoading) ...[
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    _errorMessage!,
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ],
-            if (_errorMessage != null && !_isLoading) ...[
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  _errorMessage!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
       actions: <Widget>[
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          child: Text(localization.cancel),
-        ),
         TextButton(
           onPressed: (_canCreate && !_isLoading) ? _submit : null,
           child: Text(localization.create),
@@ -292,14 +281,24 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
 
     final text = _textController.text.trim();
     final isNotEmpty = text.isNotEmpty;
+
+    // Check for invalid characters that would cause problems with folder creation
+    final RegExp invalidChars = RegExp(r'[\/\\:*?"<>|]');
+    final bool hasInvalidChars = isNotEmpty && invalidChars.hasMatch(text);
+
     final bool needsStateUpdate =
-        (isNotEmpty != _canCreate) || (_errorMessage != null && isNotEmpty);
+        (isNotEmpty != _canCreate) || (_errorMessage != null && isNotEmpty) || hasInvalidChars;
 
     if (needsStateUpdate) {
       setState(() {
-        _canCreate = isNotEmpty;
-        if (isNotEmpty) {
-          _errorMessage = null;
+        if (hasInvalidChars) {
+          _canCreate = false;
+          _errorMessage = AppLocalizations.of(context)!.invalidFolderNameChars;
+        } else {
+          _canCreate = isNotEmpty;
+          if (isNotEmpty) {
+            _errorMessage = null;
+          }
         }
       });
     } else if (!isNotEmpty && _canCreate) {
