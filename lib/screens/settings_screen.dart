@@ -196,7 +196,9 @@ class SettingsScreen extends StatelessWidget {
 
         if (!context.mounted) return;
 
-        if (selectedLocale != currentLocale) {
+        // Only change the locale if the dialog was not dismissed (selectedLocale is not null)
+        // or if the user explicitly selected the system default option
+        if (selectedLocale != null && selectedLocale != currentLocale) {
           context.read<SettingsProvider>().setLocale(selectedLocale);
         }
       },
@@ -325,6 +327,22 @@ class SettingsScreen extends StatelessWidget {
   Future<void> _importDictionary(BuildContext context) async {
     final localizations = AppLocalizations.of(context)!;
     final provider = Provider.of<DictionaryProvider>(context, listen: false);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final theme = Theme.of(context);
+
+    void showMessage(String message, {bool isError = false}) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: TextStyle(color: isError ? Colors.white : null),
+          ),
+          backgroundColor: isError ? theme.colorScheme.error : null,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
 
     try {
       final FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -334,24 +352,18 @@ class SettingsScreen extends StatelessWidget {
       );
 
       if (result == null || result.files.single.path == null) {
-        if (context.mounted) {
-          _showSnackBar(context, localizations.filePickerOperationCancelled);
-        }
+        showMessage(localizations.filePickerOperationCancelled);
         return;
       }
 
       final String filePath = result.files.single.path!;
       provider.clearError();
-      final Dictionary? importedDict = await provider.loadDictionaryForImport(
-        filePath,
-      );
-
-      if (!context.mounted) return;
+      final Dictionary? importedDict = await provider.loadDictionaryForImport(filePath);
 
       if (importedDict == null) {
-        _showErrorSnackBar(
-          context,
+        showMessage(
           provider.error ?? localizations.invalidDictionaryFile,
+          isError: true,
         );
         return;
       }
@@ -359,19 +371,20 @@ class SettingsScreen extends StatelessWidget {
       final bool exists = await provider.dictionaryExists(importedDict.name);
       Dictionary? finalDictToImport = importedDict;
 
-      if (exists) {
+      if (exists && context.mounted) {
         final conflictResult = await _showImportConflictDialog(
           context,
           importedDict.name,
         );
+        
         if (conflictResult == null) return;
 
-        if (conflictResult == _ImportConflictAction.rename) {
+        if (conflictResult == _ImportConflictAction.rename && context.mounted) {
           final newName = await _showRenameDialog(context, importedDict.name);
           if (newName == null || newName.trim().isEmpty) return;
+          
           if (await provider.dictionaryExists(newName)) {
-            if (!context.mounted) return;
-            _showErrorSnackBar(context, localizations.dictionaryAlreadyExists);
+            showMessage(localizations.dictionaryAlreadyExists, isError: true);
             return;
           }
           finalDictToImport = importedDict.copyWith(name: newName);

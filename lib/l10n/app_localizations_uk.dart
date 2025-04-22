@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -163,11 +165,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String dictionaryUpdated(Object dictionaryName) {
-    return 'Словник \"$dictionaryName\" оновлено.';
-  }
-
-  @override
-  String dictionaryUpdatedWithName(Object dictionaryName) {
     return 'Словник \"$dictionaryName\" оновлено.';
   }
 
@@ -374,7 +371,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get wordDeleted => 'Слово видалено';
 
   @override
-  String wordDeletedWithName(String word, Object wordName) {
+  String wordDeletedWithName(Object wordName) {
     return 'Слово \"$wordName\" видалено';
   }
 
@@ -391,7 +388,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get words => 'Слова';
 
   @override
-  String get sentence => 'Речення';
+  String get sentence => 'Текст';
 
   @override
   String get sentences => 'Фрази';
@@ -482,4 +479,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get holdToEdit => 'Утримуйте для редагування...';
+
+  @override
+  String get noNewlinesAllowed => 'Символи переносу рядка не дозволені';
+
+  @override
+  String get invalidFolderNameChars => 'Назва словника містить недопустимі символи. Уникайте використання: / \\ : * ? \" < > |';
 }

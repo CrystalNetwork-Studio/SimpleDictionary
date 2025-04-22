@@ -65,8 +65,12 @@ class Dictionary {
     return value != null ? Color(value) : Colors.blue;
   }
 
-  static int _colorToJson(Color color) {
-    return color.value;
+  static int _colorToJson(Color? color) {
+    if (color == null) {
+      throw ArgumentError('Color cannot be null');
+    }
+    
+    return color.toARGB32();
   }
 }
 

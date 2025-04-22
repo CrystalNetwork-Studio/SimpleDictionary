@@ -16,7 +16,7 @@ const String _fileName = 'words.json';
 ///   - [dictionaryName]: The name of the dictionary to delete.
 ///
 /// Returns:
-///   A Future<bool> that resolves to true if the directory was successfully deleted, false otherwise.
+///   A Future{bool} that resolves to true if the directory was successfully deleted, false otherwise.
 Future<bool> deleteDictionaryDirectory(String dictionaryName) async {
   try {
     if (dictionaryName.isEmpty) {
@@ -55,7 +55,7 @@ Future<bool> deleteDictionaryDirectory(String dictionaryName) async {
 ///   - [dictionaryName]: The name of the dictionary. Cannot be empty.
 ///
 /// Returns:
-///   A Future<String> that resolves to the path of the dictionary directory.
+///   A Future{String} that resolves to the path of the dictionary directory.
 ///
 /// Throws:
 ///   - ArgumentError: If [dictionaryName] is empty.
@@ -74,7 +74,7 @@ Future<String> getDictionaryDirectoryPath(String dictionaryName) async {
 /// It reads the names of the directories located inside the base dictionary directory.
 ///
 /// Returns:
-///   A Future<List<String>> that resolves to a list of dictionary names.  Returns an empty list if no dictionaries are found, or if an error occurs.
+///   A Future{List{String}} that resolves to a list of dictionary names.  Returns an empty list if no dictionaries are found, or if an error occurs.
 Future<List<String>> getDictionaryNames() async {
   try {
     final baseDirPath = await _getBaseDirectoryPath();
@@ -106,7 +106,7 @@ Future<List<String>> getDictionaryNames() async {
 ///   - [dictionaryName]: The name of the dictionary to load.
 ///
 /// Returns:
-///   A Future<Dictionary?> that resolves to the loaded Dictionary object, or null if the file doesn't exist or an error occurs.
+///   A Future{Dictionary?} that resolves to the loaded Dictionary object, or null if the file doesn't exist or an error occurs.
 Future<Dictionary?> loadDictionaryFromJson(String dictionaryName) async {
   try {
     final directoryPath = await getDictionaryDirectoryPath(dictionaryName);
@@ -198,7 +198,7 @@ Future<void> exportDictionaryToJsonFile(
 ///   - [importPath]: The full file path of the JSON file to import.
 ///
 /// Returns:
-///   A Future<Dictionary?> that resolves to the imported Dictionary object,
+///   A Future{Dictionary?} that resolves to the imported Dictionary object,
 ///   or null if the file doesn't exist, is invalid, or an error occurs.
 Future<Dictionary?> importDictionaryFromJsonFile(String importPath) async {
   try {
@@ -238,7 +238,7 @@ Future<Dictionary?> importDictionaryFromJsonFile(String importPath) async {
 /// inside the application documents directory, under the name 'Dictionary'.
 ///
 /// Returns:
-///   A Future<String> that resolves to the path of the base directory.
+///   A Future{String} that resolves to the path of the base directory.
 Future<String> _getBaseDirectoryPath() async {
   final directory = await getApplicationDocumentsDirectory();
   final baseDirPath = p.join(directory.path, _baseDirName);

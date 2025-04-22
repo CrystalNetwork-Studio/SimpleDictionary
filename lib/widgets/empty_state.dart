@@ -18,7 +18,7 @@ class EmptyState extends StatelessWidget {
             Icon(
               Icons.folder_off_outlined,
               size: 64,
-              color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6 * 255.0),
             ),
             const SizedBox(height: 16),
             Text(

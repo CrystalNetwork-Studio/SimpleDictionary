@@ -44,7 +44,6 @@
     "dictionaryNotFoundForWordUpdate": "Словник '{dictionaryName}' не знайдено для оновлення слова.",
     "dictionarySavedTo": "Словник '{dictionaryName}' збережено до: {filePath}",
     "dictionaryUpdated": "Словник \"{dictionaryName}\" оновлено.",
-    "dictionaryUpdatedWithName": "Словник \"{dictionaryName}\" оновлено.",
     "directoryForDictionaryCreated": "Каталог для словника '{dictionaryName}' створено за шляхом: {directoryPath}",
     "directoryForDictionaryNotFound": "Каталог для словника '{dictionaryName}' не знайдено за шляхом: {directoryPath}",
     "edit": "Редагувати",
@@ -105,7 +104,7 @@
     "dictionaryType": "Тип словника",
     "word": "Слово",
     "words": "Слова",
-    "sentence": "Речення",
+    "sentence": "Текст",
     "sentences": "Фрази",
     "maxLengthValidation": "Максимальна довжина: {maxLength} символів",
     "goBack": "Назад",
@@ -133,11 +132,6 @@
     "exportError": "Помилка експорту",
     "permissionDenied": "Відмовлено у доступі до сховища.",
     "holdToEdit": "Утримуйте для редагування...",
-    "@wordDeletedWithName": {
-        "placeholders": {
-            "word": {
-                "type": "String"
-            }
-        }
-    }
+    "noNewlinesAllowed": "Символи переносу рядка не дозволені",
+    "invalidFolderNameChars": "Назва словника містить недопустимі символи. Уникайте використання: / \\ : * ? \" < > |"
 }

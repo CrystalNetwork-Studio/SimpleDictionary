@@ -236,7 +236,7 @@ class DictionaryItem extends StatelessWidget {
             content: Text(
               AppLocalizations.of(
                 context,
-              )!.dictionaryUpdatedWithName(potentiallyUpdatedDictionary.name),
+              )!.dictionaryUpdated(potentiallyUpdatedDictionary.name),
             ),
             duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,

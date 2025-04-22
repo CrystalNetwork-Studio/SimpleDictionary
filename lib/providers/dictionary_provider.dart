@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:simpledictionary/l10n/app_localizations.dart';
@@ -182,7 +184,14 @@ class DictionaryProvider with ChangeNotifier {
       final deletedFromFile = await file_utils.deleteDictionaryDirectory(
         dictionaryName,
       );
-      if (deletedFromFile) {
+
+      // If the deletion was successful or the directory doesn't exist anymore,
+      // consider it a success and remove the dictionary from the list
+      final directoryPath = await file_utils.getDictionaryDirectoryPath(dictionaryName);
+      final dir = Directory(directoryPath);
+      final directoryExists = await dir.exists();
+
+      if (deletedFromFile || !directoryExists) {
         _dictionaries.removeAt(index);
         success = true;
       } else {

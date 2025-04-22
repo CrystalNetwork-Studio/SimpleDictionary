@@ -19,6 +19,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.0.0 # For state management
   path_provider: ^2.0.0 # For finding the documents directory
+  path: ^1.8.0 # For path manipulation
   json_annotation: ^4.8.0 # For JSON serialization annotations
   shared_preferences: ^2.0.0 # Storing settings
   package_info_plus: ^8.3.0 # For getting app info

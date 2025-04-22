@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -163,11 +165,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String dictionaryUpdated(Object dictionaryName) {
-    return 'Dictionary \"$dictionaryName\" updated.';
-  }
-
-  @override
-  String dictionaryUpdatedWithName(Object dictionaryName) {
     return 'Dictionary \"$dictionaryName\" updated.';
   }
 
@@ -374,7 +371,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wordDeleted => 'Word deleted';
 
   @override
-  String wordDeletedWithName(String word, Object wordName) {
+  String wordDeletedWithName(Object wordName) {
     return 'Word \"$wordName\" deleted';
   }
 
@@ -391,10 +388,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get words => 'Words';
 
   @override
-  String get sentence => 'Sentence';
+  String get sentence => 'Text';
 
   @override
-  String get sentences => 'Sentences';
+  String get sentences => 'Phrases';
 
   @override
   String get goBack => 'Back';
@@ -482,4 +479,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get holdToEdit => 'Hold to edit...';
+
+  @override
+  String get noNewlinesAllowed => 'Newline characters are not allowed';
+
+  @override
+  String get invalidFolderNameChars => 'Dictionary name contains invalid characters. Avoid using: / \\ : * ? \" < > |';
 }

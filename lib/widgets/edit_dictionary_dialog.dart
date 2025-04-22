@@ -58,108 +58,119 @@ class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
 
     return AlertDialog(
       title: Text(localization.editDictionary),
-      content: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${localization.dictionaryNameLabel}:',
-                style: textTheme.titleSmall,
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _nameController,
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: localization.dictionaryNameHint,
+      content: Material(
+        color: Colors.transparent,
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${localization.dictionaryNameLabel}:',
+                  style: textTheme.titleSmall,
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return localization.dictionaryNameNotEmpty;
-                  }
-                  return null;
-                },
-                enabled: !_isSaving,
-                onFieldSubmitted: (_) => _submitForm(),
-              ),
-              const SizedBox(height: 20),
-              Text('${localization.folderColor}:', style: textTheme.titleSmall),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 50,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children:
-                        _colorOptions.map((colorOption) {
-                          final bool isSelected =
-                              _selectedColor.value == colorOption.value;
-                          return GestureDetector(
-                            onTap:
-                                _isSaving
-                                    ? null
-                                    : () {
-                                      setState(
-                                        () => _selectedColor = colorOption,
-                                      );
-                                    },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4.0,
-                              ),
-                              child: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: colorOption,
-                                  shape: BoxShape.circle,
-                                  border:
-                                      isSelected
-                                          ? Border.all(
-                                            color: colorScheme.onSurface
-                                                .withOpacity(0.9),
-                                            width: 3.0,
-                                          )
-                                          : Border.all(
-                                            color: colorScheme.outlineVariant,
-                                            width: 1,
-                                          ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _nameController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: localization.dictionaryNameHint,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return localization.dictionaryNameNotEmpty;
+                    }
+                    if (value.contains('\n') || value.contains('/n')) {
+                      return localization.noNewlinesAllowed;
+                    }
+                    // Check for invalid characters that would cause problems with folder creation
+                    final RegExp invalidChars = RegExp(r'[\/\\:*?"<>|]');
+                    if (invalidChars.hasMatch(value)) {
+                      return localization.invalidFolderNameChars;
+                    }
+                    return null;
+                  },
+                  enabled: !_isSaving,
+                  onFieldSubmitted: (_) => _submitForm(),
+                ),
+                const SizedBox(height: 20),
+                Text('${localization.folderColor}:', style: textTheme.titleSmall),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 50,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children:
+                          _colorOptions.map((colorOption) {
+                            final bool isSelected =
+                                _selectedColor.toARGB32() == colorOption.toARGB32();
+                            return GestureDetector(
+                              onTap:
+                                  _isSaving
+                                      ? null
+                                      : () {
+                                          setState(
+                                            () => _selectedColor = colorOption,
+                                          );
+                                        },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4.0,
                                 ),
-                                child: Center(
-                                  child:
-                                      isSelected
-                                          ? Icon(
-                                            Icons.check,
-                                            color:
-                                                ThemeData.estimateBrightnessForColor(
-                                                          colorOption,
-                                                        ) ==
-                                                        Brightness.dark
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                            size: 22,
-                                          )
-                                          : null,
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: colorOption,
+                                    shape: BoxShape.circle,
+                                    border:
+                                        isSelected
+                                            ? Border.all(
+                                                color: colorScheme.onSurface
+                                                    .withValues(alpha: 0.9 * 255.0),
+                                                width: 3.0,
+                                              )
+                                            : Border.all(
+                                                color: colorScheme.outlineVariant,
+                                                width: 1,
+                                              ),
+                                  ),
+                                  child: Center(
+                                    child:
+                                        isSelected
+                                            ? Icon(
+                                                Icons.check,
+                                                color:
+                                                    ThemeData.estimateBrightnessForColor(
+                                                              colorOption,
+                                                            ) ==
+                                                            Brightness.dark
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                size: 22,
+                                              )
+                                            : null,
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        }).toList(),
+                            );
+                          }).toList(),
+                    ),
                   ),
                 ),
-              ),
-              if (_localError != null) ...[
-                const SizedBox(height: 16),
-                Text(
-                  _localError!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                  textAlign: TextAlign.center,
-                ),
+                if (_localError != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    _localError!,
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -209,7 +220,7 @@ class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
       final Color newColor = _selectedColor;
 
       if (newName == oldName &&
-          newColor.value == widget.initialDictionary.color.value) {
+          newColor.toARGB32() == widget.initialDictionary.color.toARGB32()) {
         Navigator.of(
           context,
         ).pop(EditDictionaryDialogResult(EditDictionaryDialogStatus.cancelled));
@@ -228,7 +239,7 @@ class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
         } catch (e) {
           if (!mounted) return;
           setState(() {
-            _localError = 'Помилка перевірки імені: $e';
+            _localError = AppLocalizations.of(context)!.errorValidatingName(e.toString());
             _isSaving = false;
           });
           return;
@@ -238,7 +249,7 @@ class _EditDictionaryDialogState extends State<EditDictionaryDialog> {
       if (nameConflict) {
         if (!mounted) return;
         setState(() {
-          _localError = 'Словник з назвою "$newName" вже існує.';
+          _localError = AppLocalizations.of(context)!.dictionaryAlreadyExists;
           _isSaving = false;
         });
         return;

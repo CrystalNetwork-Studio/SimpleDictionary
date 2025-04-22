@@ -44,7 +44,6 @@
     "dictionaryNotFoundForWordUpdate": "Dictionary '{dictionaryName}' not found for word update.",
     "dictionarySavedTo": "Dictionary '{dictionaryName}' saved to: {filePath}",
     "dictionaryUpdated": "Dictionary \"{dictionaryName}\" updated.",
-    "dictionaryUpdatedWithName": "Dictionary \"{dictionaryName}\" updated.",
     "directoryForDictionaryCreated": "Directory for dictionary '{dictionaryName}' created at: {directoryPath}",
     "directoryForDictionaryNotFound": "Directory for dictionary '{dictionaryName}' not found at: {directoryPath}",
     "edit": "Edit",
@@ -106,8 +105,8 @@
     "wordUpdatedSuccessfully": "Word updated successfully!",
     "dictionaryType": "Dictionary Type",
     "words": "Words",
-    "sentence": "Sentence",
-    "sentences": "Sentences",
+    "sentence": "Text",
+    "sentences": "Phrases",
     "goBack": "Back",
     "importDictionary": "Import Dictionary",
     "exportDictionary": "Export Dictionary",
@@ -133,11 +132,6 @@
     "exportError": "Export Error",
     "permissionDenied": "Storage permission denied.",
     "holdToEdit": "Hold to edit...",
-    "@wordDeletedWithName": {
-        "placeholders": {
-            "word": {
-                "type": "String"
-            }
-        }
-    }
+    "noNewlinesAllowed": "Newline characters are not allowed",
+    "invalidFolderNameChars": "Dictionary name contains invalid characters. Avoid using: / \\ : * ? \" < > |"
 }

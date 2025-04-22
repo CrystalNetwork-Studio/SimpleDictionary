@@ -359,12 +359,6 @@ abstract class AppLocalizations {
   /// **'Dictionary \"{dictionaryName}\" updated.'**
   String dictionaryUpdated(Object dictionaryName);
 
-  /// No description provided for @dictionaryUpdatedWithName.
-  ///
-  /// In en, this message translates to:
-  /// **'Dictionary \"{dictionaryName}\" updated.'**
-  String dictionaryUpdatedWithName(Object dictionaryName);
-
   /// No description provided for @directoryForDictionaryCreated.
   ///
   /// In en, this message translates to:
@@ -705,7 +699,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Word \"{wordName}\" deleted'**
-  String wordDeletedWithName(String word, Object wordName);
+  String wordDeletedWithName(Object wordName);
 
   /// No description provided for @wordOrTranslationCannotBeEmpty.
   ///
@@ -734,13 +728,13 @@ abstract class AppLocalizations {
   /// No description provided for @sentence.
   ///
   /// In en, this message translates to:
-  /// **'Sentence'**
+  /// **'Text'**
   String get sentence;
 
   /// No description provided for @sentences.
   ///
   /// In en, this message translates to:
-  /// **'Sentences'**
+  /// **'Phrases'**
   String get sentences;
 
   /// No description provided for @goBack.
@@ -892,6 +886,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hold to edit...'**
   String get holdToEdit;
+
+  /// No description provided for @noNewlinesAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Newline characters are not allowed'**
+  String get noNewlinesAllowed;
+
+  /// No description provided for @invalidFolderNameChars.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictionary name contains invalid characters. Avoid using: / \\ : * ? \" < > |'**
+  String get invalidFolderNameChars;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

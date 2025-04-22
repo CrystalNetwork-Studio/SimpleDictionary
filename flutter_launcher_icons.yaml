@@ -7,5 +7,7 @@ flutter_launcher_icons:
     generate: false
   windows:
     generate: false
+  linux:
+    generate: false
   macos:
     generate: false
