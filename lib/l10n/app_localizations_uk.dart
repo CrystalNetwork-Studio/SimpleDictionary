@@ -24,6 +24,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get addNewWord => 'Додати нове слово';
 
   @override
+  String get addNewPhrase => 'Додати нову фразу';
+
+  @override
+  String get addNewSentence => 'Додати нове речення';
+
+  @override
   String get addWordsByPressingButton => 'Додайте слова, натиснувши кнопку \"+\" внизу екрана';
 
   @override
@@ -388,10 +394,10 @@ class AppLocalizationsUk extends AppLocalizations {
   String get words => 'Слова';
 
   @override
-  String get sentence => 'Текст';
+  String get sentence => 'Речення';
 
   @override
-  String get sentences => 'Фрази';
+  String get phrases => 'Фрази';
 
   @override
   String get goBack => 'Назад';
@@ -476,9 +482,6 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get permissionDenied => 'Відмовлено у доступі до сховища.';
-
-  @override
-  String get holdToEdit => 'Утримуйте для редагування...';
 
   @override
   String get noNewlinesAllowed => 'Символи переносу рядка не дозволені';

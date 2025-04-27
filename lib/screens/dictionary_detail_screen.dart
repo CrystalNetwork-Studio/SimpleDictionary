@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:simpledictionary/data/dictionary.dart';
 import 'package:simpledictionary/l10n/app_localizations.dart';
@@ -6,7 +7,7 @@ import 'package:simpledictionary/providers/dictionary_provider.dart';
 import 'package:simpledictionary/widgets/words_list.dart';
 
 import 'add_word_dialog.dart';
-import 'edit_word_screen.dart';
+import 'edit_word_dialog.dart';
 
 enum SortOrder { alphabetical, lastAdded }
 
@@ -40,75 +41,91 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
-    return SafeArea(
-      child: Consumer<DictionaryProvider>(
-        builder: (context, provider, child) {
-          Dictionary? currentDict;
-          try {
-            currentDict = provider.dictionaries.firstWhere(
-              (d) => d.name == widget.dictionary.name,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: theme.brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
+        statusBarBrightness: theme.brightness == Brightness.dark
+            ? Brightness.dark
+            : Brightness.light,
+      ),
+      child: SafeArea(
+        child: Consumer<DictionaryProvider>(
+          builder: (context, provider, child) {
+            Dictionary? currentDict;
+            try {
+              currentDict = provider.dictionaries.firstWhere(
+                (d) => d.name == widget.dictionary.name,
+              );
+            } catch (e) {
+              debugPrint(
+                "Dictionary '${widget.dictionary.name}' not found in provider. It might have been deleted.",
+              );
+              return _buildDictionaryNotFoundScreen(localization);
+            }
+
+            final List<Word> sortedWords = _getSortedWords(
+              currentDict,
+              _sortOrder,
             );
-          } catch (e) {
-            debugPrint(
-              "Dictionary '${widget.dictionary.name}' not found in provider. It might have been deleted.",
-            );
-            return _buildDictionaryNotFoundScreen(localization);
-          }
+            final DictionaryType dictionaryType = currentDict.type;
 
-          final List<Word> sortedWords = _getSortedWords(
-            currentDict,
-            _sortOrder,
-          );
-          final DictionaryType dictionaryType = currentDict.type;
-
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(currentDict.name),
-              actions: [
-                IconButton(
-                  icon: Icon(
-                    _sortOrder == SortOrder.alphabetical
-                        ? Icons.sort_by_alpha
-                        : Icons.history,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _sortOrder = _sortOrder == SortOrder.alphabetical
-                          ? SortOrder.lastAdded
-                          : SortOrder.alphabetical;
-                    });
-                  },
-                  tooltip: _sortOrder == SortOrder.alphabetical
-                      ? localization.sortByLastAdded
-                      : localization.sortByAlphabetical,
-                ),
-              ],
-            ),
-            body: sortedWords.isEmpty
-                ? _buildEmptyDictionaryView(localization)
-                : WordsList(
-                    currentDict: currentDict,
-                    words: sortedWords,
-                    onEditWord: (context, dictionary, word) {
-                      _showEditWordDialog(
-                        context,
-                        dictionary,
-                        word,
-                        provider,
-                      );
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(currentDict.name),
+                actions: [
+                  IconButton(
+                    icon: Icon(
+                      _sortOrder == SortOrder.alphabetical
+                          ? Icons.sort_by_alpha
+                          : Icons.history,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _sortOrder = _sortOrder == SortOrder.alphabetical
+                            ? SortOrder.lastAdded
+                            : SortOrder.alphabetical;
+                      });
                     },
+                    tooltip: _sortOrder == SortOrder.alphabetical
+                        ? localization.sortByLastAdded
+                        : localization.sortByAlphabetical,
                   ),
-            floatingActionButton: FloatingActionButton(
-              // Option 1: Add null check
-              onPressed: () => currentDict != null
-                  ? _navigateToAddWord(context, currentDict, dictionaryType)
-                  : null,
-              tooltip: localization.addNewWord,
-              child: const Icon(Icons.add),
-            ),
-          );
-        },
+                ],
+              ),
+              body: sortedWords.isEmpty
+                  ? _buildEmptyDictionaryView(localization)
+                  : WordsList(
+                      currentDict: currentDict,
+                      words: sortedWords,
+                      onEditWord: (context, dictionary, word) {
+                        _showEditWordDialog(
+                          context,
+                          dictionary,
+                          word,
+                          provider,
+                        );
+                      },
+                    ),
+              floatingActionButton: FloatingActionButton(
+                // Option 1: Add null check
+                onPressed: () => currentDict != null
+                    ? _navigateToAddWord(context, currentDict, dictionaryType)
+                    : null,
+                tooltip: dictionaryType == DictionaryType.word
+                    ? localization.addNewWord
+                    : dictionaryType == DictionaryType.phrase
+                        ? localization.addNewPhrase
+                        : localization.addNewSentence,
+                child: const Icon(Icons.add),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -166,7 +183,10 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
             Icon(
               Icons.menu_book,
               size: 64,
-              color: Theme.of(context).colorScheme.secondary.withAlpha((0.6 * 255).round()),
+              color: Theme.of(context)
+                  .colorScheme
+                  .secondary
+                  .withAlpha((0.6 * 255).round()),
             ),
             const SizedBox(height: 16),
             Text(
@@ -188,7 +208,8 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
     );
   }
 
-  void _navigateToAddWord(BuildContext context, Dictionary currentDict, DictionaryType dictionaryType) {
+  void _navigateToAddWord(BuildContext context, Dictionary currentDict,
+      DictionaryType dictionaryType) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -292,7 +313,8 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: // Assuming you want to show the deleted word term
-Text(localization.wordDeletedWithName(result.deletedWordTerm!)),
+                      Text(localization
+                          .wordDeletedWithName(result.deletedWordTerm!)),
                   duration: const Duration(seconds: 2),
                   behavior: SnackBarBehavior.floating,
                 ),

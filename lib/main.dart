@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<SettingsProvider>(
         builder: (context, settingsProvider, child) {
           return MaterialApp(
-            title: 'Simple Dictionary',
+            title: 'My Dictionary',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: settingsProvider.themeMode,
@@ -41,6 +41,15 @@ class MyApp extends StatelessWidget {
               Locale('uk'), // Ukrainian
             ],
             locale: settingsProvider.locale,
+            localeResolutionCallback: (locale, supportedLocales) {
+              if (locale == null) return const Locale('en');
+              for (var supportedLocale in supportedLocales) {
+                if (supportedLocale.languageCode == locale.languageCode) {
+                  return supportedLocale;
+                }
+              }
+              return const Locale('en');
+            },
             home: const HomeScreen(),
             builder: (context, child) {
               return MediaQuery(

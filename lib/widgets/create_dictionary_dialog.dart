@@ -47,7 +47,7 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
       case DictionaryType.word:
         return localization.words;
       case DictionaryType.phrase:
-        return localization.sentences;
+        return localization.phrases;
       case DictionaryType.sentence:
         return localization.sentence;
     }
@@ -68,7 +68,8 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(localization.dictionaryNameLabel, style: textTheme.titleSmall),
+              Text(localization.dictionaryNameLabel,
+                  style: textTheme.titleSmall),
               const SizedBox(height: 8),
               TextField(
                 controller: _textController,
@@ -158,8 +159,8 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
                               shape: BoxShape.circle,
                               border: isSelected
                                   ? Border.all(
-                                      color:
-                                          colorScheme.onSurface.withValues(alpha: 0.9 * 255.0),
+                                      color: colorScheme.onSurface
+                                          .withValues(alpha: 0.9 * 255.0),
                                       width: 3.0,
                                     )
                                   : Border.all(
@@ -171,12 +172,13 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
                               child: isSelected
                                   ? Icon(
                                       Icons.check,
-                                      color: ThemeData.estimateBrightnessForColor(
-                                                color,
-                                              ) ==
-                                              Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black,
+                                      color:
+                                          ThemeData.estimateBrightnessForColor(
+                                                    color,
+                                                  ) ==
+                                                  Brightness.dark
+                                              ? Colors.white
+                                              : Colors.black,
                                       size: 22,
                                     )
                                   : null,
@@ -203,7 +205,8 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     _errorMessage!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -286,8 +289,9 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
     final RegExp invalidChars = RegExp(r'[\/\\:*?"<>|]');
     final bool hasInvalidChars = isNotEmpty && invalidChars.hasMatch(text);
 
-    final bool needsStateUpdate =
-        (isNotEmpty != _canCreate) || (_errorMessage != null && isNotEmpty) || hasInvalidChars;
+    final bool needsStateUpdate = (isNotEmpty != _canCreate) ||
+        (_errorMessage != null && isNotEmpty) ||
+        hasInvalidChars;
 
     if (needsStateUpdate) {
       setState(() {

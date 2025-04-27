@@ -24,6 +24,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addNewWord => 'Add New Word';
 
   @override
+  String get addNewPhrase => 'Add New Phrase';
+
+  @override
+  String get addNewSentence => 'Add New Sentence';
+
+  @override
   String get addWordsByPressingButton => 'Add words by pressing the \'+\' button at the bottom of the screen';
 
   @override
@@ -391,7 +397,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sentence => 'Text';
 
   @override
-  String get sentences => 'Phrases';
+  String get phrases => 'Phrases';
 
   @override
   String get goBack => 'Back';
@@ -476,9 +482,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get permissionDenied => 'Storage permission denied.';
-
-  @override
-  String get holdToEdit => 'Hold to edit...';
 
   @override
   String get noNewlinesAllowed => 'Newline characters are not allowed';

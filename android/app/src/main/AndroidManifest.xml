@@ -11,9 +11,10 @@
   />
 
   <application
-    android:label="SimpleDictionary"
+    android:label="@string/app_name"
     android:name="${applicationName}"
     android:icon="@mipmap/launcher_icon"
+    android:defaultLocale="en"
   >
     <activity
       android:name=".MainActivity"
