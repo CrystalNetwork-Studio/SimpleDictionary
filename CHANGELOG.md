@@ -1,4 +1,4 @@
-## [0.1.5] - 2025-04-22
+## [0.1.5] - 2025-04-27
 ### Added
 - Initial release with basic dictionary functionality
 - Support for multiple dictionaries
