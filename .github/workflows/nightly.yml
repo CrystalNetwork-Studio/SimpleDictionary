@@ -2,13 +2,17 @@ name: Nightly Build
 
 on:
   push:
+    branches:
+      - master
     paths:
-      - 'assets/**'
-      - 'android/**'
-      - 'ios/**'
       - 'lib/**'
+      - 'ios/**'
       - 'linux/**'
-  workflow_dispatch: # Allow manual trigger
+      - 'android/**'
+      - 'assets/**'
+  schedule:
+    - cron: "0 0 * * *" # Run at midnight UTC every day
+  workflow_dispatch:
 
 jobs:
   build:
@@ -45,7 +49,7 @@ jobs:
           cp build/app/outputs/flutter-apk/app-x86_64-release.apk build/outputs/apk/SimpleDictionary-Nightly-x86_64.apk
 
       - name: Upload APK artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: apk-files
           path: |
