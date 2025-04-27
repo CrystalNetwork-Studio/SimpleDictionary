@@ -2,6 +2,14 @@ name: PR Check
 
 on:
   pull_request:
+    paths:
+      - "lib/**"
+      - "ios/**"
+      - "linux/**"
+      - "android/**"
+      - "assets/**"
+      - "pubspec.yaml"
+      - "l10n.yaml"
 
 jobs:
   check:
