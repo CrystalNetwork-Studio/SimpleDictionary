@@ -12,8 +12,6 @@ on:
       - "assets/**"
       - "pubspec.yaml"
       - "l10n.yaml"
-  schedule:
-    - cron: "0 0 * * *" # Run at midnight UTC every day
   workflow_dispatch:
 
 jobs:
