@@ -73,7 +73,7 @@ jobs:
 
       - name: Rename APK files
         run: |
-          mkdir -p build/outputs
+          mkdir -p build/outputs/apk
           cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk build/outputs/apk/SimpleDictionary-arm64-v8a.apk
           cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk build/outputs/apk/SimpleDictionary-armeabi-v7a.apk
           cp build/app/outputs/flutter-apk/app-x86_64-release.apk build/outputs/apk/SimpleDictionary-x86_64.apk
