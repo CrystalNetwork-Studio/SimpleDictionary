@@ -170,24 +170,24 @@ class SettingsScreen extends StatelessWidget {
                   title: AppLocalizations.of(dialogContext)!.languageEnglish,
                   value: const Locale('en'),
                   groupValue: currentLocale,
-                  onChanged:
-                      (Locale? value) => Navigator.pop(dialogContext, value),
+                  onChanged: (Locale? value) =>
+                      Navigator.pop(dialogContext, value),
                 ),
                 _buildRadioListTile<Locale?>(
                   context: dialogContext,
                   title: AppLocalizations.of(dialogContext)!.languageUkrainian,
                   value: const Locale('uk'),
                   groupValue: currentLocale,
-                  onChanged:
-                      (Locale? value) => Navigator.pop(dialogContext, value),
+                  onChanged: (Locale? value) =>
+                      Navigator.pop(dialogContext, value),
                 ),
                 _buildRadioListTile<Locale?>(
                   context: dialogContext,
                   title: AppLocalizations.of(dialogContext)!.systemDefault,
                   value: null,
                   groupValue: currentLocale,
-                  onChanged:
-                      (Locale? value) => Navigator.pop(dialogContext, value),
+                  onChanged: (Locale? value) =>
+                      Navigator.pop(dialogContext, value),
                 ),
               ],
             );
@@ -198,7 +198,8 @@ class SettingsScreen extends StatelessWidget {
 
         // Only change the locale if the dialog was not dismissed (selectedLocale is not null)
         // or if the user explicitly selected the system default option
-        if (selectedLocale != null && selectedLocale != currentLocale) {
+        if ((selectedLocale != null && selectedLocale != currentLocale) ||
+            (selectedLocale == null && currentLocale != null)) {
           context.read<SettingsProvider>().setLocale(selectedLocale);
         }
       },
@@ -225,24 +226,24 @@ class SettingsScreen extends StatelessWidget {
                   title: AppLocalizations.of(dialogContext)!.light,
                   value: ThemeMode.light,
                   groupValue: provider.themeMode,
-                  onChanged:
-                      (ThemeMode? value) => Navigator.pop(dialogContext, value),
+                  onChanged: (ThemeMode? value) =>
+                      Navigator.pop(dialogContext, value),
                 ),
                 _buildRadioListTile<ThemeMode>(
                   context: dialogContext,
                   title: AppLocalizations.of(dialogContext)!.dark,
                   value: ThemeMode.dark,
                   groupValue: provider.themeMode,
-                  onChanged:
-                      (ThemeMode? value) => Navigator.pop(dialogContext, value),
+                  onChanged: (ThemeMode? value) =>
+                      Navigator.pop(dialogContext, value),
                 ),
                 _buildRadioListTile<ThemeMode>(
                   context: dialogContext,
                   title: AppLocalizations.of(dialogContext)!.systemDefault,
                   value: ThemeMode.system,
                   groupValue: provider.themeMode,
-                  onChanged:
-                      (ThemeMode? value) => Navigator.pop(dialogContext, value),
+                  onChanged: (ThemeMode? value) =>
+                      Navigator.pop(dialogContext, value),
                 ),
               ],
             );
@@ -358,7 +359,8 @@ class SettingsScreen extends StatelessWidget {
 
       final String filePath = result.files.single.path!;
       provider.clearError();
-      final Dictionary? importedDict = await provider.loadDictionaryForImport(filePath);
+      final Dictionary? importedDict =
+          await provider.loadDictionaryForImport(filePath);
 
       if (importedDict == null) {
         showMessage(
@@ -376,13 +378,13 @@ class SettingsScreen extends StatelessWidget {
           context,
           importedDict.name,
         );
-        
+
         if (conflictResult == null) return;
 
         if (conflictResult == _ImportConflictAction.rename && context.mounted) {
           final newName = await _showRenameDialog(context, importedDict.name);
           if (newName == null || newName.trim().isEmpty) return;
-          
+
           if (await provider.dictionaryExists(newName)) {
             showMessage(localizations.dictionaryAlreadyExists, isError: true);
             return;
@@ -496,17 +498,15 @@ class SettingsScreen extends StatelessWidget {
             ),
             TextButton(
               child: Text(localizations.rename),
-              onPressed:
-                  () => Navigator.of(
-                    dialogContext,
-                  ).pop(_ImportConflictAction.rename),
+              onPressed: () => Navigator.of(
+                dialogContext,
+              ).pop(_ImportConflictAction.rename),
             ),
             ElevatedButton(
               child: Text(localizations.overwrite),
-              onPressed:
-                  () => Navigator.of(
-                    dialogContext,
-                  ).pop(_ImportConflictAction.overwrite),
+              onPressed: () => Navigator.of(
+                dialogContext,
+              ).pop(_ImportConflictAction.overwrite),
             ),
           ],
         );
