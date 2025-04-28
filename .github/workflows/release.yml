@@ -24,6 +24,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: flutter-deps-${{ hashFiles('.github/workflows/*.yml') }}-${{ hashFiles('pubspec.yaml') }}
+          restore-keys: |
+            flutter-deps-
+
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
