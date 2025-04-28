@@ -9,7 +9,6 @@ on:
       - "android/**"
       - "assets/**"
       - "pubspec.yaml"
-      - "l10n.yaml"
 
 jobs:
   check:
