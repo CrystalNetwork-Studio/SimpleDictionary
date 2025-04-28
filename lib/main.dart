@@ -11,12 +11,6 @@ import 'theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.white,
-    systemNavigationBarIconBrightness: Brightness.dark,
-  ));
   runApp(const MyApp());
 }
 
@@ -38,14 +32,6 @@ class MyApp extends StatelessWidget {
                   (settingsProvider.themeMode == ThemeMode.system &&
                       MediaQuery.of(context).platformBrightness ==
                           Brightness.dark);
-              SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                statusBarIconBrightness:
-                    isDark ? Brightness.light : Brightness.dark,
-                systemNavigationBarColor: isDark ? Colors.black : Colors.white,
-                systemNavigationBarIconBrightness:
-                    isDark ? Brightness.light : Brightness.dark,
-              ));
               return MaterialApp(
                 title: 'My Dictionary',
                 theme: AppTheme.lightTheme,
@@ -73,6 +59,22 @@ class MyApp extends StatelessWidget {
                 },
                 home: const HomeScreen(),
                 builder: (context, child) {
+                  // Apply system UI overlay style dynamically based on theme
+                  final theme = Theme.of(context);
+                  final isDark = theme.brightness == Brightness.dark;
+
+                  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                    statusBarColor:
+                        Colors.transparent, // Keep status bar transparent
+                    statusBarIconBrightness:
+                        isDark ? Brightness.light : Brightness.dark,
+                    // Use scaffold background for nav bar to match screen background
+                    systemNavigationBarColor: theme.scaffoldBackgroundColor,
+                    // Set nav bar icons based on theme brightness
+                    systemNavigationBarIconBrightness:
+                        isDark ? Brightness.light : Brightness.dark,
+                  ));
+
                   return MediaQuery(
                     data: MediaQuery.of(
                       context,

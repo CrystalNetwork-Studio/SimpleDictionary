@@ -57,7 +57,6 @@ class AppTheme {
     brightness: Brightness.light,
     scaffoldBackgroundColor: _lightColorScheme.surface,
     appBarTheme: AppBarTheme(
-      backgroundColor: _lightColorScheme.surface, // Mantle
       foregroundColor: Colors.white, // White text
       elevation: 0, // Catppuccin often uses flat designs
       surfaceTintColor: Colors.transparent, // Prevent M3 tinting
@@ -189,7 +188,6 @@ class AppTheme {
     brightness: Brightness.dark,
     scaffoldBackgroundColor: _darkColorScheme.surface, // Base
     appBarTheme: AppBarTheme(
-      backgroundColor: _darkColorScheme.surface, // Mantle
       foregroundColor: _darkColorScheme.onSurface, // Text
       elevation: 0,
       surfaceTintColor: Colors.transparent,
