@@ -28,10 +28,6 @@ class MyApp extends StatelessWidget {
         builder: (context, settingsProvider, child) {
           return Builder(
             builder: (context) {
-              final isDark = settingsProvider.themeMode == ThemeMode.dark ||
-                  (settingsProvider.themeMode == ThemeMode.system &&
-                      MediaQuery.of(context).platformBrightness ==
-                          Brightness.dark);
               return MaterialApp(
                 title: 'My Dictionary',
                 theme: AppTheme.lightTheme,
