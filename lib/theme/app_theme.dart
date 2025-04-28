@@ -8,21 +8,20 @@ class AppTheme {
     // Override specific colors for better Catppuccin Latte mapping
     surface: _CatppuccinColors.latteBase,
     surfaceContainerHighest: _CatppuccinColors.latteMantle,
-    onSurface: _CatppuccinColors.latteText,
+    onSurface: Colors.white, // White text
     primary: _CatppuccinColors.latteBlue,
-    onPrimary: _CatppuccinColors.latteBase, // High contrast text on primary
+    onPrimary: Colors.white, // White text
     secondary: _CatppuccinColors.latteMauve, // Using Mauve as secondary
-    onSecondary: _CatppuccinColors.latteBase, // High contrast text on secondary
+    onSecondary: Colors.white, // White text
     tertiary: _CatppuccinColors.latteSky, // Using Sky as tertiary accent
-    onTertiary: _CatppuccinColors.latteBase, // High contrast text on tertiary
+    onTertiary: Colors.white, // White text
     error: _CatppuccinColors.latteRed,
-    onError: _CatppuccinColors.latteBase,
+    onError: Colors.white, // White text
     surfaceContainerLow:
         _CatppuccinColors.latteSurface0, // Use for card/dialog backgrounds etc.
-    onSurfaceVariant:
-        _CatppuccinColors.latteSubtext0, // Text on surface variants
-    outline: _CatppuccinColors.latteSurface1, // Borders
-    outlineVariant: _CatppuccinColors.latteSurface0, // Subtle borders/dividers
+    onSurfaceVariant: Colors.white, // White text
+    outline: Colors.white, // White for contrast
+    outlineVariant: Colors.white, // White for contrast
   );
 
   // Base colors for dark theme (Catppuccin Mocha)
@@ -31,7 +30,8 @@ class AppTheme {
     brightness: Brightness.dark,
     // Override specific colors for better Catppuccin Mocha mapping
     surface: _CatppuccinColors.mochaBase,
-    surfaceContainerHighest: _CatppuccinColors.mochaMantle, // Use for AppBars, Cards, Dialogs
+    surfaceContainerHighest:
+        _CatppuccinColors.mochaMantle, // Use for AppBars, Cards, Dialogs
     onSurface: _CatppuccinColors.mochaText,
     primary: _CatppuccinColors.mochaBlue,
     onPrimary: _CatppuccinColors.mochaCrust, // High contrast text on primary
@@ -42,9 +42,8 @@ class AppTheme {
     onTertiary: _CatppuccinColors.mochaCrust, // High contrast text on tertiary
     error: _CatppuccinColors.mochaRed,
     onError: _CatppuccinColors.mochaCrust,
-    surfaceContainerLow:
-        _CatppuccinColors
-            .mochaSurface0, // Use for input fields, chip backgrounds
+    surfaceContainerLow: _CatppuccinColors
+        .mochaSurface0, // Use for input fields, chip backgrounds
     onSurfaceVariant:
         _CatppuccinColors.mochaSubtext0, // Text on surface variants
     outline: _CatppuccinColors.mochaSurface1, // Borders
@@ -59,36 +58,36 @@ class AppTheme {
     scaffoldBackgroundColor: _lightColorScheme.surface,
     appBarTheme: AppBarTheme(
       backgroundColor: _lightColorScheme.surface, // Mantle
-      foregroundColor: _lightColorScheme.onSurface, // Text
+      foregroundColor: Colors.white, // White text
       elevation: 0, // Catppuccin often uses flat designs
       surfaceTintColor: Colors.transparent, // Prevent M3 tinting
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: _lightColorScheme.primary, // Blue
-      foregroundColor: _lightColorScheme.onPrimary, // Base
+      foregroundColor: Colors.white, // White text
     ),
     dialogTheme: DialogTheme(
       backgroundColor: _lightColorScheme.surface, // Mantle
       titleTextStyle: TextStyle(
-        color: _lightColorScheme.onSurface, // Text
+        color: Colors.white, // White text
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
       contentTextStyle: TextStyle(
-        color: _lightColorScheme.onSurfaceVariant, // Subtext0
+        color: Colors.white, // White text
         fontSize: 16,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: _CatppuccinColors.latteSapphire, // Sapphire for text buttons
+        foregroundColor: Colors.white, // White text
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: _lightColorScheme.primary, // Blue
-        foregroundColor: _lightColorScheme.onPrimary, // Base
+        foregroundColor: Colors.white, // White text
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -103,7 +102,8 @@ class AppTheme {
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return _lightColorScheme.tertiary.withValues(alpha: 0.5 * 255.0); // Transparent Sky for track
+          return _lightColorScheme.tertiary
+              .withValues(alpha: 0.5 * 255.0); // Transparent Sky for track
         }
         return null;
       }),
@@ -115,8 +115,10 @@ class AppTheme {
     // Add text selection theme for tertiary color
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: _lightColorScheme.tertiary, // Sky for cursor
-      selectionColor: _lightColorScheme.tertiary.withValues(alpha: 0.3 * 255.0), // Transparent Sky for selection
-      selectionHandleColor: _lightColorScheme.tertiary, // Sky for selection handles
+      selectionColor: _lightColorScheme.tertiary
+          .withValues(alpha: 0.3 * 255.0), // Transparent Sky for selection
+      selectionHandleColor:
+          _lightColorScheme.tertiary, // Sky for selection handles
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -128,15 +130,15 @@ class AppTheme {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: _CatppuccinColors.latteSapphire, // Sapphire for focused borders
+          color: Colors.white, // White border
           width: 2,
         ),
       ),
       labelStyle: TextStyle(
-        color: _lightColorScheme.onSurfaceVariant,
+        color: Colors.white, // White text
       ), // Subtext0
       hintStyle: TextStyle(
-        color: _lightColorScheme.onSurfaceVariant.withValues(alpha: 0.7 * 255.0),
+        color: Colors.white.withOpacity(0.7), // White with opacity
       ), // Subtext0 slightly faded
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 16,
@@ -150,24 +152,24 @@ class AppTheme {
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
     ),
     listTileTheme: ListTileThemeData(
-      iconColor: _lightColorScheme.onSurfaceVariant, // Subtext0
+      iconColor: Colors.white, // White
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       tileColor: Colors.transparent, // Make list tiles transparent on Latte
     ),
     dividerTheme: DividerThemeData(
-      color: _lightColorScheme.outlineVariant, // Surface0
+      color: Colors.white, // White
       thickness: 1,
     ),
     iconButtonTheme: IconButtonThemeData(
       style: IconButton.styleFrom(
-        foregroundColor: _lightColorScheme.onSurfaceVariant, // Subtext0
+        foregroundColor: Colors.white, // White
       ),
     ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       backgroundColor: _lightColorScheme.surface, // Surface0
       contentTextStyle: TextStyle(
-        color: _lightColorScheme.onSurfaceVariant,
+        color: Colors.white, // White
       ), // Subtext0
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 4, // Slight elevation to distinguish
@@ -176,7 +178,7 @@ class AppTheme {
       color: _lightColorScheme.surface, // Mantle
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 2,
-      textStyle: TextStyle(color: _lightColorScheme.onSurface), // Text
+      textStyle: TextStyle(color: Colors.white), // White
     ),
   );
 
@@ -211,7 +213,8 @@ class AppTheme {
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: _CatppuccinColors.mochaSapphire, // Sapphire for text buttons
+        foregroundColor:
+            _CatppuccinColors.mochaSapphire, // Sapphire for text buttons
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -232,7 +235,8 @@ class AppTheme {
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return _darkColorScheme.tertiary.withValues(alpha: 0.5 * 255.0); // Transparent Sky for track
+          return _darkColorScheme.tertiary
+              .withValues(alpha: 0.5 * 255.0); // Transparent Sky for track
         }
         return null;
       }),
@@ -244,8 +248,10 @@ class AppTheme {
     // Add text selection theme for tertiary color
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: _darkColorScheme.tertiary, // Sky for cursor
-      selectionColor: _darkColorScheme.tertiary.withValues(alpha: 0.3 * 255.0), // Transparent Sky for selection
-      selectionHandleColor: _darkColorScheme.tertiary, // Sky for selection handles
+      selectionColor: _darkColorScheme.tertiary
+          .withValues(alpha: 0.3 * 255.0), // Transparent Sky for selection
+      selectionHandleColor:
+          _darkColorScheme.tertiary, // Sky for selection handles
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -257,7 +263,8 @@ class AppTheme {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color: _CatppuccinColors.mochaSapphire, // Sapphire for focused borders
+          color:
+              _CatppuccinColors.mochaSapphire, // Sapphire for focused borders
           width: 2,
         ),
       ),
