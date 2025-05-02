@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 class AppTheme {
   // Base colors for light theme (Catppuccin Latte)
   static final ColorScheme _lightColorScheme = ColorScheme.fromSeed(
-    seedColor: _CatppuccinColors.latteBlue, // Using Blue as the primary seed
+    seedColor: CatppuccinColors.latteBlue, // Using Blue as the primary seed
     brightness: Brightness.light,
     // Override specific colors for better Catppuccin Latte mapping
-    surface: _CatppuccinColors.latteBase,
-    surfaceContainerHighest: _CatppuccinColors.latteMantle,
+    surface: CatppuccinColors.latteBase,
+    surfaceContainerHighest: CatppuccinColors.latteMantle,
     onSurface: Colors.white, // White text
-    primary: _CatppuccinColors.latteBlue,
+    primary: CatppuccinColors.latteBlue,
     onPrimary: Colors.white, // White text
-    secondary: _CatppuccinColors.latteMauve, // Using Mauve as secondary
+    secondary: CatppuccinColors.latteMauve, // Using Mauve as secondary
     onSecondary: Colors.white, // White text
-    tertiary: _CatppuccinColors.latteSky, // Using Sky as tertiary accent
+    tertiary: CatppuccinColors.latteSky, // Using Sky as tertiary accent
     onTertiary: Colors.white, // White text
-    error: _CatppuccinColors.latteRed,
+    error: CatppuccinColors.latteRed,
     onError: Colors.white, // White text
     surfaceContainerLow:
-        _CatppuccinColors.latteSurface0, // Use for card/dialog backgrounds etc.
+        CatppuccinColors.latteSurface0, // Use for card/dialog backgrounds etc.
     onSurfaceVariant: Colors.white, // White text
     outline: Colors.white, // White for contrast
     outlineVariant: Colors.white, // White for contrast
@@ -26,28 +26,27 @@ class AppTheme {
 
   // Base colors for dark theme (Catppuccin Mocha)
   static final ColorScheme _darkColorScheme = ColorScheme.fromSeed(
-    seedColor: _CatppuccinColors.mochaBlue, // Using Blue as the primary seed
+    seedColor: CatppuccinColors.mochaBlue, // Using Blue as the primary seed
     brightness: Brightness.dark,
     // Override specific colors for better Catppuccin Mocha mapping
-    surface: _CatppuccinColors.mochaBase,
+    surface: CatppuccinColors.mochaBase,
     surfaceContainerHighest:
-        _CatppuccinColors.mochaMantle, // Use for AppBars, Cards, Dialogs
-    onSurface: _CatppuccinColors.mochaText,
-    primary: _CatppuccinColors.mochaBlue,
-    onPrimary: _CatppuccinColors.mochaCrust, // High contrast text on primary
-    secondary: _CatppuccinColors.mochaMauve, // Using Mauve as secondary
-    onSecondary:
-        _CatppuccinColors.mochaCrust, // High contrast text on secondary
-    tertiary: _CatppuccinColors.mochaSky, // Using Sky as tertiary accent
-    onTertiary: _CatppuccinColors.mochaCrust, // High contrast text on tertiary
-    error: _CatppuccinColors.mochaRed,
-    onError: _CatppuccinColors.mochaCrust,
-    surfaceContainerLow: _CatppuccinColors
+        CatppuccinColors.mochaMantle, // Use for AppBars, Cards, Dialogs
+    onSurface: CatppuccinColors.mochaText,
+    primary: CatppuccinColors.mochaBlue,
+    onPrimary: CatppuccinColors.mochaCrust, // High contrast text on primary
+    secondary: CatppuccinColors.mochaMauve, // Using Mauve as secondary
+    onSecondary: CatppuccinColors.mochaCrust, // High contrast text on secondary
+    tertiary: CatppuccinColors.mochaSky, // Using Sky as tertiary accent
+    onTertiary: CatppuccinColors.mochaCrust, // High contrast text on tertiary
+    error: CatppuccinColors.mochaRed,
+    onError: CatppuccinColors.mochaCrust,
+    surfaceContainerLow: CatppuccinColors
         .mochaSurface0, // Use for input fields, chip backgrounds
     onSurfaceVariant:
-        _CatppuccinColors.mochaSubtext0, // Text on surface variants
-    outline: _CatppuccinColors.mochaSurface1, // Borders
-    outlineVariant: _CatppuccinColors.mochaSurface0, // Subtle borders/dividers
+        CatppuccinColors.mochaSubtext0, // Text on surface variants
+    outline: CatppuccinColors.mochaSurface1, // Borders
+    outlineVariant: CatppuccinColors.mochaSurface0, // Subtle borders/dividers
   );
 
   // Light Theme (Latte)
@@ -212,7 +211,7 @@ class AppTheme {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor:
-            _CatppuccinColors.mochaSapphire, // Sapphire for text buttons
+            CatppuccinColors.mochaSapphire, // Sapphire for text buttons
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -261,8 +260,7 @@ class AppTheme {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
-          color:
-              _CatppuccinColors.mochaSapphire, // Sapphire for focused borders
+          color: CatppuccinColors.mochaSapphire, // Sapphire for focused borders
           width: 2,
         ),
       ),
@@ -313,7 +311,7 @@ class AppTheme {
 }
 
 // Catppuccin Color Definitions
-class _CatppuccinColors {
+class CatppuccinColors {
   // Latte
   static const Color latteMauve = Color(0xff8839ef);
   static const Color latteRed = Color(0xffd20f39);

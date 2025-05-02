@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,18 @@ import 'theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isAndroid || Platform.isIOS) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent, // Transparent for AppBar overlay
+      systemNavigationBarColor: Platform.isAndroid
+          ? CatppuccinColors.mochaBase
+          : CatppuccinColors.latteBase, // Matches theme dynamically
+      statusBarIconBrightness: null, // Removed Brightness
+      systemNavigationBarIconBrightness: null, // Removed Brightness
+    ));
+  }
+
   runApp(const MyApp());
 }
 
@@ -57,18 +70,16 @@ class MyApp extends StatelessWidget {
                 builder: (context, child) {
                   // Apply system UI overlay style dynamically based on theme
                   final theme = Theme.of(context);
-                  final isDark = theme.brightness == Brightness.dark;
 
                   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                     statusBarColor:
                         Colors.transparent, // Keep status bar transparent
-                    statusBarIconBrightness:
-                        isDark ? Brightness.light : Brightness.dark,
+                    statusBarIconBrightness: null, // Removed Brightness
                     // Use scaffold background for nav bar to match screen background
                     systemNavigationBarColor: theme.scaffoldBackgroundColor,
                     // Set nav bar icons based on theme brightness
                     systemNavigationBarIconBrightness:
-                        isDark ? Brightness.light : Brightness.dark,
+                        null, // Removed Brightness
                   ));
 
                   return MediaQuery(
