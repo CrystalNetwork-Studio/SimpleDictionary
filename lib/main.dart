@@ -51,31 +51,17 @@ class MyApp extends StatelessWidget {
 
   // Приватний метод для інкапсуляції логіки оновлення стилю системних оверлеїв
   void _updateSystemUIOverlayStyle(BuildContext context) {
-    // Отримуємо поточну тему з контексту
     final theme = Theme.of(context);
-    // Визначаємо, чи є поточна тема темною
-    final isDark = theme.brightness == Brightness.dark;
-
-    // Застосовуємо стиль тільки для мобільних платформ Android та iOS
-    if (Platform.isAndroid || Platform.isIOS) {
-      SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(
-          // Рядок стану (Status Bar)
-          statusBarColor: Colors.transparent, // Робимо фон рядка стану прозорим
-          // Встановлюємо колір іконок рядка стану (годинник, батарея тощо)
-          // світлим для темної теми і темним для світлої теми
-          statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-
-          // Навігаційна панель (System Navigation Bar - переважно Android)
-          // Встановлюємо колір фону навігаційної панелі відповідно до фону Scaffold
-          systemNavigationBarColor: theme.scaffoldBackgroundColor,
-          // Встановлюємо колір іконок навігаційної панелі (назад, додому тощо)
-          // світлим для темної теми і темним для світлої теми
-          systemNavigationBarIconBrightness:
-              isDark ? Brightness.light : Brightness.dark,
-        ),
-      );
-    }
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: theme.appBarTheme.backgroundColor, // Match AppBar color
+      statusBarIconBrightness: theme.brightness == Brightness.dark
+          ? Brightness.light
+          : Brightness.dark,
+      systemNavigationBarColor: theme.scaffoldBackgroundColor,
+      systemNavigationBarIconBrightness: theme.brightness == Brightness.dark
+          ? Brightness.light
+          : Brightness.dark,
+    ));
   }
 
   @override
