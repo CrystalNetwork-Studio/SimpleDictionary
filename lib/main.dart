@@ -1,99 +1,149 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart'; // Потрібно для SystemChrome та SystemUiOverlayStyle
+import 'package:flutter_localizations/flutter_localizations.dart'; // Делегати локалізації
+import 'package:provider/provider.dart'; // Для керування станом (State Management)
 
-import 'l10n/app_localizations.dart';
-import 'providers/dictionary_provider.dart';
-import 'providers/settings_provider.dart';
-import 'screens/home_screen.dart';
-import 'theme/app_theme.dart';
+import 'l10n/app_localizations.dart'; // Клас для локалізації
+import 'providers/dictionary_provider.dart'; // Провайдер словника
+import 'providers/settings_provider.dart'; // Провайдер налаштувань
+import 'screens/home_screen.dart'; // Головний екран
+import 'theme/app_theme.dart'; // Теми додатку
 
-void main() {
+Future<void> main() async {
+  // Переконуємося, що Flutter ініціалізовано перед використанням плагінів або Platform Channels
+  // Це обов'язково, якщо main є async або якщо ви викликаєте нативний код перед runApp
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (Platform.isAndroid || Platform.isIOS) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent, // Transparent for AppBar overlay
-      systemNavigationBarColor: Platform.isAndroid
-          ? CatppuccinColors.mochaBase
-          : CatppuccinColors.latteBase, // Matches theme dynamically
-      statusBarIconBrightness: null, // Removed Brightness
-      systemNavigationBarIconBrightness: null, // Removed Brightness
-    ));
-  }
+  // --- Місце для потенційної асинхронної ініціалізації ---
+  // Наприклад, завантаження налаштувань з SharedPreferences перед запуском:
+  // final settingsProvider = SettingsProvider();
+  // await settingsProvider.loadSettings(); // Потрібно реалізувати цей метод у SettingsProvider
+  // Потім передати цей екземпляр через ChangeNotifierProvider.value замість .create
+  // --- Кінець потенційної асинхронної ініціалізації ---
 
-  runApp(const MyApp());
+  // Можна встановити бажану орієнтацію екрану тут, якщо потрібно:
+  // await SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  // ]);
+
+  runApp(
+    // MultiProvider дозволяє надати декілька провайдерів дереву віджетів
+    MultiProvider(
+      providers: [
+        // ChangeNotifierProvider.create створює екземпляр провайдера "ліниво" (при першому запиті)
+        ChangeNotifierProvider(create: (_) => DictionaryProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        // Якщо використовували попередньо ініціалізований провайдер:
+        // ChangeNotifierProvider.value(value: settingsProvider),
+      ],
+      // Використовуємо const MyApp для невеликої оптимізації,
+      // оскільки сам віджет MyApp не змінюється.
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
+  // Конструктор з const для оптимізації
   const MyApp({super.key});
+
+  // Приватний метод для інкапсуляції логіки оновлення стилю системних оверлеїв
+  void _updateSystemUIOverlayStyle(BuildContext context) {
+    // Отримуємо поточну тему з контексту
+    final theme = Theme.of(context);
+    // Визначаємо, чи є поточна тема темною
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Застосовуємо стиль тільки для мобільних платформ Android та iOS
+    if (Platform.isAndroid || Platform.isIOS) {
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          // Рядок стану (Status Bar)
+          statusBarColor: Colors.transparent, // Робимо фон рядка стану прозорим
+          // Встановлюємо колір іконок рядка стану (годинник, батарея тощо)
+          // світлим для темної теми і темним для світлої теми
+          statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+
+          // Навігаційна панель (System Navigation Bar - переважно Android)
+          // Встановлюємо колір фону навігаційної панелі відповідно до фону Scaffold
+          systemNavigationBarColor: theme.scaffoldBackgroundColor,
+          // Встановлюємо колір іконок навігаційної панелі (назад, додому тощо)
+          // світлим для темної теми і темним для світлої теми
+          systemNavigationBarIconBrightness:
+              isDark ? Brightness.light : Brightness.dark,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => DictionaryProvider()),
-        ChangeNotifierProvider(create: (context) => SettingsProvider()),
-      ],
-      child: Consumer<SettingsProvider>(
-        builder: (context, settingsProvider, child) {
-          return Builder(
-            builder: (context) {
-              return MaterialApp(
-                title: 'My Dictionary',
-                theme: AppTheme.lightTheme,
-                darkTheme: AppTheme.darkTheme,
-                themeMode: settingsProvider.themeMode,
-                localizationsDelegates: const [
-                  AppLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: const [
-                  Locale('en'), // English
-                  Locale('uk'), // Ukrainian
-                ],
-                locale: settingsProvider.locale,
-                localeResolutionCallback: (locale, supportedLocales) {
-                  if (locale == null) return const Locale('en');
-                  for (var supportedLocale in supportedLocales) {
-                    if (supportedLocale.languageCode == locale.languageCode) {
-                      return supportedLocale;
-                    }
-                  }
-                  return const Locale('en');
-                },
-                home: const HomeScreen(),
-                builder: (context, child) {
-                  // Apply system UI overlay style dynamically based on theme
-                  final theme = Theme.of(context);
+    return Consumer<SettingsProvider>(
+      builder: (context, settingsProvider, child) {
+        return MaterialApp(
+          // --- Метадані додатку ---
+          title: 'My Dictionary', // Назва додатку, яка відображається в системі
 
-                  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                    statusBarColor:
-                        Colors.transparent, // Keep status bar transparent
-                    statusBarIconBrightness: null, // Removed Brightness
-                    // Use scaffold background for nav bar to match screen background
-                    systemNavigationBarColor: theme.scaffoldBackgroundColor,
-                    // Set nav bar icons based on theme brightness
-                    systemNavigationBarIconBrightness:
-                        null, // Removed Brightness
-                  ));
+          // --- Теми ---
+          theme: AppTheme.lightTheme, // Світла тема додатку
+          darkTheme: AppTheme.darkTheme, // Темна тема додатку
+          // Визначає, яку тему використовувати (світлу, темну або системну)
+          // Значення береться з SettingsProvider
+          themeMode: settingsProvider.themeMode,
 
-                  return MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: const TextScaler.linear(1.0)),
-                    child: child!,
-                  );
-                },
-              );
-            },
-          );
-        },
-      ),
+          // --- Локалізація ---
+          // Встановлює поточну локаль (мову та регіон) додатку
+          locale: settingsProvider.locale,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''), // Англійська
+            Locale('uk', ''), // Українська
+          ],
+          localeResolutionCallback: (locale, supportedLocales) {
+            if (locale == null) {
+              return supportedLocales.first;
+            }
+            // Шукаємо підтримувану локаль, яка відповідає мові пристрою
+            for (var supportedLocale in supportedLocales) {
+              if (supportedLocale.languageCode == locale.languageCode) {
+                // Знайдено! Повертаємо її.
+                // Можна також перевіряти scriptCode або countryCode, якщо потрібно.
+                return supportedLocale;
+              }
+            }
+            return supportedLocales.first;
+          },
+          // --- Навігація ---
+          home: const HomeScreen(),
+
+          // --- Builder ---
+          builder: (context, child) {
+            _updateSystemUIOverlayStyle(context);
+
+            return MediaQuery(
+              // Створюємо копію даних MediaQuery з поточного контексту,
+              // але змінюємо лише параметр textScaler.
+              data: MediaQuery.of(context).copyWith(
+                textScaler: const TextScaler.linear(1.0),
+              ),
+              // child! - це віджет, що представляє поточний екран/навігатор,
+              // згенерований MaterialApp. Використовуємо `!`, бо впевнені, що child не буде null.
+              child: child!,
+            );
+          },
+
+          // --- Прапорці для налагодження (необов'язково) ---
+          // Приховує банер "Debug" у верхньому правому куті екрану
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }
