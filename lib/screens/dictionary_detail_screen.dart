@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Потрібно для AnnotatedRegion
+import 'package:flutter/services.dart'; // Needed for AnnotatedRegion
 import 'package:provider/provider.dart';
 import 'package:simpledictionary/data/dictionary.dart';
 import 'package:simpledictionary/l10n/app_localizations.dart';
@@ -43,7 +43,7 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context)!;
-    // Отримуємо SystemUiOverlayStyle з MyApp
+    // Get SystemUiOverlayStyle from MyApp
     final systemUiOverlayStyle = MyApp.getAppSystemUIOverlayStyle(context);
 
     return Consumer<DictionaryProvider>(
@@ -58,7 +58,7 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
             "Dictionary '${widget.dictionary.name}' not found in provider. It might have been deleted.",
           );
           return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: systemUiOverlayStyle, // Застосовуємо тут також
+            value: systemUiOverlayStyle, // Apply here too
             child: _buildDictionaryNotFoundScreen(localization),
           );
         }
@@ -70,7 +70,7 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
         final DictionaryType dictionaryType = currentDict.type;
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: systemUiOverlayStyle, // Застосовуємо тут
+          value: systemUiOverlayStyle, // Apply here
           child: Scaffold(
             appBar: AppBar(
               title: Text(currentDict.name),
@@ -125,7 +125,7 @@ class _DictionaryDetailScreenState extends State<DictionaryDetailScreen> {
   }
 
   Widget _buildDictionaryNotFoundScreen(AppLocalizations localization) {
-    // Цей Scaffold буде обгорнутий в AnnotatedRegion викликаючим кодом.
+    // This Scaffold will be wrapped in AnnotatedRegion by the calling code.
     return Scaffold(
       appBar: AppBar(title: Text(widget.dictionary.name)),
       body: Center(
