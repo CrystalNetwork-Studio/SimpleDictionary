@@ -49,7 +49,7 @@ class AppTheme {
     outlineVariant: CatppuccinColors.mochaSurface0, // Subtle borders/dividers
   );
 
-  // Light Theme (Latte)
+  // Light Theme
   static final ThemeData lightTheme = ThemeData(
     colorScheme: _lightColorScheme,
     useMaterial3: true,
