@@ -3,7 +3,7 @@ description: "A simple dictionary application."
 publish_to: "none"
 repository: "https://github.com/CrystalNetwork-Studio/SimpleDictionary"
 issue_tracker: "https://github.com/CrystalNetwork-Studio/SimpleDictionary/issues"
-version: 0.1.6
+version: 0.1.0
 
 platforms:
   android:

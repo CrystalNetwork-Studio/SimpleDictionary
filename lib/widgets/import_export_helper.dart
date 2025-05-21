@@ -197,7 +197,7 @@ class ImportExportHelper {
   /// Exports a dictionary to a file
   static Future<void> exportDictionary(BuildContext context) async {
     final l10n = AppLocalizations.of(context)!;
-    final provider = Provider.of<DictionaryProvider>(context, listen: false);
+    Provider.of<DictionaryProvider>(context, listen: false);
 
     // Show dictionary selection dialog
     final dictionary = await _showDictionarySelectionDialog(context);
