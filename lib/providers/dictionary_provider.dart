@@ -17,6 +17,12 @@ class DictionaryProvider with ChangeNotifier {
   }
   List<Dictionary> get dictionaries => List.unmodifiable(_dictionaries);
   String? get error => _error;
+  
+  /// Sets the error message and notifies listeners
+  void setError(String? errorMessage) {
+    _error = errorMessage;
+    notifyListeners();
+  }
 
   bool get isLoading => _isLoading;
 
@@ -165,8 +171,7 @@ class DictionaryProvider with ChangeNotifier {
 
   void clearError() {
     if (_error != null) {
-      _error = null;
-      notifyListeners();
+      setError(null);
     }
   }
 
@@ -262,6 +267,19 @@ class DictionaryProvider with ChangeNotifier {
             "Dictionary '$dictionaryName' not found for export.",
           ),
         );
+        
+        // Ensure export directory exists
+        try {
+          final exportFile = File(exportPath);
+          final parentDir = exportFile.parent;
+          if (!await parentDir.exists()) {
+            await parentDir.create(recursive: true);
+          }
+        } catch (e) {
+          debugPrint("Warning: Could not verify export directory: $e");
+          // Continue anyway as the export function will also try to handle this
+        }
+        
         await file_utils.exportDictionaryToJsonFile(dictionary, exportPath);
         success = true;
       },
@@ -272,21 +290,42 @@ class DictionaryProvider with ChangeNotifier {
   }
 
   /// Loads dictionary data from a file for import preview, without adding it to the state.
+  /// 
+  /// [importPath] can be either a file path (older Android, iOS) or a content URI (Android 11+)
   Future<Dictionary?> loadDictionaryForImport(String importPath) async {
     Dictionary? dictionary;
     await _performAction(
       () async {
-        dictionary = await file_utils.importDictionaryFromJsonFile(importPath);
-        if (dictionary == null) {
-          // file_utils handles internal errors, but set a provider error for UI
-          _error = "Failed to load dictionary from file or file not found.";
-        } else if (dictionary!.name.trim().isEmpty) {
-          _error = "Imported dictionary has an empty name.";
-          dictionary = null; // Invalidate dictionary with empty name
+        try {
+          dictionary = await file_utils.importDictionaryFromJsonFile(importPath);
+          if (dictionary == null) {
+            // file_utils handles internal errors, but set a provider error for UI
+            setError("Failed to load dictionary from file or file not found.");
+          } else if (dictionary!.name.trim().isEmpty) {
+            setError("Imported dictionary has an empty name.");
+            dictionary = null; // Invalidate dictionary with empty name
+          }
+        } catch (e) {
+          debugPrint("Error in loadDictionaryForImport: $e");
+          
+          // Provide more specific error messages based on exception type
+          if (e.toString().contains("Permission") || 
+              e.toString().contains("access") || 
+              e.toString().contains("denied")) {
+            setError("Permission denied: Cannot access this file location. Try selecting from Downloads folder.");
+          } else if (e.toString().contains("URI")) {
+            setError("Cannot read from this location. Please select the file from Downloads or Documents folder.");
+          } else if (e.toString().contains("format") || e.toString().contains("JSON")) {
+            setError("Invalid dictionary format: ${e.toString()}");
+          } else {
+            setError("Error reading dictionary file: ${e.toString()}");
+          }
+          
+          dictionary = null;
         }
       },
       errorMessagePrefix:
-          "Error loading dictionary for import from '$importPath'",
+          "Error loading dictionary for import",
     );
     // Notify listeners if an error occurred during the action (e.g., empty name)
     if (_error != null) {
@@ -302,32 +341,63 @@ class DictionaryProvider with ChangeNotifier {
 
     // Ensure name is not empty after potential rename during import preview
     if (importName.trim().isEmpty) {
-      _error = "Dictionary name cannot be empty for import.";
-      notifyListeners();
+      setError("Dictionary name cannot be empty for import.");
+      return false;
+    }
+    
+    // Check for invalid characters in the dictionary name
+    final RegExp invalidChars = RegExp(r'[\/\\:*?"<>|]');
+    if (invalidChars.hasMatch(importName)) {
+      setError("Dictionary name contains invalid characters. Avoid using: / \\ : * ? \" < > |");
       return false;
     }
 
     await _performAction(
       () async {
-        final existingIndex = _dictionaries.indexWhere(
-          (d) => d.name.toLowerCase() == importName.toLowerCase(),
-        );
-
-        if (existingIndex != -1) {
-          // Overwrite existing dictionary
-          await file_utils.saveDictionaryToJson(
-              dictionaryToImport); // Save replaces file content
-          _dictionaries[existingIndex] =
-              dictionaryToImport; // Update in provider list
-        } else {
-          // Add as a new dictionary
-          await file_utils.saveDictionaryToJson(dictionaryToImport);
-          _dictionaries.add(dictionaryToImport);
-          _dictionaries.sort(
-            (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+        try {
+          final existingIndex = _dictionaries.indexWhere(
+            (d) => d.name.toLowerCase() == importName.toLowerCase(),
           );
+
+          if (existingIndex != -1) {
+            // Overwrite existing dictionary
+            await file_utils.saveDictionaryToJson(
+                dictionaryToImport); // Save replaces file content
+            _dictionaries[existingIndex] =
+                dictionaryToImport; // Update in provider list
+          } else {
+            // Add as a new dictionary
+            try {
+              // Ensure the dictionary directory exists before saving
+              final directoryPath = await file_utils.getDictionaryDirectoryPath(importName);
+              final dir = Directory(directoryPath);
+              if (!await dir.exists()) {
+                await dir.create(recursive: true);
+                debugPrint("Created directory for imported dictionary at: $directoryPath");
+              }
+            } catch (dirError) {
+              debugPrint("Warning: Error preparing directory: $dirError");
+              // Continue anyway as saveDictionaryToJson will also try to handle this
+            }
+            
+            await file_utils.saveDictionaryToJson(dictionaryToImport);
+            _dictionaries.add(dictionaryToImport);
+            _dictionaries.sort(
+              (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+            );
+          }
+          success = true;
+        } catch (e) {
+          debugPrint("Error in importDictionary: $e");
+          
+          if (e.toString().contains("Permission") || e.toString().contains("access denied")) {
+            setError("Storage permission denied. Cannot save the imported dictionary.");
+          } else {
+            setError("Failed to save imported dictionary: ${e.toString()}");
+          }
+          
+          success = false;
         }
-        success = true;
       },
       errorMessagePrefix:
           "Error importing dictionary '${dictionaryToImport.name}'",

@@ -1,20 +1,25 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-  <!-- READ_EXTERNAL_STORAGE needed for file picking on Android <= 9 (API 28). -->
+<manifest
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+>
+  <!-- File picker permissions -->
+  <!-- Storage permissions for Android 12 and below -->
   <uses-permission
     android:name="android.permission.READ_EXTERNAL_STORAGE"
-    android:maxSdkVersion="28"
+    android:maxSdkVersion="32"
   />
-  <!-- WRITE_EXTERNAL_STORAGE needed for file picking on Android <= 9 (API 28). -->
   <uses-permission
     android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-    android:maxSdkVersion="28"
+    android:maxSdkVersion="29"
   />
 
   <application
     android:label="@string/app_name"
-    android:name="${applicationName}"
     android:icon="@mipmap/launcher_icon"
-    android:defaultLocale="en"
+    android:requestLegacyExternalStorage="true"
+    android:preserveLegacyExternalStorage="true"
+    android:hasFragileUserData="true"
+    android:extractNativeLibs="true"
   >
     <activity
       android:name=".MainActivity"
@@ -35,13 +40,53 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
+
+    <!-- FileProvider for sharing files and handling content URIs -->
+    <provider
+      android:name="androidx.core.content.FileProvider"
+      android:authorities="${applicationId}.fileprovider"
+      android:exported="false"
+      android:grantUriPermissions="true"
+    >
+        <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/file_paths"
+      />
+    </provider>
     <meta-data android:name="flutterEmbedding" android:value="2" />
   </application>
   <queries>
-    <!-- Intent to handle JSON files -->
+    <!-- Intents to handle any file type -->
     <intent>
       <action android:name="android.intent.action.GET_CONTENT" />
-      <data android:mimeType="application/json" />
+      <data android:mimeType="*/*" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:mimeType="*/*" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.OPEN_DOCUMENT" />
+      <data android:mimeType="*/*" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.CREATE_DOCUMENT" />
+      <data android:mimeType="*/*" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+    </intent>
+    <!-- For Storage Access Framework -->
+    <intent>
+      <action android:name="android.intent.action.PICK" />
+      <data android:mimeType="*/*" />
+    </intent>
+    <!-- Additional intents for better file access -->
+    <intent>
+      <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+    </intent>
+    <intent>
+      <action android:name="android.provider.action.DOCUMENTS_PROVIDER" />
     </intent>
   </queries>
 </manifest>

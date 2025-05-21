@@ -25,7 +25,7 @@ dependencies:
   shared_preferences: ^2.0.0 # Storing settings
   package_info_plus: ^8.3.0 # For getting app info
   url_launcher: ^6.3.1 # For opening URLs
-  file_picker: ^10.0.0 # For picking files - Updated version
+  file_picker: ^10.0.0 # For picking files
   permission_handler: ^12.0.0+1 # For handling permissions
 
 dev_dependencies:
