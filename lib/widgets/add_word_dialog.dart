@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/dictionary.dart';
 import '../l10n/app_localizations.dart';
-import '../widgets/word_form_widget.dart';
+import 'word_form_widget.dart';
 
 class AddWordDialog extends StatelessWidget {
   final Future<bool> Function(Word) onWordAdded;

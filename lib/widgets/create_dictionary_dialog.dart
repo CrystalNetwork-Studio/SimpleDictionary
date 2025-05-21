@@ -118,7 +118,6 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
                         }
                       },
                 decoration: InputDecoration(
-                  // Optional: Add border or customize decoration
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),

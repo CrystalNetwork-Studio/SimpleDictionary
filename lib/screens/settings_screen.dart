@@ -1,14 +1,10 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simpledictionary/data/dictionary.dart';
 import 'package:simpledictionary/l10n/app_localizations.dart';
 import 'package:simpledictionary/providers/dictionary_provider.dart';
 
 import '../providers/settings_provider.dart';
+import '../widgets/import_export_helper.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -55,6 +51,21 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
+
+  // Helper method to create bullet point items
+
+  // Widget _buildBulletPoint(String text) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(left: 8, bottom: 4),
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         const Text("• ", style: TextStyle(fontWeight: FontWeight.bold)),
+  //         Expanded(child: Text(text)),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildExpansionTile({
     required BuildContext context,
@@ -119,7 +130,7 @@ class SettingsScreen extends StatelessWidget {
           );
           return;
         }
-        await _exportDictionary(context);
+        await ImportExportHelper.exportDictionary(context);
       },
     );
   }
@@ -140,7 +151,7 @@ class SettingsScreen extends StatelessWidget {
       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
       dense: true,
       onTap: () async {
-        await _importDictionary(context);
+        await ImportExportHelper.importDictionary(context);
       },
     );
   }
@@ -206,6 +217,24 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildRadioListTile<T>({
+    required BuildContext context,
+    required String title,
+    required T value,
+    required T? groupValue,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return RadioListTile<T>(
+      title: Text(title),
+      value: value,
+      groupValue: groupValue,
+      onChanged: onChanged,
+      activeColor: Theme.of(context).colorScheme.primary,
+      dense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
+    );
+  }
+
   Widget _buildThemeSetting(BuildContext context, SettingsProvider provider) {
     return ListTile(
       title: Text(AppLocalizations.of(context)!.theme),
@@ -258,175 +287,6 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRadioListTile<T>({
-    required BuildContext context,
-    required String title,
-    required T value,
-    required T? groupValue,
-    required ValueChanged<T?> onChanged,
-  }) {
-    return RadioListTile<T>(
-      title: Text(title),
-      value: value,
-      groupValue: groupValue,
-      onChanged: onChanged,
-      activeColor: Theme.of(context).colorScheme.primary,
-      dense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
-    );
-  }
-
-  Future<void> _exportDictionary(BuildContext context) async {
-    final localizations = AppLocalizations.of(context)!;
-    Provider.of<DictionaryProvider>(context, listen: false);
-
-    final dictionaryToExport = await _showExportSelectionDialog(context);
-    if (dictionaryToExport == null || !context.mounted) return;
-
-    try {
-      final jsonString = jsonEncode(dictionaryToExport.toJson());
-      final Uint8List fileBytes = utf8.encode(jsonString);
-      final String suggestedName = '${dictionaryToExport.name}.json';
-
-      final String? outputFile = await FilePicker.platform.saveFile(
-        dialogTitle: localizations.selectExportLocation,
-        fileName: suggestedName,
-        type: FileType.custom,
-        allowedExtensions: ['json'],
-        bytes: fileBytes,
-      );
-
-      if (outputFile == null) {
-        if (context.mounted) {
-          _showSnackBar(context, localizations.filePickerOperationCancelled);
-        }
-        return;
-      }
-
-      if (context.mounted) {
-        _showSnackBar(
-          context,
-          localizations.dictionaryExportedSuccess(
-            dictionaryToExport.name,
-            outputFile,
-          ),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        _showErrorSnackBar(
-          context,
-          localizations.dictionaryExportFailed(
-            dictionaryToExport.name,
-            e.toString(),
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _importDictionary(BuildContext context) async {
-    final localizations = AppLocalizations.of(context)!;
-    final provider = Provider.of<DictionaryProvider>(context, listen: false);
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-    final theme = Theme.of(context);
-
-    void showMessage(String message, {bool isError = false}) {
-      scaffoldMessenger.showSnackBar(
-        SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(color: isError ? Colors.white : null),
-          ),
-          backgroundColor: isError ? theme.colorScheme.error : null,
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 3),
-        ),
-      );
-    }
-
-    try {
-      final FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['json'],
-        dialogTitle: localizations.selectDictionaryFileToImport,
-      );
-
-      if (result == null || result.files.single.path == null) {
-        showMessage(localizations.filePickerOperationCancelled);
-        return;
-      }
-
-      final String filePath = result.files.single.path!;
-      provider.clearError();
-      final Dictionary? importedDict =
-          await provider.loadDictionaryForImport(filePath);
-
-      if (importedDict == null) {
-        showMessage(
-          provider.error ?? localizations.invalidDictionaryFile,
-          isError: true,
-        );
-        return;
-      }
-
-      final bool exists = await provider.dictionaryExists(importedDict.name);
-      Dictionary? finalDictToImport = importedDict;
-
-      if (exists && context.mounted) {
-        final conflictResult = await _showImportConflictDialog(
-          context,
-          importedDict.name,
-        );
-
-        if (conflictResult == null) return;
-
-        if (conflictResult == _ImportConflictAction.rename && context.mounted) {
-          final newName = await _showRenameDialog(context, importedDict.name);
-          if (newName == null || newName.trim().isEmpty) return;
-
-          if (await provider.dictionaryExists(newName)) {
-            showMessage(localizations.dictionaryAlreadyExists, isError: true);
-            return;
-          }
-          finalDictToImport = importedDict.copyWith(name: newName);
-        }
-      }
-
-      provider.clearError();
-      final success = await provider.importDictionary(finalDictToImport);
-
-      if (!context.mounted) return;
-      if (success) {
-        _showSnackBar(
-          context,
-          localizations.dictionaryImportedSuccess(finalDictToImport.name),
-        );
-      } else {
-        _showErrorSnackBar(
-          context,
-          localizations.dictionaryImportFailed(
-            provider.error ?? 'Unknown error',
-          ),
-        );
-      }
-    } on FormatException catch (e) {
-      if (context.mounted) {
-        _showErrorSnackBar(
-          context,
-          '${localizations.invalidDictionaryFile} (${e.message})',
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        _showErrorSnackBar(
-          context,
-          localizations.dictionaryImportFailed(e.toString()),
-        );
-      }
-    }
-  }
-
   String _localeToString(Locale? locale, BuildContext context) {
     if (locale == null) {
       return AppLocalizations.of(context)!.systemDefault;
@@ -440,136 +300,12 @@ class SettingsScreen extends StatelessWidget {
         return AppLocalizations.of(context)!.systemDefault;
     }
   }
+  // Errors are shown using the general _showSnackBar method with the isError flag.
+  // A dedicated error method like the one below is not needed.
 
-  Future<Dictionary?> _showExportSelectionDialog(BuildContext context) async {
-    final localizations = AppLocalizations.of(context)!;
-    final provider = Provider.of<DictionaryProvider>(context, listen: false);
-    final dictionaries = provider.dictionaries;
-
-    return await showDialog<Dictionary?>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(localizations.selectDictionaryToExport),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: dictionaries.length,
-              itemBuilder: (context, index) {
-                final dict = dictionaries[index];
-                return ListTile(
-                  leading: Icon(Icons.book_outlined, color: dict.color),
-                  title: Text(dict.name),
-                  onTap: () => Navigator.of(dialogContext).pop(dict),
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(null),
-              child: Text(localizations.cancel),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<_ImportConflictAction?> _showImportConflictDialog(
-    BuildContext context,
-    String dictionaryName,
-  ) async {
-    final localizations = AppLocalizations.of(context)!;
-    return await showDialog<_ImportConflictAction>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(localizations.importNameConflictTitle),
-          content: Text(
-            localizations.importNameConflictContent(dictionaryName),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(localizations.cancel),
-              onPressed: () => Navigator.of(dialogContext).pop(null),
-            ),
-            TextButton(
-              child: Text(localizations.rename),
-              onPressed: () => Navigator.of(
-                dialogContext,
-              ).pop(_ImportConflictAction.rename),
-            ),
-            ElevatedButton(
-              child: Text(localizations.overwrite),
-              onPressed: () => Navigator.of(
-                dialogContext,
-              ).pop(_ImportConflictAction.overwrite),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<String?> _showRenameDialog(
-    BuildContext context,
-    String currentName,
-  ) async {
-    final localizations = AppLocalizations.of(context)!;
-    final controller = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-
-    return await showDialog<String?>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(localizations.rename),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: controller,
-              autofocus: true,
-              decoration: InputDecoration(
-                hintText: localizations.enterNewName,
-                labelText: localizations.dictionaryName,
-              ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return localizations.dictionaryNameNotEmpty;
-                }
-                if (value.trim() == currentName) {
-                  return 'Please enter a different name.';
-                }
-                return null;
-              },
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(localizations.cancel),
-              onPressed: () => Navigator.of(dialogContext).pop(null),
-            ),
-            ElevatedButton(
-              child: Text(localizations.rename),
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  Navigator.of(dialogContext).pop(controller.text.trim());
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showErrorSnackBar(BuildContext context, String message) {
-    _showSnackBar(context, message, isError: true);
-  }
+  // void _showErrorSnackBar(BuildContext context, String message) {
+  //   _showSnackBar(context, message, isError: true);
+  // }
 
   void _showSnackBar(
     BuildContext context,
@@ -590,7 +326,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  String _themeModeToString(ThemeMode mode, BuildContext context) {
+  _themeModeToString(ThemeMode mode, BuildContext context) {
     switch (mode) {
       case ThemeMode.light:
         return AppLocalizations.of(context)!.light;
@@ -601,5 +337,3 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 }
-
-enum _ImportConflictAction { overwrite, rename }

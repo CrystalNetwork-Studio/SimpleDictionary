@@ -24,6 +24,7 @@ class _AppDrawerState extends State<AppDrawer> {
         context.watch<DictionaryProvider>().dictionaries.length;
 
     return Drawer(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       child: Column(
         children: <Widget>[
           DrawerHeader(

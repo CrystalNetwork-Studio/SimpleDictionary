@@ -10,12 +10,12 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = JavaVersion.VERSION_17
     }
 
     defaultConfig {
@@ -24,6 +24,16 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // For handling file paths on Android 10+
+        manifestPlaceholders = [
+            "fileprovider": "${applicationId}.fileprovider"
+        ]
+    }
+    
+    // Add support for file access on Android 11+
+    aaptOptions {
+        noCompress "json"
     }
 
     buildTypes {
@@ -31,8 +41,19 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+
+    // Configure XML resource support
+    sourceSets {
+        main.resources.srcDirs += 'src/main/res/xml'
+    }
 }
 
 flutter {
     source = "../.."
+}
+
+// Add dependencies for document provider support
+dependencies {
+    // For Android 12+ file handling support
+    implementation "androidx.documentfile:documentfile:1.0.1"
 }
