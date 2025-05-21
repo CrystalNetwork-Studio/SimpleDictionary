@@ -6,7 +6,8 @@ class AppTheme {
     seedColor: CatppuccinColors.latteBlue,
     brightness: Brightness.light,
     surface: CatppuccinColors.latteMantle,
-    surfaceContainerHighest: CatppuccinColors.latteSurface0.withOpacity(0.95),
+    surfaceContainerHighest:
+        CatppuccinColors.latteSurface0.withValues(alpha: 0.95),
     onSurface: CatppuccinColors.latteText,
     primary: CatppuccinColors.latteBlue,
     onPrimary: Colors.white,
@@ -16,7 +17,7 @@ class AppTheme {
     onTertiary: Colors.white,
     error: CatppuccinColors.latteRed,
     onError: Colors.white,
-    surfaceContainerLow: CatppuccinColors.latteSurface1.withOpacity(0.85),
+    surfaceContainerLow: CatppuccinColors.latteSurface1.withValues(alpha: 0.85),
     onSurfaceVariant: CatppuccinColors.latteSubtext0,
     outline: CatppuccinColors.latteSurface1,
     outlineVariant: CatppuccinColors.latteSurface0,
@@ -372,7 +373,7 @@ extension ColorAlpha on Color {
     if (alpha == null) {
       return this;
     }
-    int newAlpha = (this.alpha * alpha.clamp(0.0, 1.0)).round();
+    int newAlpha = (this.a * alpha.clamp(0.0, 1.0)).round();
     return withAlpha(newAlpha);
   }
 }
