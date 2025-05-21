@@ -5,9 +5,9 @@ class AppTheme {
   static final ColorScheme _lightColorScheme = ColorScheme.fromSeed(
     seedColor: CatppuccinColors.latteBlue,
     brightness: Brightness.light,
-    surface: CatppuccinColors.latteBase,
-    surfaceContainerHighest: CatppuccinColors.latteMantle,
-    onSurface: const Color(0xFF1A1B21),
+    surface: CatppuccinColors.latteMantle,
+    surfaceContainerHighest: CatppuccinColors.latteSurface0.withOpacity(0.95),
+    onSurface: CatppuccinColors.latteText,
     primary: CatppuccinColors.latteBlue,
     onPrimary: Colors.white,
     secondary: CatppuccinColors.latteMauve,
@@ -16,14 +16,13 @@ class AppTheme {
     onTertiary: Colors.white,
     error: CatppuccinColors.latteRed,
     onError: Colors.white,
-    surfaceContainerLow: CatppuccinColors.latteSurface0,
-    onSurfaceVariant:
-        const Color(0xFF4A4B52), // Теплий сірий для вторинного тексту
-    outline: const Color(0xFFA6A8B5),
-    outlineVariant: const Color(0xFFA6A8B5),
+    surfaceContainerLow: CatppuccinColors.latteSurface1.withOpacity(0.85),
+    onSurfaceVariant: CatppuccinColors.latteSubtext0,
+    outline: CatppuccinColors.latteSurface1,
+    outlineVariant: CatppuccinColors.latteSurface0,
   );
 
-  // Base colors for dark theme ( Catppuccin Mocha)
+  // Base colors for dark theme (Catppuccin Mocha)
   static final ColorScheme _darkColorScheme = ColorScheme.fromSeed(
     seedColor: CatppuccinColors.mochaBlue,
     brightness: Brightness.dark,
@@ -93,11 +92,11 @@ class AppTheme {
       ),
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return _lightColorScheme.tertiary;
         }
-        return _lightColorScheme.onSurfaceVariant.withOpacity(0.4);
+        return _lightColorScheme.onSurfaceVariant.withValues(alpha: 0.4);
       }),
     ),
     progressIndicatorTheme: ProgressIndicatorThemeData(
@@ -105,7 +104,7 @@ class AppTheme {
     ),
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: _lightColorScheme.tertiary,
-      selectionColor: _lightColorScheme.tertiary.withOpacity(0.3),
+      selectionColor: _lightColorScheme.tertiary.withValues(alpha: 0.3),
       selectionHandleColor: _lightColorScheme.tertiary,
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -127,10 +126,10 @@ class AppTheme {
         fontSize: 16,
       ),
       hintStyle: TextStyle(
-        color: _lightColorScheme.onSurfaceVariant.withOpacity(0.7),
+        color: _lightColorScheme.onSurfaceVariant.withValues(alpha: 0.7),
         fontSize: 16,
       ),
-      contentPadding: const EdgeInsets.symmetric(
+      contentPadding: EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 16,
       ),
@@ -139,7 +138,7 @@ class AppTheme {
       elevation: 0,
       color: _lightColorScheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
     ),
     listTileTheme: ListTileThemeData(
       iconColor: _lightColorScheme.onSurfaceVariant,
@@ -220,16 +219,16 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: _darkColorScheme.primary,
         foregroundColor: _darkColorScheme.onPrimary,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return _darkColorScheme.tertiary;
         }
-        return _darkColorScheme.onSurfaceVariant.withOpacity(0.4);
+        return _darkColorScheme.onSurfaceVariant.withValues(alpha: 0.4);
       }),
     ),
     progressIndicatorTheme: ProgressIndicatorThemeData(
@@ -237,7 +236,7 @@ class AppTheme {
     ),
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: _darkColorScheme.tertiary,
-      selectionColor: _darkColorScheme.tertiary.withOpacity(0.3),
+      selectionColor: _darkColorScheme.tertiary.withValues(alpha: 0.3),
       selectionHandleColor: _darkColorScheme.tertiary,
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -259,16 +258,16 @@ class AppTheme {
         fontSize: 16,
       ),
       hintStyle: TextStyle(
-        color: _darkColorScheme.onSurfaceVariant.withOpacity(0.7),
+        color: _darkColorScheme.onSurfaceVariant.withValues(alpha: 0.7),
         fontSize: 16,
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     ),
     cardTheme: CardTheme(
       elevation: 0,
       color: _darkColorScheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
     ),
     listTileTheme: ListTileThemeData(
       iconColor: _darkColorScheme.onSurfaceVariant,
@@ -326,7 +325,7 @@ class AppTheme {
       bodyLarge: TextStyle(fontSize: 18, color: primaryColor),
       bodyMedium: TextStyle(fontSize: 16, color: secondaryColor),
       bodySmall:
-          TextStyle(fontSize: 14, color: secondaryColor.withOpacity(0.7)),
+          TextStyle(fontSize: 14, color: secondaryColor.withValues(alpha: 0.7)),
       labelLarge: TextStyle(
           fontSize: 16, fontWeight: FontWeight.bold, color: secondaryColor),
       labelMedium: TextStyle(
@@ -367,10 +366,13 @@ class CatppuccinColors {
   static const Color mochaCrust = Color(0xff11111b);
 }
 
-// Extension for easier alpha modification if needed
+// Extension for easier alpha modification
 extension ColorAlpha on Color {
   Color withValues({double? alpha}) {
-    int alphaInt = (alpha ?? a.toDouble()).toInt();
-    return withAlpha(alphaInt);
+    if (alpha == null) {
+      return this;
+    }
+    int newAlpha = (this.alpha * alpha.clamp(0.0, 1.0)).round();
+    return withAlpha(newAlpha);
   }
 }

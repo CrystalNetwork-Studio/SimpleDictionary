@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../data/dictionary.dart';
@@ -27,6 +25,33 @@ class AndroidStorageHelper {
       debugPrint('Error detecting Android version: $e');
     }
     return false;
+  }
+
+  /// Gets the app's documents directory (accessible in scoped storage)
+  static Future<Directory> getAccessibleDocsDir() async {
+    final appDocsDir = await getApplicationDocumentsDirectory();
+    return appDocsDir;
+  }
+
+  /// Gets a temporary directory that's accessible in scoped storage
+  static Future<Directory> getAccessibleTempDir() async {
+    final tempDir = await getTemporaryDirectory();
+    return tempDir;
+  }
+
+  /// Returns guidance for users about Android 11+ storage restrictions
+  static List<String> getAndroidStorageGuidance() {
+    return [
+      'On Android 11+, storage access is restricted for security reasons.',
+      'Use the system file picker to select where to save or load files.',
+      'You can choose any folder accessible by the picker, including Downloads, Documents, or external storage.',
+      'Using the device\'s default file manager app within the picker might improve access.',
+    ];
+  }
+
+  /// Checks if a path appears to be a content URI (Android SAF)
+  static bool isContentUri(String path) {
+    return path.startsWith('content://');
   }
 
   /// Picks a file for importing, allowing selection from any folder.
@@ -55,77 +80,6 @@ class AndroidStorageHelper {
     }
 
     return result;
-  }
-
-  /// Saves a dictionary to a JSON file, handling both regular paths and content URIs.
-  /// Uses Storage Access Framework for Android 11+ compatibility, allowing
-  /// selection of any folder accessible by the system file picker.
-  ///
-  /// Returns the path where the file was saved (may be a content URI).
-  static Future<String> saveDictionaryToExternalFile({
-    required Dictionary dictionary,
-    required String suggestedFilename,
-    required String dialogTitle,
-  }) async {
-    try {
-      // Sanitize filename
-      final sanitizedName =
-          suggestedFilename.replaceAll(RegExp(r'[\/\\:*?"<>|]'), '_');
-
-      // Create JSON data
-      final jsonMap = dictionary.toJson();
-      final jsonString = const JsonEncoder.withIndent('  ').convert(jsonMap);
-      final Uint8List fileBytes = utf8.encode(jsonString);
-
-      // Use FilePicker.saveFile to access Storage Access Framework on Android
-      // This allows the user to choose any directory they have access to.
-      final String? outputFile = await FilePicker.platform.saveFile(
-        dialogTitle: dialogTitle,
-        fileName: sanitizedName,
-        type: FileType.custom,
-        allowedExtensions: ['json'],
-        bytes: fileBytes, // Provide bytes for direct writing via SAF
-        lockParentWindow: true,
-      );
-
-      if (outputFile == null) {
-        // User cancelled the picker
-        throw Exception('File selection cancelled');
-      }
-
-      // On Android 11+, FilePicker.saveFile with the `bytes` parameter handles
-      // writing the data directly to the selected URI. The returned `outputFile`
-      // is typically a content URI.
-      // For non-content URIs (like older Android versions or other platforms),
-      // the plugin might return a direct file path, and the direct write below
-      // serves as a backup or standard behavior.
-      if (!outputFile.startsWith('content://')) {
-        try {
-          final file = File(outputFile);
-          // Only write if the file doesn't already exist or if bytes wasn't used,
-          // but with bytes parameter, the plugin should handle it.
-          // This block might be redundant if bytes param is always used.
-          // Keeping it as a safeguard for unexpected behavior.
-          if (!await file.exists() || fileBytes.isEmpty) {
-            // Basic check
-            await file.writeAsBytes(fileBytes, flush: true);
-          } else {
-            // Assuming bytes were written by the plugin if outputFile is not content://
-            debugPrint('Note: FilePicker plugin likely wrote bytes directly.');
-          }
-        } catch (e) {
-          debugPrint(
-              'Note: Direct file write error after FilePicker.saveFile: $e');
-          // This might happen if saveFile returns a path but failed to write bytes
-          // or if the path is inaccessible for direct writes.
-        }
-      }
-
-      return outputFile;
-    } catch (e) {
-      debugPrint('Error exporting dictionary: $e');
-      rethrow;
-    }
   }
 
   /// Attempts to read a dictionary from raw bytes.
@@ -227,30 +181,74 @@ class AndroidStorageHelper {
     }
   }
 
-  /// Gets a temporary directory that's accessible in scoped storage
-  static Future<Directory> getAccessibleTempDir() async {
-    final tempDir = await getTemporaryDirectory();
-    return tempDir;
-  }
+  /// Saves a dictionary to a JSON file, handling both regular paths and content URIs.
+  /// Uses Storage Access Framework for Android 11+ compatibility, allowing
+  /// selection of any folder accessible by the system file picker.
+  ///
+  /// Returns the path where the file was saved (may be a content URI).
+  static Future<String> saveDictionaryToExternalFile({
+    required Dictionary dictionary,
+    required String suggestedFilename,
+    required String dialogTitle,
+  }) async {
+    try {
+      // Sanitize filename
+      final sanitizedName =
+          suggestedFilename.replaceAll(RegExp(r'[\/\\:*?"<>|]'), '_');
 
-  /// Gets the app's documents directory (accessible in scoped storage)
-  static Future<Directory> getAccessibleDocsDir() async {
-    final appDocsDir = await getApplicationDocumentsDirectory();
-    return appDocsDir;
-  }
+      // Create JSON data
+      final jsonMap = dictionary.toJson();
+      final jsonString = const JsonEncoder.withIndent('  ').convert(jsonMap);
+      final Uint8List fileBytes = utf8.encode(jsonString);
 
-  /// Returns guidance for users about Android 11+ storage restrictions
-  static List<String> getAndroidStorageGuidance() {
-    return [
-      'On Android 11+, storage access is restricted for security reasons.',
-      'Use the system file picker to select where to save or load files.',
-      'You can choose any folder accessible by the picker, including Downloads, Documents, or external storage.',
-      'Using the device\'s default file manager app within the picker might improve access.',
-    ];
-  }
+      // Use FilePicker.saveFile to access Storage Access Framework on Android
+      // This allows the user to choose any directory they have access to.
+      final String? outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: dialogTitle,
+        fileName: sanitizedName,
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        bytes: fileBytes, // Provide bytes for direct writing via SAF
+        lockParentWindow: true,
+      );
 
-  /// Checks if a path appears to be a content URI (Android SAF)
-  static bool isContentUri(String path) {
-    return path.startsWith('content://');
+      if (outputFile == null) {
+        // User cancelled the picker
+        throw Exception('File selection cancelled');
+      }
+
+      // On Android 11+, FilePicker.saveFile with the `bytes` parameter handles
+      // writing the data directly to the selected URI. The returned `outputFile`
+      // is typically a content URI.
+      // For non-content URIs (like older Android versions or other platforms),
+      // the plugin might return a direct file path, and the direct write below
+      // serves as a backup or standard behavior.
+      if (!outputFile.startsWith('content://')) {
+        try {
+          final file = File(outputFile);
+          // Only write if the file doesn't already exist or if bytes wasn't used,
+          // but with bytes parameter, the plugin should handle it.
+          // This block might be redundant if bytes param is always used.
+          // Keeping it as a safeguard for unexpected behavior.
+          if (!await file.exists() || fileBytes.isEmpty) {
+            // Basic check
+            await file.writeAsBytes(fileBytes, flush: true);
+          } else {
+            // Assuming bytes were written by the plugin if outputFile is not content://
+            debugPrint('Note: FilePicker plugin likely wrote bytes directly.');
+          }
+        } catch (e) {
+          debugPrint(
+              'Note: Direct file write error after FilePicker.saveFile: $e');
+          // This might happen if saveFile returns a path but failed to write bytes
+          // or if the path is inaccessible for direct writes.
+        }
+      }
+
+      return outputFile;
+    } catch (e) {
+      debugPrint('Error exporting dictionary: $e');
+      rethrow;
+    }
   }
 }
