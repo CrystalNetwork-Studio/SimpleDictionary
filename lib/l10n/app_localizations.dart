@@ -62,7 +62,8 @@ import 'app_localizations_uk.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -70,7 +71,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,7 +84,8 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -219,7 +222,8 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'CRITICAL: Failed to delete old directory \'{oldName}\' after renaming to \'{newName}\'. Manual cleanup might be needed.'**
-  String criticalErrorFailedToDeleteOldDictionary(Object newName, Object oldName);
+  String criticalErrorFailedToDeleteOldDictionary(
+      Object newName, Object oldName);
 
   /// No description provided for @dark.
   ///
@@ -375,13 +379,15 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Directory for dictionary \'{dictionaryName}\' created at: {directoryPath}'**
-  String directoryForDictionaryCreated(Object dictionaryName, Object directoryPath);
+  String directoryForDictionaryCreated(
+      Object dictionaryName, Object directoryPath);
 
   /// No description provided for @directoryForDictionaryNotFound.
   ///
   /// In en, this message translates to:
   /// **'Directory for dictionary \'{dictionaryName}\' not found at: {directoryPath}'**
-  String directoryForDictionaryNotFound(Object dictionaryName, Object directoryPath);
+  String directoryForDictionaryNotFound(
+      Object dictionaryName, Object directoryPath);
 
   /// No description provided for @edit.
   ///
@@ -543,7 +549,8 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Invalid word index {wordIndex} for dictionary \'{dictionaryName}\'. Max index is {maxIndex}.'**
-  String invalidWordIndexForDictionary(Object dictionaryName, Object maxIndex, Object wordIndex);
+  String invalidWordIndexForDictionary(
+      Object dictionaryName, Object maxIndex, Object wordIndex);
 
   /// No description provided for @language.
   ///
@@ -651,7 +658,8 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Successfully deleted dictionary \'{dictionaryName}\' at: {directoryPath}'**
-  String successfullyDeletedDictionary(Object dictionaryName, Object directoryPath);
+  String successfullyDeletedDictionary(
+      Object dictionaryName, Object directoryPath);
 
   /// No description provided for @systemDefault.
   ///
@@ -906,7 +914,8 @@ abstract class AppLocalizations {
   String get invalidFolderNameChars;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -915,25 +924,25 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'uk'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'uk'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return AppLocalizationsEn();
-    case 'uk': return AppLocalizationsUk();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'uk':
+      return AppLocalizationsUk();
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

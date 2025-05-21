@@ -12,7 +12,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get aboutApp => 'Про додаток';
 
   @override
-  String get aboutAppDescription => 'Простий додаток для створення та керування особистими словниками.';
+  String get aboutAppDescription =>
+      'Простий додаток для створення та керування особистими словниками.';
 
   @override
   String get aboutAppNotReady => 'Інформація про додаток ще не готова.';
@@ -30,7 +31,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get addNewSentence => 'Додати нове речення';
 
   @override
-  String get addWordsByPressingButton => 'Додайте слова, натиснувши кнопку \"+\" внизу екрана';
+  String get addWordsByPressingButton =>
+      'Додайте слова, натиснувши кнопку \"+\" внизу екрана';
 
   @override
   String anotherWordWithSameTermExists(Object term, Object translation) {
@@ -52,7 +54,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get cancel => 'Відмінити';
 
   @override
-  String get cannotDeleteMainDictionaryDirectory => 'Помилка: Неможливо видалити головний каталог \'Dictionary\'. Назва словника порожня.';
+  String get cannotDeleteMainDictionaryDirectory =>
+      'Помилка: Неможливо видалити головний каталог \'Dictionary\'. Назва словника порожня.';
 
   @override
   String get checkingAvailability => 'Перевірка доступності...';
@@ -75,7 +78,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get createDictionary => 'Створити словник';
 
   @override
-  String criticalErrorFailedToDeleteOldDictionary(Object newName, Object oldName) {
+  String criticalErrorFailedToDeleteOldDictionary(
+      Object newName, Object oldName) {
     return 'КРИТИЧНО: Не вдалося видалити стару версію словника. \'$oldName\' після перейменування на \'$newName\'. Можливо, потрібне ручне очищення.';
   }
 
@@ -175,12 +179,14 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String directoryForDictionaryCreated(Object dictionaryName, Object directoryPath) {
+  String directoryForDictionaryCreated(
+      Object dictionaryName, Object directoryPath) {
     return 'Каталог для словника \'$dictionaryName\' створено за шляхом: $directoryPath';
   }
 
   @override
-  String directoryForDictionaryNotFound(Object dictionaryName, Object directoryPath) {
+  String directoryForDictionaryNotFound(
+      Object dictionaryName, Object directoryPath) {
     return 'Каталог для словника \'$dictionaryName\' не знайдено за шляхом: $directoryPath';
   }
 
@@ -264,7 +270,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get failedToDeleteWord => 'Не вдалося видалити слово.';
 
   @override
-  String get failedToFindWordForEdit => 'Не вдалося знайти слово для редагування/видалення.';
+  String get failedToFindWordForEdit =>
+      'Не вдалося знайти слово для редагування/видалення.';
 
   @override
   String get failedToAddWord => 'Не вдалося додати слово.';
@@ -287,7 +294,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get importExportDictionaries => 'Імпорт / Експорт словників';
 
   @override
-  String invalidWordIndexForDictionary(Object dictionaryName, Object maxIndex, Object wordIndex) {
+  String invalidWordIndexForDictionary(
+      Object dictionaryName, Object maxIndex, Object wordIndex) {
     return 'Невірний індекс слова $wordIndex для словника \'$dictionaryName\'. Максимальний індекс: $maxIndex.';
   }
 
@@ -321,7 +329,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get myDictionaries => 'Мої словники';
 
   @override
-  String get oopsImportExportNotReady => 'Функція Імпорту/Експорту ще не готова. :(';
+  String get oopsImportExportNotReady =>
+      'Функція Імпорту/Експорту ще не готова. :(';
 
   @override
   String get options => 'Опції';
@@ -345,7 +354,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get sortByLastAdded => 'Сортувати за останніми доданими';
 
   @override
-  String successfullyDeletedDictionary(Object dictionaryName, Object directoryPath) {
+  String successfullyDeletedDictionary(
+      Object dictionaryName, Object directoryPath) {
     return 'Словник \'$dictionaryName\' успішно видалено за шляхом: $directoryPath';
   }
 
@@ -371,7 +381,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get word => 'Слово';
 
   @override
-  String get wordAndTranslationMaxLength => 'Довжина слова та перекладу не може перевищувати 14 символів.';
+  String get wordAndTranslationMaxLength =>
+      'Довжина слова та перекладу не може перевищувати 14 символів.';
 
   @override
   String get wordDeleted => 'Слово видалено';
@@ -382,7 +393,8 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
-  String get wordOrTranslationCannotBeEmpty => 'Слово та переклад не можуть бути порожніми.';
+  String get wordOrTranslationCannotBeEmpty =>
+      'Слово та переклад не можуть бути порожніми.';
 
   @override
   String get wordUpdatedSuccessfully => 'Слово успішно оновлено!';
@@ -415,7 +427,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get selectExportLocation => 'Виберіть місце для експорту';
 
   @override
-  String get selectDictionaryFileToImport => 'Виберіть файл словника для імпорту (.json)';
+  String get selectDictionaryFileToImport =>
+      'Виберіть файл словника для імпорту (.json)';
 
   @override
   String dictionaryExportedSuccess(Object dictionaryName, Object filePath) {
@@ -455,7 +468,8 @@ class AppLocalizationsUk extends AppLocalizations {
   String get enterNewName => 'Введіть нову назву';
 
   @override
-  String get invalidDictionaryFile => 'Недійсний формат або вміст файлу словника.';
+  String get invalidDictionaryFile =>
+      'Недійсний формат або вміст файлу словника.';
 
   @override
   String errorReadingFile(Object error) {
@@ -487,5 +501,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get noNewlinesAllowed => 'Символи переносу рядка не дозволені';
 
   @override
-  String get invalidFolderNameChars => 'Назва словника містить недопустимі символи. Уникайте використання: / \\ : * ? \" < > |';
+  String get invalidFolderNameChars =>
+      'Назва словника містить недопустимі символи. Уникайте використання: / \\ : * ? \" < > |';
 }
