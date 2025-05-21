@@ -53,18 +53,19 @@ class SettingsScreen extends StatelessWidget {
   }
 
   // Helper method to create bullet point items
-  Widget _buildBulletPoint(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8, bottom: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("• ", style: TextStyle(fontWeight: FontWeight.bold)),
-          Expanded(child: Text(text)),
-        ],
-      ),
-    );
-  }
+
+  // Widget _buildBulletPoint(String text) {
+  //   return Padding(
+  //     padding: const EdgeInsets.only(left: 8, bottom: 4),
+  //     child: Row(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         const Text("• ", style: TextStyle(fontWeight: FontWeight.bold)),
+  //         Expanded(child: Text(text)),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildExpansionTile({
     required BuildContext context,
@@ -299,10 +300,12 @@ class SettingsScreen extends StatelessWidget {
         return AppLocalizations.of(context)!.systemDefault;
     }
   }
+  // Errors are shown using the general _showSnackBar method with the isError flag.
+  // A dedicated error method like the one below is not needed.
 
-  void _showErrorSnackBar(BuildContext context, String message) {
-    _showSnackBar(context, message, isError: true);
-  }
+  // void _showErrorSnackBar(BuildContext context, String message) {
+  //   _showSnackBar(context, message, isError: true);
+  // }
 
   void _showSnackBar(
     BuildContext context,
