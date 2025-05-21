@@ -12,7 +12,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutApp => 'About App';
 
   @override
-  String get aboutAppDescription => 'A simple application for creating and managing personal dictionaries.';
+  String get aboutAppDescription =>
+      'A simple application for creating and managing personal dictionaries.';
 
   @override
   String get aboutAppNotReady => 'About app info is not ready yet.';
@@ -30,7 +31,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addNewSentence => 'Add New Sentence';
 
   @override
-  String get addWordsByPressingButton => 'Add words by pressing the \'+\' button at the bottom of the screen';
+  String get addWordsByPressingButton =>
+      'Add words by pressing the \'+\' button at the bottom of the screen';
 
   @override
   String anotherWordWithSameTermExists(Object term, Object translation) {
@@ -52,7 +54,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
-  String get cannotDeleteMainDictionaryDirectory => 'Error: Cannot delete the main \'Dictionary\' directory. Dictionary name is blank.';
+  String get cannotDeleteMainDictionaryDirectory =>
+      'Error: Cannot delete the main \'Dictionary\' directory. Dictionary name is blank.';
 
   @override
   String get checkingAvailability => 'Checking availability...';
@@ -75,7 +78,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createDictionary => 'Create Dictionary';
 
   @override
-  String criticalErrorFailedToDeleteOldDictionary(Object newName, Object oldName) {
+  String criticalErrorFailedToDeleteOldDictionary(
+      Object newName, Object oldName) {
     return 'CRITICAL: Failed to delete old directory \'$oldName\' after renaming to \'$newName\'. Manual cleanup might be needed.';
   }
 
@@ -175,12 +179,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String directoryForDictionaryCreated(Object dictionaryName, Object directoryPath) {
+  String directoryForDictionaryCreated(
+      Object dictionaryName, Object directoryPath) {
     return 'Directory for dictionary \'$dictionaryName\' created at: $directoryPath';
   }
 
   @override
-  String directoryForDictionaryNotFound(Object dictionaryName, Object directoryPath) {
+  String directoryForDictionaryNotFound(
+      Object dictionaryName, Object directoryPath) {
     return 'Directory for dictionary \'$dictionaryName\' not found at: $directoryPath';
   }
 
@@ -264,7 +270,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failedToDeleteWord => 'Failed to delete word.';
 
   @override
-  String get failedToFindWordForEdit => 'Failed to find word for editing/deleting.';
+  String get failedToFindWordForEdit =>
+      'Failed to find word for editing/deleting.';
 
   @override
   String get failedToAddWord => 'Failed to add word.';
@@ -287,7 +294,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importExportDictionaries => 'Import / Export Dictionaries';
 
   @override
-  String invalidWordIndexForDictionary(Object dictionaryName, Object maxIndex, Object wordIndex) {
+  String invalidWordIndexForDictionary(
+      Object dictionaryName, Object maxIndex, Object wordIndex) {
     return 'Invalid word index $wordIndex for dictionary \'$dictionaryName\'. Max index is $maxIndex.';
   }
 
@@ -321,7 +329,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myDictionaries => 'My Dictionaries';
 
   @override
-  String get oopsImportExportNotReady => 'Import/Export feature is not ready yet. :(';
+  String get oopsImportExportNotReady =>
+      'Import/Export feature is not ready yet. :(';
 
   @override
   String get options => 'Options';
@@ -345,7 +354,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sortByLastAdded => 'Sort by Last Added';
 
   @override
-  String successfullyDeletedDictionary(Object dictionaryName, Object directoryPath) {
+  String successfullyDeletedDictionary(
+      Object dictionaryName, Object directoryPath) {
     return 'Successfully deleted dictionary \'$dictionaryName\' at: $directoryPath';
   }
 
@@ -371,7 +381,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get word => 'Word';
 
   @override
-  String get wordAndTranslationMaxLength => 'Word and translation length cannot exceed 13 characters.';
+  String get wordAndTranslationMaxLength =>
+      'Word and translation length cannot exceed 13 characters.';
 
   @override
   String get wordDeleted => 'Word deleted';
@@ -382,7 +393,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get wordOrTranslationCannotBeEmpty => 'Word and translation cannot be empty.';
+  String get wordOrTranslationCannotBeEmpty =>
+      'Word and translation cannot be empty.';
 
   @override
   String get wordUpdatedSuccessfully => 'Word updated successfully!';
@@ -415,7 +427,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectExportLocation => 'Select export location';
 
   @override
-  String get selectDictionaryFileToImport => 'Select dictionary file to import (.json)';
+  String get selectDictionaryFileToImport =>
+      'Select dictionary file to import (.json)';
 
   @override
   String dictionaryExportedSuccess(Object dictionaryName, Object filePath) {
@@ -455,7 +468,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterNewName => 'Enter new name';
 
   @override
-  String get invalidDictionaryFile => 'Invalid dictionary file format or content.';
+  String get invalidDictionaryFile =>
+      'Invalid dictionary file format or content.';
 
   @override
   String errorReadingFile(Object error) {
@@ -487,5 +501,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noNewlinesAllowed => 'Newline characters are not allowed';
 
   @override
-  String get invalidFolderNameChars => 'Dictionary name contains invalid characters. Avoid using: / \\ : * ? \" < > |';
+  String get invalidFolderNameChars =>
+      'Dictionary name contains invalid characters. Avoid using: / \\ : * ? \" < > |';
 }

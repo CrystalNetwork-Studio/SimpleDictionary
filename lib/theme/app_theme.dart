@@ -66,7 +66,7 @@ class AppTheme {
       backgroundColor: _lightColorScheme.primary,
       foregroundColor: _lightColorScheme.onPrimary,
     ),
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: _lightColorScheme.surfaceContainerHighest,
       titleTextStyle: TextStyle(
         color: _lightColorScheme.onSurface,
@@ -135,7 +135,7 @@ class AppTheme {
         vertical: 16,
       ),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       elevation: 0,
       color: _lightColorScheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -198,7 +198,7 @@ class AppTheme {
       backgroundColor: _darkColorScheme.primary,
       foregroundColor: _darkColorScheme.onPrimary,
     ),
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: _darkColorScheme.surfaceContainerHighest,
       titleTextStyle: TextStyle(
         color: _darkColorScheme.onSurface,
@@ -264,7 +264,7 @@ class AppTheme {
       ),
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       elevation: 0,
       color: _darkColorScheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
