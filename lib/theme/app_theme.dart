@@ -373,7 +373,7 @@ extension ColorAlpha on Color {
     if (alpha == null) {
       return this;
     }
-    int newAlpha = (this.a * alpha.clamp(0.0, 1.0)).round();
+    int newAlpha = (a * alpha.clamp(0.0, 1.0)).round();
     return withAlpha(newAlpha);
   }
 }
