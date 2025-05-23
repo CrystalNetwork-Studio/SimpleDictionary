@@ -73,7 +73,7 @@ class _CreateDictionaryDialogState extends State<CreateDictionaryDialog> {
               const SizedBox(height: 8),
               TextField(
                 controller: _textController,
-                autofocus: true,
+                autofocus: false,
                 decoration: InputDecoration(
                   hintText: localization.dictionaryNameHint,
                   suffixIcon: _isLoading
