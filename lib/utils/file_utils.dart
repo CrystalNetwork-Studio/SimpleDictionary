@@ -58,6 +58,7 @@ Future<Dictionary?> readDictionaryFromBytes(Uint8List bytes) async {
     jsonString = jsonString.trim().replaceAll(RegExp(r'[\uFEFF\u00A0]'), '');
 
     // Verify the string contains valid JSON before parsing
+    debugPrint("File content preview: ${jsonString.substring(0, jsonString.length > 100 ? 100 : jsonString.length)}");
     final trimmedJson = jsonString.trim();
     if (trimmedJson.isEmpty) {
       throw const FormatException("File is empty");
@@ -88,7 +89,7 @@ Future<Dictionary?> readDictionaryFromBytes(Uint8List bytes) async {
         debugPrint("Successfully parsed JSON after cleaning (aggressive)");
       } catch (secondError) {
         debugPrint("Failed to parse even after cleaning: $secondError");
-        throw FormatException("Invalid JSON format: ${secondError.toString()}");
+        throw FormatException("Invalid JSON format after cleaning: ${secondError.toString()}. Please check that the file is a valid dictionary export and not corrupted.");
       }
     }
 

@@ -50,8 +50,7 @@ class AppTheme {
     useMaterial3: true,
     brightness: Brightness.light,
     scaffoldBackgroundColor: _lightColorScheme.surface,
-    textTheme: _createTextTheme(
-        _lightColorScheme.onSurface, _lightColorScheme.onSurfaceVariant),
+    textTheme: _createTextTheme(Colors.black54, Colors.black45),
     appBarTheme: AppBarTheme(
       foregroundColor: _lightColorScheme.onSurface,
       elevation: 0,
@@ -142,7 +141,8 @@ class AppTheme {
       margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
     ),
     listTileTheme: ListTileThemeData(
-      iconColor: _lightColorScheme.onSurfaceVariant,
+      iconColor: Colors.black87,
+      textColor: Colors.black87,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       tileColor: Colors.transparent,
     ),

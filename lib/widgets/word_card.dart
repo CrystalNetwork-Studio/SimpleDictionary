@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:simpledictionary/l10n/app_localizations.dart';
 
 import '../data/dictionary.dart';
 
@@ -60,72 +59,66 @@ class WordCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onEdit,
-        child: Tooltip(
-          message: dictionaryType == DictionaryType.word
-              ? AppLocalizations.of(context)!.word
-              : dictionaryType == DictionaryType.phrase
-                  ? AppLocalizations.of(context)!.phrases
-                  : AppLocalizations.of(context)!.sentence,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 12.0,
-              horizontal: 16.0,
-            ),
-            child: Column(
-              crossAxisAlignment: crossAxisAlignmentItemAlignment,
-              children: [
-                IntrinsicHeight(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Align(
-                          alignment: rowChildAlignment,
-                          child: Text(
-                            word.term,
-                            textAlign: alignment,
-                            style: textTheme.titleMedium?.copyWith(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            maxLines: null,
-                            softWrap: true,
+        onLongPress: onEdit,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 12.0,
+            horizontal: 16.0,
+          ),
+          child: Column(
+            crossAxisAlignment: crossAxisAlignmentItemAlignment,
+            children: [
+              IntrinsicHeight(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: rowChildAlignment,
+                        child: Text(
+                          word.term,
+                          textAlign: alignment,
+                          style: textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.w500,
                           ),
+                          maxLines: null,
+                          softWrap: true,
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: VerticalDivider(thickness: 1, width: 1),
-                      ),
-                      Expanded(
-                        child: Align(
-                          alignment: rowChildAlignment,
-                          child: Text(
-                            word.translation,
-                            textAlign: alignment,
-                            style: textTheme.titleMedium,
-                            maxLines: null,
-                            softWrap: true,
-                          ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: VerticalDivider(thickness: 1, width: 1),
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: rowChildAlignment,
+                        child: Text(
+                          word.translation,
+                          textAlign: alignment,
+                          style: textTheme.titleMedium,
+                          maxLines: null,
+                          softWrap: true,
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+              if (descriptionVisible) ...[
+                const Divider(height: 20, thickness: 0.5),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    word.description!,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.start,
                   ),
                 ),
-                if (descriptionVisible) ...[
-                  const Divider(height: 20, thickness: 0.5),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      word.description!,
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.start,
-                    ),
-                  ),
-                ],
               ],
-            ),
+            ],
           ),
         ),
       ),
