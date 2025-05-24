@@ -12,38 +12,38 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(title: Text(localizations.settings)),
       body: Consumer<SettingsProvider>(
-        builder: (context, settingsProvider, child) {
+        builder: (context, settingsProvider, _) {
           if (settingsProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
           return ListView(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-            children: <Widget>[
-              _buildExpansionTile(
-                context: context,
+            children: [
+              _SettingsExpansionTile(
                 title: localizations.appearance,
                 leadingIcon: Icons.palette_outlined,
-                children: [_buildThemeSetting(context, settingsProvider)],
+                children: [
+                  _ThemeSettingTile(provider: settingsProvider),
+                ],
               ),
-              _buildExpansionTile(
-                context: context,
+              _SettingsExpansionTile(
                 title: localizations.dataManagement,
                 leadingIcon: Icons.storage_outlined,
                 children: [
-                  _buildImportTile(context),
-                  _buildExportTile(context),
+                  const _ImportTile(),
+                  const _ExportTile(),
                 ],
               ),
-              _buildExpansionTile(
-                context: context,
+              _SettingsExpansionTile(
                 title: localizations.language,
                 leadingIcon: Icons.language_outlined,
-                children: [_buildLanguageSetting(context, settingsProvider)],
+                children: [
+                  _LanguageSettingTile(provider: settingsProvider),
+                ],
               ),
             ],
           );
@@ -51,74 +51,70 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  // Helper method to create bullet point items
+class _SettingsExpansionTile extends StatelessWidget {
+  final String title;
+  final IconData leadingIcon;
+  final List<Widget> children;
 
-  // Widget _buildBulletPoint(String text) {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(left: 8, bottom: 4),
-  //     child: Row(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         const Text("• ", style: TextStyle(fontWeight: FontWeight.bold)),
-  //         Expanded(child: Text(text)),
-  //       ],
-  //     ),
-  //   );
-  // }
+  const _SettingsExpansionTile({
+    required this.title,
+    required this.leadingIcon,
+    required this.children,
+  });
 
-  Widget _buildExpansionTile({
-    required BuildContext context,
-    required String title,
-    required IconData leadingIcon,
-    required List<Widget> children,
-  }) {
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
+    final iconColor = isLight ? Colors.black87 : theme.colorScheme.primary;
+    final textColor =
+        isLight ? Colors.black87 : theme.textTheme.titleMedium?.color;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
       elevation: 1.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       child: ExpansionTile(
-        leading: Icon(leadingIcon, color: theme.colorScheme.primary),
+        leading: Icon(leadingIcon, color: iconColor),
         title: Text(
           title,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w500,
+            color: textColor,
           ),
         ),
-        tilePadding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 4.0,
-        ),
-        childrenPadding: const EdgeInsets.only(
-          bottom: 8.0,
-          left: 16.0,
-          right: 16.0,
-        ),
-        collapsedShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
+        tilePadding:
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+        childrenPadding:
+            const EdgeInsets.only(bottom: 8.0, left: 16.0, right: 16.0),
+        collapsedShape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         children: children,
       ),
     );
   }
+}
 
-  Widget _buildExportTile(BuildContext context) {
+class _ExportTile extends StatelessWidget {
+  const _ExportTile();
+
+  @override
+  Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final provider = Provider.of<DictionaryProvider>(context, listen: false);
     final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
+    final iconColor = isLight ? Colors.black87 : theme.iconTheme.color;
+    final textColor =
+        isLight ? Colors.black87 : theme.textTheme.bodyMedium?.color;
 
     return ListTile(
-      leading: Icon(
-        Icons.upload_file_outlined,
-        size: 24,
-        color: theme.iconTheme.color,
-      ),
-      title: Text(
-        localizations.exportDictionary,
-        style: TextStyle(color: theme.textTheme.bodyMedium?.color),
-      ),
+      leading: Icon(Icons.upload_file_outlined, size: 24, color: iconColor),
+      title: Text(localizations.exportDictionary,
+          style: TextStyle(color: textColor)),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
       dense: true,
       onTap: () async {
@@ -134,20 +130,25 @@ class SettingsScreen extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget _buildImportTile(BuildContext context) {
+class _ImportTile extends StatelessWidget {
+  const _ImportTile();
+
+  @override
+  Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
+    final iconColor = isLight ? Colors.black87 : theme.iconTheme.color;
+    final textColor =
+        isLight ? Colors.black87 : theme.textTheme.bodyMedium?.color;
+
     return ListTile(
-      leading: Icon(
-        Icons.download_for_offline_outlined,
-        size: 24,
-        color: theme.iconTheme.color,
-      ),
-      title: Text(
-        localizations.importDictionary,
-        style: TextStyle(color: theme.textTheme.bodyMedium?.color),
-      ),
+      leading:
+          Icon(Icons.download_for_offline_outlined, size: 24, color: iconColor),
+      title: Text(localizations.importDictionary,
+          style: TextStyle(color: textColor)),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
       dense: true,
       onTap: () async {
@@ -155,15 +156,29 @@ class SettingsScreen extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget _buildLanguageSetting(
-    BuildContext context,
-    SettingsProvider provider,
-  ) {
+class _LanguageSettingTile extends StatelessWidget {
+  final SettingsProvider provider;
+
+  const _LanguageSettingTile({required this.provider});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
+    final textColor =
+        isLight ? Colors.black87 : theme.textTheme.bodyMedium?.color;
+    final subtitleColor =
+        isLight ? Colors.black54 : theme.textTheme.bodySmall?.color;
+    final iconColor = isLight ? Colors.black87 : null;
+
     return ListTile(
-      title: Text(AppLocalizations.of(context)!.language),
-      subtitle: Text(_localeToString(provider.locale, context)),
-      trailing: const Icon(Icons.arrow_drop_down, size: 20),
+      title: Text(AppLocalizations.of(context)!.language,
+          style: TextStyle(color: textColor)),
+      subtitle: Text(_localeToString(provider.locale, context),
+          style: TextStyle(color: subtitleColor)),
+      trailing: Icon(Icons.arrow_drop_down, size: 20, color: iconColor),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
       dense: true,
       onTap: () async {
@@ -172,29 +187,27 @@ class SettingsScreen extends StatelessWidget {
         final selectedLocale = await showDialog<Locale?>(
           context: context,
           builder: (BuildContext dialogContext) {
+            final localizations = AppLocalizations.of(dialogContext)!;
             return SimpleDialog(
-              title: Text(AppLocalizations.of(dialogContext)!.language),
+              title: Text(localizations.language),
               contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-              children: <Widget>[
-                _buildRadioListTile<Locale?>(
-                  context: dialogContext,
-                  title: AppLocalizations.of(dialogContext)!.languageEnglish,
+              children: [
+                _RadioListTile<Locale?>(
+                  title: localizations.languageEnglish,
                   value: const Locale('en'),
                   groupValue: currentLocale,
                   onChanged: (Locale? value) =>
                       Navigator.pop(dialogContext, value),
                 ),
-                _buildRadioListTile<Locale?>(
-                  context: dialogContext,
-                  title: AppLocalizations.of(dialogContext)!.languageUkrainian,
+                _RadioListTile<Locale?>(
+                  title: localizations.languageUkrainian,
                   value: const Locale('uk'),
                   groupValue: currentLocale,
                   onChanged: (Locale? value) =>
                       Navigator.pop(dialogContext, value),
                 ),
-                _buildRadioListTile<Locale?>(
-                  context: dialogContext,
-                  title: AppLocalizations.of(dialogContext)!.systemDefault,
+                _RadioListTile<Locale?>(
+                  title: localizations.systemDefault,
                   value: null,
                   groupValue: currentLocale,
                   onChanged: (Locale? value) =>
@@ -207,8 +220,6 @@ class SettingsScreen extends StatelessWidget {
 
         if (!context.mounted) return;
 
-        // Only change the locale if the dialog was not dismissed (selectedLocale is not null)
-        // or if the user explicitly selected the system default option
         if ((selectedLocale != null && selectedLocale != currentLocale) ||
             (selectedLocale == null && currentLocale != null)) {
           context.read<SettingsProvider>().setLocale(selectedLocale);
@@ -216,59 +227,56 @@ class SettingsScreen extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget _buildRadioListTile<T>({
-    required BuildContext context,
-    required String title,
-    required T value,
-    required T? groupValue,
-    required ValueChanged<T?> onChanged,
-  }) {
-    return RadioListTile<T>(
-      title: Text(title),
-      value: value,
-      groupValue: groupValue,
-      onChanged: onChanged,
-      activeColor: Theme.of(context).colorScheme.primary,
-      dense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
-    );
-  }
+class _ThemeSettingTile extends StatelessWidget {
+  final SettingsProvider provider;
 
-  Widget _buildThemeSetting(BuildContext context, SettingsProvider provider) {
+  const _ThemeSettingTile({required this.provider});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
+    final textColor =
+        isLight ? Colors.black87 : theme.textTheme.bodyMedium?.color;
+    final subtitleColor =
+        isLight ? Colors.black54 : theme.textTheme.bodySmall?.color;
+    final iconColor = isLight ? Colors.black87 : null;
+
     return ListTile(
-      title: Text(AppLocalizations.of(context)!.theme),
-      subtitle: Text(_themeModeToString(provider.themeMode, context)),
-      trailing: const Icon(Icons.arrow_drop_down, size: 20),
+      title: Text(AppLocalizations.of(context)!.theme,
+          style: TextStyle(color: textColor)),
+      subtitle: Text(_themeModeToString(provider.themeMode, context),
+          style: TextStyle(color: subtitleColor)),
+      trailing: Icon(Icons.arrow_drop_down, size: 20, color: iconColor),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
       dense: true,
       onTap: () async {
         final selectedTheme = await showDialog<ThemeMode>(
           context: context,
           builder: (BuildContext dialogContext) {
+            final localizations = AppLocalizations.of(dialogContext)!;
             return SimpleDialog(
-              title: Text(AppLocalizations.of(dialogContext)!.theme),
+              title: Text(localizations.theme),
               contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-              children: <Widget>[
-                _buildRadioListTile<ThemeMode>(
-                  context: dialogContext,
-                  title: AppLocalizations.of(dialogContext)!.light,
+              children: [
+                _RadioListTile<ThemeMode>(
+                  title: localizations.light,
                   value: ThemeMode.light,
                   groupValue: provider.themeMode,
                   onChanged: (ThemeMode? value) =>
                       Navigator.pop(dialogContext, value),
                 ),
-                _buildRadioListTile<ThemeMode>(
-                  context: dialogContext,
-                  title: AppLocalizations.of(dialogContext)!.dark,
+                _RadioListTile<ThemeMode>(
+                  title: localizations.dark,
                   value: ThemeMode.dark,
                   groupValue: provider.themeMode,
                   onChanged: (ThemeMode? value) =>
                       Navigator.pop(dialogContext, value),
                 ),
-                _buildRadioListTile<ThemeMode>(
-                  context: dialogContext,
-                  title: AppLocalizations.of(dialogContext)!.systemDefault,
+                _RadioListTile<ThemeMode>(
+                  title: localizations.systemDefault,
                   value: ThemeMode.system,
                   groupValue: provider.themeMode,
                   onChanged: (ThemeMode? value) =>
@@ -286,54 +294,82 @@ class SettingsScreen extends StatelessWidget {
       },
     );
   }
+}
 
-  String _localeToString(Locale? locale, BuildContext context) {
-    if (locale == null) {
-      return AppLocalizations.of(context)!.systemDefault;
-    }
-    switch (locale.languageCode) {
-      case 'en':
-        return AppLocalizations.of(context)!.languageEnglish;
-      case 'uk':
-        return AppLocalizations.of(context)!.languageUkrainian;
-      default:
-        return AppLocalizations.of(context)!.systemDefault;
-    }
-  }
-  // Errors are shown using the general _showSnackBar method with the isError flag.
-  // A dedicated error method like the one below is not needed.
+class _RadioListTile<T> extends StatelessWidget {
+  final String title;
+  final T value;
+  final T? groupValue;
+  final ValueChanged<T?> onChanged;
 
-  // void _showErrorSnackBar(BuildContext context, String message) {
-  //   _showSnackBar(context, message, isError: true);
-  // }
+  const _RadioListTile({
+    required this.title,
+    required this.value,
+    required this.groupValue,
+    required this.onChanged,
+  });
 
-  void _showSnackBar(
-    BuildContext context,
-    String message, {
-    bool isError = false,
-  }) {
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(color: isError ? Colors.white : null),
-        ),
-        backgroundColor: isError ? Theme.of(context).colorScheme.error : null,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 3),
-      ),
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
+    final textColor =
+        isLight ? Colors.black87 : theme.textTheme.bodyMedium?.color;
+
+    return RadioListTile<T>(
+      title: Text(title, style: TextStyle(color: textColor)),
+      value: value,
+      groupValue: groupValue,
+      onChanged: onChanged,
+      activeColor: theme.colorScheme.primary,
+      dense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24.0),
     );
   }
+}
 
-  _themeModeToString(ThemeMode mode, BuildContext context) {
-    switch (mode) {
-      case ThemeMode.light:
-        return AppLocalizations.of(context)!.light;
-      case ThemeMode.dark:
-        return AppLocalizations.of(context)!.dark;
-      case ThemeMode.system:
-        return AppLocalizations.of(context)!.systemDefault;
-    }
+String _localeToString(Locale? locale, BuildContext context) {
+  final localizations = AppLocalizations.of(context)!;
+  if (locale == null) {
+    return localizations.systemDefault;
+  }
+  switch (locale.languageCode) {
+    case 'en':
+      return localizations.languageEnglish;
+    case 'uk':
+      return localizations.languageUkrainian;
+    default:
+      return localizations.systemDefault;
+  }
+}
+
+void _showSnackBar(
+  BuildContext context,
+  String message, {
+  bool isError = false,
+}) {
+  if (!context.mounted) return;
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        message,
+        style: TextStyle(color: isError ? Colors.white : null),
+      ),
+      backgroundColor: isError ? Theme.of(context).colorScheme.error : null,
+      behavior: SnackBarBehavior.floating,
+      duration: const Duration(seconds: 3),
+    ),
+  );
+}
+
+String _themeModeToString(ThemeMode mode, BuildContext context) {
+  final localizations = AppLocalizations.of(context)!;
+  switch (mode) {
+    case ThemeMode.light:
+      return localizations.light;
+    case ThemeMode.dark:
+      return localizations.dark;
+    case ThemeMode.system:
+      return localizations.systemDefault;
   }
 }
