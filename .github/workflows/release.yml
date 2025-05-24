@@ -62,19 +62,20 @@ jobs:
         id: changelog
         run: |
           VERSION_HEADER="## [${{ env.VERSION }}]"
-          NEXT_VERSION_PATTERN="## \["
+          ESCAPED_VERSION_HEADER=$(echo "$VERSION_HEADER" | sed 's/\[/\\[/g; s/\]/\\]/g')
+          NEXT_VERSION_PATTERN="## \\["
 
           # Extract content between current version header and the next version header
-          RELEASE_NOTES=$(awk "/$VERSION_HEADER/,/$NEXT_VERSION_PATTERN/ { if (!/^## \[/ || /^$VERSION_HEADER/) print }" CHANGELOG.md | sed '1d' | sed '$d')
+          RELEASE_NOTES=$(awk "/$ESCAPED_VERSION_HEADER/,/$NEXT_VERSION_PATTERN/ { if (!/^## \[/ || /^$ESCAPED_VERSION_HEADER/) print }" CHANGELOG.md | sed '1d' | sed '$d')
 
           # If there's no next version, extract until the end of the file
           if [ -z "$RELEASE_NOTES" ]; then
-            RELEASE_NOTES=$(awk "/$VERSION_HEADER/,/^$/ { print }" CHANGELOG.md | sed '1d')
+            RELEASE_NOTES=$(awk "/$ESCAPED_VERSION_HEADER/,/^$/ { print }" CHANGELOG.md | sed '1d')
           fi
 
           # If still empty, try extracting until the end of file (for last entry)
           if [ -z "$RELEASE_NOTES" ]; then
-            RELEASE_NOTES=$(awk "/$VERSION_HEADER/,0 { if (!/^## \[/ || /^$VERSION_HEADER/) print }" CHANGELOG.md | sed '1d')
+            RELEASE_NOTES=$(awk "/$ESCAPED_VERSION_HEADER/,0 { if (!/^## \[/ || /^$ESCAPED_VERSION_HEADER/) print }" CHANGELOG.md | sed '1d')
           fi
 
           # Remove trailing empty lines

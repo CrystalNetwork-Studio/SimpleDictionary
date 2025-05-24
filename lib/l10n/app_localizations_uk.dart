@@ -79,7 +79,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String criticalErrorFailedToDeleteOldDictionary(
-      Object newName, Object oldName) {
+    Object newName,
+    Object oldName,
+  ) {
     return 'КРИТИЧНО: Не вдалося видалити стару версію словника. \'$oldName\' після перейменування на \'$newName\'. Можливо, потрібне ручне очищення.';
   }
 
@@ -180,13 +182,17 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String directoryForDictionaryCreated(
-      Object dictionaryName, Object directoryPath) {
+    Object dictionaryName,
+    Object directoryPath,
+  ) {
     return 'Каталог для словника \'$dictionaryName\' створено за шляхом: $directoryPath';
   }
 
   @override
   String directoryForDictionaryNotFound(
-      Object dictionaryName, Object directoryPath) {
+    Object dictionaryName,
+    Object directoryPath,
+  ) {
     return 'Каталог для словника \'$dictionaryName\' не знайдено за шляхом: $directoryPath';
   }
 
@@ -295,7 +301,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String invalidWordIndexForDictionary(
-      Object dictionaryName, Object maxIndex, Object wordIndex) {
+    Object dictionaryName,
+    Object maxIndex,
+    Object wordIndex,
+  ) {
     return 'Невірний індекс слова $wordIndex для словника \'$dictionaryName\'. Максимальний індекс: $maxIndex.';
   }
 
@@ -355,7 +364,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String successfullyDeletedDictionary(
-      Object dictionaryName, Object directoryPath) {
+    Object dictionaryName,
+    Object directoryPath,
+  ) {
     return 'Словник \'$dictionaryName\' успішно видалено за шляхом: $directoryPath';
   }
 

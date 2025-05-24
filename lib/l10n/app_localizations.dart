@@ -10,57 +10,6 @@ import 'app_localizations_uk.dart';
 
 // ignore_for_file: type=lint
 
-/// Callers can lookup localized strings with an instance of AppLocalizations
-/// returned by `AppLocalizations.of(context)`.
-///
-/// Applications need to include `AppLocalizations.delegate()` in their app's
-/// `localizationDelegates` list, and the locales they support in the app's
-/// `supportedLocales` list. For example:
-///
-/// ```dart
-/// import 'l10n/app_localizations.dart';
-///
-/// return MaterialApp(
-///   localizationsDelegates: AppLocalizations.localizationsDelegates,
-///   supportedLocales: AppLocalizations.supportedLocales,
-///   home: MyApplicationHome(),
-/// );
-/// ```
-///
-/// ## Update pubspec.yaml
-///
-/// Please make sure to update your pubspec.yaml to include the following
-/// packages:
-///
-/// ```yaml
-/// dependencies:
-///   # Internationalization support.
-///   flutter_localizations:
-///     sdk: flutter
-///   intl: any # Use the pinned version from flutter_localizations
-///
-///   # Rest of dependencies
-/// ```
-///
-/// ## iOS Applications
-///
-/// iOS applications define key application metadata, including supported
-/// locales, in an Info.plist file that is built into the application bundle.
-/// To configure the locales supported by your app, you’ll need to edit this
-/// file.
-///
-/// First, open your project’s ios/Runner.xcworkspace Xcode workspace file.
-/// Then, in the Project Navigator, open the Info.plist file under the Runner
-/// project’s Runner folder.
-///
-/// Next, select the Information Property List item, select Add Item from the
-/// Editor menu, then select Localizations from the pop-up menu.
-///
-/// Select and expand the newly-created Localizations item then, for each
-/// locale your application supports, add a new item and select the locale
-/// you wish to add from the pop-up menu in the Value field. This list should
-/// be consistent with the languages listed in the AppLocalizations.supportedLocales
-/// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
       : localeName = intl.Intl.canonicalizedLocale(locale.toString());
@@ -95,7 +44,7 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('uk')
+    Locale('uk'),
   ];
 
   /// No description provided for @aboutApp.
@@ -223,7 +172,9 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'CRITICAL: Failed to delete old directory \'{oldName}\' after renaming to \'{newName}\'. Manual cleanup might be needed.'**
   String criticalErrorFailedToDeleteOldDictionary(
-      Object newName, Object oldName);
+    Object newName,
+    Object oldName,
+  );
 
   /// No description provided for @dark.
   ///
@@ -380,14 +331,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Directory for dictionary \'{dictionaryName}\' created at: {directoryPath}'**
   String directoryForDictionaryCreated(
-      Object dictionaryName, Object directoryPath);
+    Object dictionaryName,
+    Object directoryPath,
+  );
 
   /// No description provided for @directoryForDictionaryNotFound.
   ///
   /// In en, this message translates to:
   /// **'Directory for dictionary \'{dictionaryName}\' not found at: {directoryPath}'**
   String directoryForDictionaryNotFound(
-      Object dictionaryName, Object directoryPath);
+    Object dictionaryName,
+    Object directoryPath,
+  );
 
   /// No description provided for @edit.
   ///
@@ -550,7 +505,10 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid word index {wordIndex} for dictionary \'{dictionaryName}\'. Max index is {maxIndex}.'**
   String invalidWordIndexForDictionary(
-      Object dictionaryName, Object maxIndex, Object wordIndex);
+    Object dictionaryName,
+    Object maxIndex,
+    Object wordIndex,
+  );
 
   /// No description provided for @language.
   ///
@@ -659,7 +617,9 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Successfully deleted dictionary \'{dictionaryName}\' at: {directoryPath}'**
   String successfullyDeletedDictionary(
-      Object dictionaryName, Object directoryPath);
+    Object dictionaryName,
+    Object directoryPath,
+  );
 
   /// No description provided for @systemDefault.
   ///
@@ -941,8 +901,9 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }

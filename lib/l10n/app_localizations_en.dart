@@ -79,7 +79,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String criticalErrorFailedToDeleteOldDictionary(
-      Object newName, Object oldName) {
+    Object newName,
+    Object oldName,
+  ) {
     return 'CRITICAL: Failed to delete old directory \'$oldName\' after renaming to \'$newName\'. Manual cleanup might be needed.';
   }
 
@@ -180,13 +182,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String directoryForDictionaryCreated(
-      Object dictionaryName, Object directoryPath) {
+    Object dictionaryName,
+    Object directoryPath,
+  ) {
     return 'Directory for dictionary \'$dictionaryName\' created at: $directoryPath';
   }
 
   @override
   String directoryForDictionaryNotFound(
-      Object dictionaryName, Object directoryPath) {
+    Object dictionaryName,
+    Object directoryPath,
+  ) {
     return 'Directory for dictionary \'$dictionaryName\' not found at: $directoryPath';
   }
 
@@ -295,7 +301,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String invalidWordIndexForDictionary(
-      Object dictionaryName, Object maxIndex, Object wordIndex) {
+    Object dictionaryName,
+    Object maxIndex,
+    Object wordIndex,
+  ) {
     return 'Invalid word index $wordIndex for dictionary \'$dictionaryName\'. Max index is $maxIndex.';
   }
 
@@ -355,7 +364,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String successfullyDeletedDictionary(
-      Object dictionaryName, Object directoryPath) {
+    Object dictionaryName,
+    Object directoryPath,
+  ) {
     return 'Successfully deleted dictionary \'$dictionaryName\' at: $directoryPath';
   }
 
