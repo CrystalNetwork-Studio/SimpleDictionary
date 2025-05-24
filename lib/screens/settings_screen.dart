@@ -67,10 +67,13 @@ class _SettingsExpansionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isLight = theme.brightness == Brightness.light;
-    final iconColor = isLight ? Colors.black87 : theme.colorScheme.primary;
-    final textColor =
-        isLight ? Colors.black87 : theme.textTheme.titleMedium?.color;
+    // Use explicit black87 for icons and text for better contrast in light theme
+    final iconColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black54
+        : theme.iconTheme.color;
+    final textColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black54
+        : theme.textTheme.titleMedium?.color;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
@@ -106,10 +109,12 @@ class _ExportTile extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
     final provider = Provider.of<DictionaryProvider>(context, listen: false);
     final theme = Theme.of(context);
-    final isLight = theme.brightness == Brightness.light;
-    final iconColor = isLight ? Colors.black87 : theme.iconTheme.color;
-    final textColor =
-        isLight ? Colors.black87 : theme.textTheme.bodyMedium?.color;
+    final iconColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black87
+        : theme.iconTheme.color;
+    final textColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black87
+        : theme.textTheme.bodyMedium?.color;
 
     return ListTile(
       leading: Icon(Icons.upload_file_outlined, size: 24, color: iconColor),
@@ -139,10 +144,13 @@ class _ImportTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final isLight = theme.brightness == Brightness.light;
-    final iconColor = isLight ? Colors.black87 : theme.iconTheme.color;
-    final textColor =
-        isLight ? Colors.black87 : theme.textTheme.bodyMedium?.color;
+    // Use explicit black87 for icons and text for better contrast in light theme
+    final iconColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black87
+        : theme.iconTheme.color;
+    final textColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black87
+        : theme.textTheme.bodyMedium?.color;
 
     return ListTile(
       leading:
@@ -166,12 +174,16 @@ class _LanguageSettingTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isLight = theme.brightness == Brightness.light;
-    final textColor =
-        isLight ? Colors.black87 : theme.textTheme.bodyMedium?.color;
-    final subtitleColor =
-        isLight ? Colors.black54 : theme.textTheme.bodySmall?.color;
-    final iconColor = isLight ? Colors.black87 : null;
+    // Use explicit black87 for text and black54 for subtitle in light theme
+    final textColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black87
+        : theme.textTheme.bodyMedium?.color;
+    final subtitleColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black54
+        : theme.textTheme.bodySmall?.color;
+    final iconColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black87
+        : theme.iconTheme.color;
 
     return ListTile(
       title: Text(AppLocalizations.of(context)!.language,
@@ -237,12 +249,16 @@ class _ThemeSettingTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isLight = theme.brightness == Brightness.light;
-    final textColor =
-        isLight ? Colors.black87 : theme.textTheme.bodyMedium?.color;
-    final subtitleColor =
-        isLight ? Colors.black54 : theme.textTheme.bodySmall?.color;
-    final iconColor = isLight ? Colors.black87 : null;
+    // Use explicit black87 for text and black54 for subtitle in light theme
+    final textColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black87
+        : theme.textTheme.bodyMedium?.color;
+    final subtitleColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black54
+        : theme.textTheme.bodySmall?.color;
+    final iconColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black87
+        : theme.iconTheme.color;
 
     return ListTile(
       title: Text(AppLocalizations.of(context)!.theme,
@@ -312,9 +328,10 @@ class _RadioListTile<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isLight = theme.brightness == Brightness.light;
-    final textColor =
-        isLight ? Colors.black87 : theme.textTheme.bodyMedium?.color;
+    // Use explicit black87 for text in light theme
+    final textColor = Theme.of(context).brightness == Brightness.light
+        ? Colors.black87
+        : theme.textTheme.bodyMedium?.color;
 
     return RadioListTile<T>(
       title: Text(title, style: TextStyle(color: textColor)),

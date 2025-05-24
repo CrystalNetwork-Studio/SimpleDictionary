@@ -50,7 +50,7 @@ class AppTheme {
     useMaterial3: true,
     brightness: Brightness.light,
     scaffoldBackgroundColor: _lightColorScheme.surface,
-    textTheme: _createTextTheme(Colors.black87, Colors.black54),
+    textTheme: _createTextTheme(Colors.black54, Colors.black45),
     appBarTheme: AppBarTheme(
       foregroundColor: _lightColorScheme.onSurface,
       elevation: 0,
