@@ -1,6 +1,8 @@
 ## [0.1.1] - 2025-05-28
 ### Changed ✨
 - Updated application icon 🖼️
+- Improved text and icon colors in the light theme for better readability 🎨
+- The keyboard no longer appears automatically when creating a new dictionary ⌨️
 
 ## [0.1.0] - 2025-05-21
 ### Added 🎉

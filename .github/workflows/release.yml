@@ -70,13 +70,21 @@ jobs:
             RELEASE_NOTES=$(awk "/$VERSION_HEADER/,/^$/ { print }" CHANGELOG.md | sed '1d')
           fi
 
-          # Escape newlines for GitHub Actions
+          # If still empty, try extracting until the end of file (for last entry)
+          if [ -z "$RELEASE_NOTES" ]; then
+            RELEASE_NOTES=$(awk "/$VERSION_HEADER/,0 { if (!/^## \[/ || /^$VERSION_HEADER/) print }" CHANGELOG.md | sed '1d')
+          fi
+
+          # Remove trailing empty lines
+          RELEASE_NOTES=$(echo "$RELEASE_NOTES" | sed '/^[[:space:]]*$/d')
+
+          # Escape newlines and percent for GitHub Actions
           RELEASE_NOTES="${RELEASE_NOTES//'%'/'%25'}"
           RELEASE_NOTES="${RELEASE_NOTES//$'\n'/'%0A'}"
           RELEASE_NOTES="${RELEASE_NOTES//$'\r'/'%0D'}"
 
           echo "RELEASE_NOTES=$RELEASE_NOTES" >> $GITHUB_ENV
-          echo "Release notes extracted"
+          echo "Release notes extracted: $RELEASE_NOTES"
 
       - name: Build APK
         run: flutter build apk --split-per-abi
@@ -93,7 +101,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.VERSION }}
-          name: Release v${{ env.VERSION }}
+          name: v${{ env.VERSION }}
           body: ${{ env.RELEASE_NOTES }}
           draft: false
           prerelease: false
